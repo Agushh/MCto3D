@@ -1,0 +1,310 @@
+﻿
+using Avalonia; // Necesario para interactuar con la app de Avalonia
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.TextFormatting.Unicode;
+using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using fNbt;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO; // Necesario para manejar rutas de archivos
+using System.Numerics;
+using System.Threading.Tasks;
+
+
+namespace MCto3D.ViewModels;
+
+public partial class MainWindowViewModel : ObservableObject
+{
+    [ObservableProperty]
+    private string _statusText = "Archivo sin cargar";
+
+    [ObservableProperty]
+    private bool _isFileLoaded = false;
+
+    // VARIABLE CLAVE: Aquí guardaremos la ruta completa en tu disco duro (ej: "C:/Carpeta/archivo.nbt")
+    // Al ser privada, no se muestra en la interfaz, pero la podemos usar en cualquier parte del código.
+    private string? _selectedFilePath;
+
+    private float bs = 0.5f;
+
+    public struct Triangle
+    {
+        public Vector3 V1, V2, V3, Normal;
+
+        public Triangle(Vector3 v1, Vector3 v2, Vector3 v3)
+        {
+            V1 = v1;
+            V2 = v2;
+            V3 = v3;
+            Normal = Vector3.Normalize(Vector3.Cross(v2 - v1, v3 - v1));
+        }
+
+        public static void CreateAsciiStl(string filePath, List<Triangle> triangles)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine("solid CustomModel");
+
+                foreach (var t in triangles)
+                {
+                    var culture = System.Globalization.CultureInfo.InvariantCulture;
+
+                    writer.WriteLine($"  facet normal {t.Normal.X.ToString(culture)} {t.Normal.Y.ToString(culture)} {t.Normal.Z.ToString(culture)}");
+                    writer.WriteLine("    outer loop");
+                    writer.WriteLine($"      vertex {t.V1.X.ToString(culture)} {t.V1.Y.ToString(culture)} {t.V1.Z.ToString(culture)}");
+                    writer.WriteLine($"      vertex {t.V2.X.ToString(culture)} {t.V2.Y.ToString(culture)} {t.V2.Z.ToString(culture)}");
+                    writer.WriteLine($"      vertex {t.V3.X.ToString(culture)} {t.V3.Y.ToString(culture)} {t.V3.Z.ToString(culture)}");
+                    writer.WriteLine("    endloop");
+                    writer.WriteLine("  endfacet");
+                }
+                writer.WriteLine("endsolid CustomModel");
+            }
+        }
+
+    }
+
+    public static class VoxelData
+    {
+        // Las 8 esquinas desde tu punto de referencia (Atrás-Izquierda-Abajo)
+        public static readonly Vector3[] Vertices =
+        [
+        new(0, 0, 0), // Vértice 0: Atrás - Izquierda - Abajo (Tu Origen)
+        new(1, 0, 0), // Vértice 1: Atrás - Derecha - Abajo
+        new(1, 1, 0), // Vértice 2: Atrás - Derecha - Arriba
+        new(0, 1, 0), // Vértice 3: Atrás - Izquierda - Arriba
+        new(0, 0, 1), // Vértice 4: Frente - Izquierda - Abajo
+        new(1, 0, 1), // Vértice 5: Frente - Derecha - Abajo
+        new(1, 1, 1), // Vértice 6: Frente - Derecha - Arriba
+        new(0, 1, 1)  // Vértice 7: Frente - Izquierda - Arriba
+        ];
+        // Caras: 0:Arriba, 1:Abajo, 2:Derecha, 3:Izquierda, 4:Frente, 5:Atrás
+        public static readonly int[][] FaceTriangles =
+        [
+        [3, 7, 6, 2], // Cara 0 (+Y, Superior)  -> Sentido antihorario visto desde arriba
+        [4, 0, 1, 5], // Cara 1 (-Y, Inferior)  -> Sentido antihorario visto desde abajo
+        [6, 5, 1, 2], // Cara 2 (+X, Derecha)   -> Sentido antihorario visto desde la derecha
+        [3, 0, 4, 7], // Cara 3 (-X, Izquierda) -> Sentido antihorario visto desde la izquierda
+        [7, 4, 5, 6], // Cara 4 (+Z, Frontal)   -> Sentido antihorario visto desde el frente
+        [2, 1, 0, 3]  // Cara 5 (-Z, Trasera)   -> Sentido antihorario visto desde atrás
+        ];
+
+        // Matriz auxiliar para revisar a los vecinos en el mismo orden que las caras
+        public static readonly int[][] NeighborOffsets =
+        [
+        [0, 1, 0],  // 0: Vecino de Arriba
+        [0, -1, 0], // 1: Vecino de Abajo
+        [1, 0, 0],  // 2: Vecino de la Derecha
+        [-1, 0, 0], // 3: Vecino de la Izquierda
+        [0, 0, 1],  // 4: Vecino del Frente
+        [0, 0, -1]  // 5: Vecino de Atrás
+        ];
+    }
+
+
+    [RelayCommand]
+    private async Task LoadFileAsync()
+    {
+        // 1. Buscamos la ventana principal de tu aplicación para poder encimarle el explorador de archivos
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+            desktop.MainWindow != null)
+        {
+            var storageProvider = desktop.MainWindow.StorageProvider;
+
+            // 2. Configuramos y abrimos el selector de archivos
+            var result = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Seleccionar archivo NBT",
+                AllowMultiple = false, // Solo permitir seleccionar un archivo
+                FileTypeFilter = new[]
+                {
+                    // Filtro para que solo te deje ver archivos .nbt (y no te equivoques de archivo)
+                    new FilePickerFileType("Archivos NBT (*.nbt)") { Patterns = new[] { "*.nbt" } },
+                    new FilePickerFileType("Todos los archivos") { Patterns = new[] { "*.*" } }
+                }
+            });
+
+            // 3. Si el usuario seleccionó un archivo (no cerró la ventana con la X)
+            if (result.Count > 0)
+            {
+                var file = result[0];
+
+                // Guardamos la ruta real en nuestra variable interna
+                _selectedFilePath = file.Path.LocalPath;
+
+                // Cambiamos el estatus para mostrar solo el nombre (ej: "mi_mundo.nbt")
+                StatusText = file.Name;
+                IsFileLoaded = true;
+            }
+        }
+    }
+
+    private List<Triangle> GenerateListTriangle(string _selectedFilePath)
+    {
+        var myFile = new NbtFile();
+        myFile.LoadFromFile(_selectedFilePath);
+
+        var rootTag = myFile.RootTag;
+
+        var palette = rootTag.Get<NbtList>("palette");
+        var blocks = rootTag.Get<NbtList>("blocks");
+        var size = rootTag.Get<NbtList>("size");
+
+
+        if (blocks != null && size != null)
+        {
+            int sizeX = size[0].IntValue;
+            int sizeY = size[1].IntValue;
+            int sizeZ = size[2].IntValue;
+
+            if (sizeX != 0 || sizeY != 0 || sizeZ != 0)
+            {
+                int[,,] voxelGrid = new int[sizeX, sizeY, sizeZ];
+                for (int x = 0; x < sizeX; x++)
+                    for (int y = 0; y < sizeY; y++)
+                        for (int z = 0; z < sizeZ; z++)
+                            voxelGrid[x, y, z] = 0;
+
+                foreach (NbtCompound blockTag in blocks)
+                {
+                    var pos = blockTag.Get<NbtList>("pos");
+                    int stateId = blockTag.Get<NbtInt>("state").Value;
+
+                    int x = pos[0].IntValue;
+                    int y = pos[1].IntValue;
+                    int z = pos[2].IntValue;
+
+                    // Guardamos qué bloque hay en esta coordenada exacta
+                    voxelGrid[x, y, z] = stateId;
+                }
+                List<Triangle> t = new();
+                for (int x = 0; x < sizeX; x++)
+                    for (int y = 0; y < sizeY; y++)
+                        for (int z = 0; z < sizeZ; z++)
+                        {
+                            int blockState = voxelGrid[x, y, z];
+
+                            if (blockState == -1 || blockState == 0) continue;
+
+                            // Revisamos las 6 caras usando un bucle
+                            for (int f = 0; f < 6; f++)
+                            {
+                                // Coordenadas del bloque vecino
+                                int nx = x + VoxelData.NeighborOffsets[f][0];
+                                int ny = y + VoxelData.NeighborOffsets[f][1];
+                                int nz = z + VoxelData.NeighborOffsets[f][2];
+
+                                // Condición única de Face Culling: 
+                                // Dibujamos la cara si toca el borde del mapa O si el vecino es aire (<= 0)
+                                if (nx < 0 || nx >= sizeX || ny < 0 || ny >= sizeY || nz < 0 || nz >= sizeZ || voxelGrid[nx, ny, nz] <= 0)
+                                {
+                                    // Extraemos los índices correspondientes a este número de cara
+                                    int i0 = VoxelData.FaceTriangles[f][0];
+                                    int i1 = VoxelData.FaceTriangles[f][1];
+                                    int i2 = VoxelData.FaceTriangles[f][2];
+                                    int i3 = VoxelData.FaceTriangles[f][3];
+
+                                    // CORRECCIÓN ESCALA: Multiplicamos toda la coordenada por 'bs' para evitar que se separen
+                                    float x0 = (x + VoxelData.Vertices[i0].X) * bs;
+                                    float y0 = (y + VoxelData.Vertices[i0].Y) * bs;
+                                    float z0 = (z + VoxelData.Vertices[i0].Z) * bs;
+
+                                    float x1 = (x + VoxelData.Vertices[i1].X) * bs;
+                                    float y1 = (y + VoxelData.Vertices[i1].Y) * bs;
+                                    float z1 = (z + VoxelData.Vertices[i1].Z) * bs;
+
+                                    float x2 = (x + VoxelData.Vertices[i2].X) * bs;
+                                    float y2 = (y + VoxelData.Vertices[i2].Y) * bs;
+                                    float z2 = (z + VoxelData.Vertices[i2].Z) * bs;
+
+                                    float x3 = (x + VoxelData.Vertices[i3].X) * bs;
+                                    float y3 = (y + VoxelData.Vertices[i3].Y) * bs;
+                                    float z3 = (z + VoxelData.Vertices[i3].Z) * bs;
+
+                                    // CORRECCIÓN ROTACIÓN (Y-Up a Z-Up): Reordenamos los componentes para que el 
+                                    // modelo no aparezca acostado en el software de impresión 3D
+                                    Vector3 v0 = new Vector3(x0, -z0, y0);
+                                    Vector3 v1 = new Vector3(x1, -z1, y1);
+                                    Vector3 v2 = new Vector3(x2, -z2, y2);
+                                    Vector3 v3 = new Vector3(x3, -z3, y3);
+
+                                    // Añadimos los dos triángulos que completan este plano cuadrado sin deformaciones diagonales
+                                    t.Add(new Triangle(v0, v1, v2));
+                                    t.Add(new Triangle(v0, v2, v3));
+                                }
+                            }
+                        }
+                return t;
+            }
+            else
+            {
+                StatusText = "El archivo no tiene la estructura esperada.";
+                throw new Exception("El archivo corrupto o incorrecto.");
+            }
+        }
+        else
+        {
+            StatusText = "El archivo no tiene la estructura esperada.";
+            throw new Exception("El archivo corrupto o incorrecto.");
+        }
+    }
+
+    [RelayCommand]
+    private async void ExportToStl()
+    {
+        // Seguridad: Si por alguna razón no hay ruta de archivo, no hacemos nada
+        if (string.IsNullOrEmpty(_selectedFilePath)) return;
+
+        try
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+                desktop.MainWindow != null)
+            {
+                var storageProvider = desktop.MainWindow.StorageProvider;
+
+                // Extra: Obtenemos el nombre del archivo original para sugerirlo (ej: si cargaste "casa.nbt", sugerirá "casa.stl")
+                string nombreSugerido = Path.GetFileNameWithoutExtension(_selectedFilePath) + ".stl";
+
+                // 2. Configuramos y abrimos el guardador de archivos
+                var result = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                {
+                    Title = "Exportar a STL",
+                    SuggestedFileName = nombreSugerido,
+                    DefaultExtension = "stl",
+                    FileTypeChoices =
+                    [
+                        new FilePickerFileType("Modelos 3D (*.stl)") { Patterns = new[] { "*.stl" } }
+                    ]
+                });
+
+                if (result != null)
+                {
+                    string rutaDestinoStl = result.Path.LocalPath;
+
+                    List<Triangle> mesh = GenerateListTriangle(_selectedFilePath);
+
+                    Triangle.CreateAsciiStl(rutaDestinoStl, mesh);
+
+                }
+                StatusText = $"¡Convertido con éxito!";
+
+            }
+        }
+        catch (Exception ex)
+        {
+            // Si algo falla leyendo el archivo, te lo mostrará en la pantalla
+            StatusText = $"Error al procesar: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void Cancel()
+    {
+        // Al cancelar, olvidamos la ruta del archivo y reiniciamos la interfaz
+        _selectedFilePath = null;
+        StatusText = "Archivo sin cargar";
+        IsFileLoaded = false;
+    }
+}

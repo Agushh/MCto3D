@@ -1,0 +1,126 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:MCto3D.ViewModels"
+		x:Class="MCto3D.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="MCto3D" Width="900" Height="600">
+
+	<Grid RowDefinitions="Auto,*">
+		<!-- Top bar -->
+		<Border Background="#1F2937" Padding="12" CornerRadius="0">
+			<DockPanel LastChildFill="True">
+				<TextBlock Text="MCto3D" Foreground="White" FontWeight="Bold" FontSize="18" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+				<StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+					<Button Content="Perfil" Background="#0F172A" Foreground="White"/>
+				</StackPanel>
+			</DockPanel>
+		</Border>
+
+		<!-- Main area -->
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="220"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Sidebar -->
+			<StackPanel Grid.Column="0" Background="#0B1220" Padding="12" Spacing="10">
+				<TextBlock Text="Navegación" Foreground="#94A3B8" FontWeight="Bold"/>
+				<Button Content="Historial" HorizontalAlignment="Stretch"/>
+				<Button Content="Modelos públicos" HorizontalAlignment="Stretch"/>
+				<Button Content="Ajustes" HorizontalAlignment="Stretch"/>
+				<Button Content="Perfil" HorizontalAlignment="Stretch"/>
+				<Border Background="#071021" CornerRadius="6" Padding="8" Margin="0,12,0,0">
+					<TextBlock Text="Espacio para información adicional / anuncios" Foreground="#94A3B8" TextWrapping="Wrap"/>
+				</Border>
+			</StackPanel>
+
+			<!-- Content area -->
+			<Grid Grid.Column="1" Padding="18">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="2*" />
+					<ColumnDefinition Width="1.3*" />
+				</Grid.ColumnDefinitions>
+
+				<!-- Main panel (controles y opciones) -->
+				<StackPanel Grid.Column="0" Spacing="12">
+					<TextBlock Text="{Binding StatusText}" FontSize="16" FontWeight="SemiBold"/>
+
+					<Button Content="Cargar archivo NBT" Command="{Binding LoadFileCommand}" Width="180"/>
+
+					<!-- Opciones visibles tras cargar archivo -->
+					<Border Background="#FFFFFF" CornerRadius="8" Padding="12" IsVisible="{Binding IsFileLoaded}">
+						<StackPanel Spacing="10">
+							<TextBlock Text="Opciones de exportación" FontWeight="Bold"/>
+
+							<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+								<TextBlock Text="Tamaño del bloque:" VerticalAlignment="Center" Width="120"/>
+								<NumericUpDown Value="{Binding Bs, Mode=TwoWay}" Minimum="0.01" Maximum="10" Increment="0.05" Width="140"/>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+								<TextBlock Text="Formato:" VerticalAlignment="Center" Width="120"/>
+								<ComboBox Width="140" SelectedItem="{Binding ExportFormat, Mode=TwoWay}">
+									<ComboBoxItem Content="STL" />
+									<ComboBoxItem Content="3MF" />
+								</ComboBox>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+								<TextBlock Text="Color (solo 3MF):" VerticalAlignment="Center" Width="120"/>
+								<CheckBox IsChecked="{Binding UseColor, Mode=TwoWay}" IsEnabled="{Binding IsColorOptionEnabled}"/>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+								<TextBlock Text="¿Qué renderizar?:" VerticalAlignment="Center" Width="120"/>
+								<ComboBox Width="180" SelectedItem="{Binding RenderSelection, Mode=TwoWay}">
+									<ComboBoxItem Content="Todos bloques" />
+									<ComboBoxItem Content="También geometrias" />
+								</ComboBox>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal" Spacing="8">
+								<Button Content="Generar archivo" Command="{Binding GenerateFileCommand}" Background="#10B981" Foreground="White"/>
+								<Button Content="Cancelar" Command="{Binding CancelCommand}" Background="#EF4444" Foreground="White"/>
+							</StackPanel>
+						</StackPanel>
+					</Border>
+				</StackPanel>
+
+				<!-- Preview / derecha -->
+				<Border Grid.Column="1" Background="#F8FAFC" CornerRadius="8" Padding="12">
+					<StackPanel Spacing="8">
+						<TextBlock Text="Previsualización" FontWeight="Bold"/>
+						<Border Height="300" Background="#E6EEF8" CornerRadius="6" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+							<TextBlock Text="[Placeholder de render]
+Aquí se mostrará una previsualización pequeña del modelo con color/geometrías" Margin="12" Foreground="#475569"/>
+						</Border>
+						<TextBlock Text="Cambios de color y geometría se mostrarán aquí (demo)." Foreground="#64748B"/>
+					</StackPanel>
+				</Border>
+
+				<!-- Vista generada (overlay de contenido) -->
+				<Border Grid.ColumnSpan="2" Background="#80000000" IsVisible="{Binding IsGeneratedViewVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+					<Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="760" Height="480">
+						<Border Background="White" CornerRadius="8" Padding="12">
+							<StackPanel Spacing="12">
+								<TextBlock Text="Vista de archivo generado" FontWeight="Bold" FontSize="16"/>
+								<Border Height="320" Background="#F3F4F6" CornerRadius="6">
+									<TextBlock Text="[Aquí se renderizará el archivo generado — placeholder]" Margin="12" Foreground="#475569"/>
+								</Border>
+
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<Button Content="Exportar" Command="{Binding ExportGeneratedFileCommand}" Background="#0EA5A0" Foreground="White"/>
+									<Button Content="Abrir con slicer" Command="{Binding OpenWithSlicerCommand}"/>
+									<Button Content="Volver" Command="{Binding BackFromGeneratedCommand}"/>
+								</StackPanel>
+							</StackPanel>
+						</Border>
+					</Grid>
+				</Border>
+
+			</Grid>
+		</Grid>
+	</Grid>
+
+</Window>

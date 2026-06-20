@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:MCto3D.ViewModels"
+		xmlns:views="using:MCto3D.Views"
+		x:Class="MCto3D.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="MCto3D" Width="1020" Height="680" MinWidth="950" MinHeight="600"
+		Background="#0B0F19" Foreground="#E2E8F0">
+
+	<Window.DataTemplates>
+		<DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+			<views:DashboardView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:ExportResultViewModel}">
+			<views:ExportResultView/>
+		</DataTemplate>
+	</Window.DataTemplates>
+
+	<Grid RowDefinitions="Auto,*">
+		<Border Grid.Row="0" Background="#111827" Padding="16,12" BorderBrush="#1F2937" BorderThickness="0,0,0,1">
+			<TextBlock Text="MCto3D" Foreground="#F3F4F6" FontWeight="ExtraBold" FontSize="18"/>
+		</Border>
+
+		<Grid Grid.Row="1" ColumnDefinitions="240,*">
+			<Border Grid.Column="0" Background="#0F172A" Padding="16" BorderBrush="#1F2937" BorderThickness="0,0,1,0">
+				<StackPanel Spacing="6">
+					<TextBlock Text="PROYECTOS" Foreground="#475569" FontWeight="Bold" FontSize="11" Margin="8,0,0,8"/>
+					<Button Content="Conversor NBT" HorizontalAlignment="Stretch" Background="#1E293B" Foreground="#10B981" CornerRadius="6"/>
+					<Button Content="Historial" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8"/>
+					<Button Content="Ajustes" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8"/>
+				</StackPanel>
+			</Border>
+
+			<ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+		</Grid>
+	</Grid>
+</Window>
