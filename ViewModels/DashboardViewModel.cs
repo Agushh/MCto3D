@@ -1,43 +1,65 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Models;
+using MCto3D.Services;
+using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace MCto3D.ViewModels;
+
+public class SlicerOption
+{
+    public string Name { get; set; } = "";
+    public string ColorHex { get; set; } = "";
+    public string UriScheme { get; set; } = "";
+    public string ButtonText => $"Abrir en {Name}";
+}
 
 public partial class DashboardViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _navigationController;
 
     private string? _selectedFilePath;
+    
     [ObservableProperty] private string _statusText = "Esperando archivo NBT...";
     [ObservableProperty] private bool _isFileLoaded = false;
+    [ObservableProperty] private string _originalFileName = "";
+    
     [ObservableProperty] private float _bs = 1.0f;
-    [ObservableProperty] private string _selectedColor = "#808080";
-    [ObservableProperty] private string _renderSelection = "Todos los bloques sólidos";
+    [ObservableProperty] private string _geometryMode = "Bloques sólidos";
 
-    // Formato de exportación: "STL" o "3MF"
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Is3MfSelected))]
-    [NotifyPropertyChangedFor(nameof(IsColorSelectorVisible))]
     private string _exportFormat = "STL";
 
-    // Modos de color para 3MF
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(IsColorSelectorVisible))] private bool _isSingleColorMode = true;
+    [ObservableProperty] private bool _isSingleColorMode = true;
     [ObservableProperty] private bool _isMultiColorMode = false;
 
-    // Propiedades calculadas para la interfaz (Getters condicionales)
     public bool Is3MfSelected => ExportFormat == "3MF";
-    public bool IsColorSelectorVisible => ExportFormat == "STL" || (ExportFormat == "3MF" && IsSingleColorMode);
+
+    public List<SlicerOption> SlicerOptions { get; } = new()
+    {
+        new SlicerOption { Name = "OrcaSlicer", ColorHex = "#027D52", UriScheme = "orcaslicer://" },
+        new SlicerOption { Name = "BambuStudio", ColorHex = "#00AE42", UriScheme = "bambustudio://" },
+        new SlicerOption { Name = "PrusaSlicer", ColorHex = "#EA6B24", UriScheme = "prusaslicer://" },
+        new SlicerOption { Name = "Cura", ColorHex = "#0055FF", UriScheme = "cura://" }
+    };
+
+    [ObservableProperty]
+    private SlicerOption _selectedSlicer;
 
     public DashboardViewModel(MainWindowViewModel navigationController)
     {
         _navigationController = navigationController;
+        _selectedSlicer = SlicerOptions[0];
     }
 
     [RelayCommand]
@@ -45,38 +67,34 @@ public partial class DashboardViewModel : ViewModelBase
     {
         if (visualTarget == null) return;
 
-        // Obtenemos el TopLevel (la ventana o contenedor principal que renderiza el control)
         var topLevel = TopLevel.GetTopLevel(visualTarget);
         if (topLevel == null) return;
 
         try
         {
-            // Configuramos las opciones del explorador de archivos
             var options = new FilePickerOpenOptions
             {
                 Title = "Seleccionar archivo NBT de Minecraft",
-                AllowMultiple = false, // Solo un archivo a la vez
+                AllowMultiple = false,
                 FileTypeFilter = new[]
                 {
                     new FilePickerFileType("Estructura Minecraft (*.nbt)")
                     {
-                        Patterns = new[] { "*.nbt" } // Filtro estricto de extensión
+                        Patterns = new[] { "*.nbt" }
                     }
                 }
             };
 
-            // Abre el diálogo nativo del sistema operativo (Windows/Mac/Linux)
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(options);
 
-            // Si el usuario seleccionó un archivo y no canceló el diálogo
             if (files != null && files.Count > 0)
             {
-                // Convertimos la URI de almacenamiento seguro en una ruta física local
                 _selectedFilePath = files[0].Path.LocalPath;
 
                 if (!string.IsNullOrEmpty(_selectedFilePath))
                 {
                     IsFileLoaded = true;
+                    OriginalFileName = Path.GetFileNameWithoutExtension(_selectedFilePath);
                     StatusText = $"Archivo cargado: {Path.GetFileName(_selectedFilePath)}";
                 }
             }
@@ -89,15 +107,151 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void GenerateFile()
+    private void CancelFile()
     {
-        StatusText = "Procesando geometría...";
+        _selectedFilePath = null;
+        OriginalFileName = "";
+        IsFileLoaded = false;
+        StatusText = "Esperando archivo NBT...";
+    }
 
+    [RelayCommand]
+    private void ChangeSlicer(SlicerOption newSlicer)
+    {
+        if (newSlicer != null)
+        {
+            SelectedSlicer = newSlicer;
+        }
+    }
 
-        List<Triangle> mallaSimulada = Triangle.GenerateListTriangle(_selectedFilePath! , Bs);
-        
-        // 2. NAVEGACIÓN: Creamos la pantalla de resultados y le pasamos los triángulos calculados
-        var resultadoVM = new ExportResultViewModel(_navigationController, mallaSimulada, ExportFormat);
-        _navigationController.NavigateTo(resultadoVM);
+    [RelayCommand]
+    private async Task ExportFile(Control visualTarget)
+    {
+        if (visualTarget == null || string.IsNullOrEmpty(_selectedFilePath)) return;
+
+        var topLevel = TopLevel.GetTopLevel(visualTarget);
+        if (topLevel == null) return;
+
+        try
+        {
+            StatusText = "Procesando geometría para exportar...";
+            List<Triangle> malla = Triangle.GenerateListTriangle(_selectedFilePath, Bs);
+
+            string extensionPorDefecto = ExportFormat.ToLower();
+            string nombreFiltro = ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
+            string patronExtension = $"*.{extensionPorDefecto}";
+            
+            string suggestedName = string.IsNullOrWhiteSpace(OriginalFileName) ? "modelo_minecraft" : OriginalFileName;
+
+            var saveOptions = new FilePickerSaveOptions
+            {
+                Title = $"Exportar modelo como {ExportFormat}",
+                DefaultExtension = extensionPorDefecto,
+                SuggestedFileName = suggestedName,
+                FileTypeChoices = new[]
+                {
+                    new FilePickerFileType(nombreFiltro)
+                    {
+                        Patterns = new[] { patronExtension }
+                    }
+                }
+            };
+
+            var fileLocation = await topLevel.StorageProvider.SaveFilePickerAsync(saveOptions);
+
+            if (fileLocation != null)
+            {
+                string rutaDestino = fileLocation.Path.LocalPath;
+
+                if (ExportFormat == "STL")
+                {
+                    StlGenerator.CreateBinaryStlWithColor(rutaDestino, malla, Color.Gray);
+                }
+                StatusText = "¡Exportado con éxito!";
+            }
+            else
+            {
+                StatusText = "Exportación cancelada.";
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error al exportar: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"Error al exportar: {ex.Message}");
+        }
+    }
+
+    private string GetSlicerExecutableFromRegistry(string uriScheme)
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
+
+#pragma warning disable CA1416
+        try
+        {
+            string scheme = uriScheme.Replace("://", "");
+            using var key = Registry.ClassesRoot.OpenSubKey($@"{scheme}\shell\open\command");
+            if (key != null)
+            {
+                string val = key.GetValue("")?.ToString();
+                if (!string.IsNullOrEmpty(val))
+                {
+                    int exeIndex = val.IndexOf(".exe", StringComparison.OrdinalIgnoreCase);
+                    if (exeIndex > 0)
+                    {
+                        return val.Substring(0, exeIndex + 4).Trim(' ', '"');
+                    }
+                }
+            }
+        }
+        catch { }
+#pragma warning restore CA1416
+        return null;
+    }
+
+    [RelayCommand]
+    private void OpenInSlicer()
+    {
+        if (string.IsNullOrEmpty(_selectedFilePath)) return;
+
+        try
+        {
+            StatusText = "Procesando geometría para Slicer...";
+            List<Triangle> malla = Triangle.GenerateListTriangle(_selectedFilePath, Bs);
+
+            string extension = ExportFormat.ToLower();
+            string suggestedName = string.IsNullOrWhiteSpace(OriginalFileName) ? "modelo" : OriginalFileName;
+            string tempFile = Path.Combine(Path.GetTempPath(), $"{suggestedName}_{Guid.NewGuid():N}.{extension}");
+
+            if (ExportFormat == "STL")
+            {
+                StlGenerator.CreateBinaryStlWithColor(tempFile, malla, Color.Gray);
+            }
+
+            string exePath = GetSlicerExecutableFromRegistry(SelectedSlicer.UriScheme);
+
+            if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = $"\"{tempFile}\"",
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = tempFile,
+                    UseShellExecute = true
+                });
+            }
+            StatusText = "¡Enviado al Slicer!";
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error al abrir el slicer: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"Error al abrir el slicer: {ex.Message}");
+        }
     }
 }

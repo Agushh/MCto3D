@@ -4,30 +4,44 @@
 		xmlns:views="using:MCto3D.Views"
 		x:Class="MCto3D.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Title="MCto3D" Width="1020" Height="680" MinWidth="950" MinHeight="600"
+		Title="MCto3D" Width="1200" Height="750" MinWidth="1400" MinHeight="650"
 		Background="#0B0F19" Foreground="#E2E8F0">
 
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type vm:DashboardViewModel}">
 			<views:DashboardView/>
 		</DataTemplate>
-		<DataTemplate DataType="{x:Type vm:ExportResultViewModel}">
-			<views:ExportResultView/>
-		</DataTemplate>
 	</Window.DataTemplates>
 
+	<Window.Styles>
+		<!-- Efectos Hover dinámicos estilo Web para botones laterales -->
+		<Style Selector="Button.SidebarBtn">
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.2"/>
+					<BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		<Style Selector="Button.SidebarBtn:pointerover">
+			<Setter Property="Background" Value="#1A1528"/>
+			<Setter Property="Foreground" Value="#C084FC"/>
+		</Style>
+	</Window.Styles>
+
 	<Grid RowDefinitions="Auto,*">
-		<Border Grid.Row="0" Background="#111827" Padding="16,12" BorderBrush="#1F2937" BorderThickness="0,0,0,1">
-			<TextBlock Text="MCto3D" Foreground="#F3F4F6" FontWeight="ExtraBold" FontSize="18"/>
+		<Border Grid.Row="0" Background="#05050A" Padding="20,16" BorderBrush="#1E1B2E" BorderThickness="0,0,0,1">
+			<TextBlock Text="MCto3D" Foreground="#F8FAFC" FontWeight="Black" FontSize="20" LetterSpacing="1"/>
 		</Border>
 
-		<Grid Grid.Row="1" ColumnDefinitions="240,*">
-			<Border Grid.Column="0" Background="#0F172A" Padding="16" BorderBrush="#1F2937" BorderThickness="0,0,1,0">
-				<StackPanel Spacing="6">
-					<TextBlock Text="PROYECTOS" Foreground="#475569" FontWeight="Bold" FontSize="11" Margin="8,0,0,8"/>
-					<Button Content="Conversor NBT" HorizontalAlignment="Stretch" Background="#1E293B" Foreground="#10B981" CornerRadius="6"/>
-					<Button Content="Historial" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8"/>
-					<Button Content="Ajustes" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8"/>
+		<Grid Grid.Row="1" ColumnDefinitions="260,*">
+			<Border Grid.Column="0" Background="#0B0B13" Padding="20" BorderBrush="#1E1B2E" BorderThickness="0,0,1,0">
+				<StackPanel Spacing="10">
+					<TextBlock Text="MENÚ PRINCIPAL" Foreground="#64748B" FontWeight="Bold" FontSize="12" Margin="8,0,0,12" LetterSpacing="0.5"/>
+					<!-- El botón activo tiene colores primarios predefinidos, los demás tienen el Hover -->
+					<Button Content="Conversor NBT" HorizontalAlignment="Stretch" Background="#1A1528" Foreground="#A855F7" FontWeight="SemiBold" CornerRadius="8" Padding="16,12" Cursor="Hand"/>
+					<Button Classes="SidebarBtn" Content="Historial de Archivos" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="16,12" Cursor="Hand"/>
+					<Button Classes="SidebarBtn" Content="Ajustes" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="16,12" Cursor="Hand"/>
 				</StackPanel>
 			</Border>
 

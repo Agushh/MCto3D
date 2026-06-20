@@ -137,3 +137,4 @@ C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\ru\Microsoft.Co
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.sourcelink.json
