@@ -1,0 +1,88 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:MCto3D.ViewModels"
+			 xmlns:controls="using:MCto3D.Controls"
+			 x:Class="MCto3D.Views.HomeView"
+			 x:DataType="vm:HomeViewModel">
+
+	<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+		<StackPanel Spacing="32" Margin="32" HorizontalAlignment="Stretch">
+			
+			<!-- HEADER SECTION -->
+			<StackPanel Spacing="8" HorizontalAlignment="Center">
+				<TextBlock Text="Minecraft To 3D Model" FontSize="42" FontWeight="Black" Foreground="#F8FAFC" HorizontalAlignment="Center" LetterSpacing="2"/>
+				<TextBlock Text="Dale vida a tus construcciones" FontSize="20" Foreground="#A855F7" HorizontalAlignment="Center" FontStyle="Italic"/>
+			</StackPanel>
+
+			<!-- RENDER & IMAGES SECTION -->
+			<Grid HorizontalAlignment="Center" Margin="0,16">
+				<!-- Background PNG placeholders (floating) -->
+				<TextBlock Text="[PNG L]" FontSize="24" Foreground="#334155" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-100,0,0,-40" RenderTransform="rotate(-15deg)"/>
+				<TextBlock Text="[PNG R]" FontSize="24" Foreground="#334155" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-40,-100,0" RenderTransform="rotate(15deg)"/>
+
+				<!-- Central Render Preview -->
+				<Border Background="#13101E" BorderBrush="#7C3AED" BorderThickness="2" CornerRadius="16" Width="600" Height="350" HorizontalAlignment="Center" ClipToBounds="True">
+					<controls:MinecraftRenderControl Triangles="{Binding MeshTriangles}" AutoRotate="True"/>
+				</Border>
+			</Grid>
+
+			<!-- START BUTTON -->
+			<Button Content="START!" Command="{Binding StartConverterCommand}" Background="#7C3AED" Foreground="White" FontSize="24" FontWeight="Black" Padding="60,20" CornerRadius="12" HorizontalAlignment="Center" Cursor="Hand" Margin="0,16">
+				<Button.Transitions>
+					<Transitions>
+						<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+					</Transitions>
+				</Button.Transitions>
+				<Button.Styles>
+					<Style Selector="Button:pointerover">
+						<Setter Property="RenderTransform" Value="scale(1.05)"/>
+					</Style>
+				</Button.Styles>
+			</Button>
+
+			<Border Height="1" Background="#1E1B2E" Margin="0,16"/>
+
+			<!-- CAROUSEL SECTION -->
+			<StackPanel Spacing="16">
+				<TextBlock Text="Galería Destacada" FontSize="24" FontWeight="Bold" Foreground="#F1F5F9" HorizontalAlignment="Center"/>
+				<!-- Fake Carousel using ScrollViewer -->
+				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="0,0,0,16">
+					<StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Center">
+						<Border Background="#13101E" Width="280" Height="180" CornerRadius="12" BorderBrush="#251F3D" BorderThickness="1">
+							<TextBlock Text="Imagen 1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#475569"/>
+						</Border>
+						<Border Background="#13101E" Width="280" Height="180" CornerRadius="12" BorderBrush="#251F3D" BorderThickness="1">
+							<TextBlock Text="Imagen 2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#475569"/>
+						</Border>
+						<Border Background="#13101E" Width="280" Height="180" CornerRadius="12" BorderBrush="#251F3D" BorderThickness="1">
+							<TextBlock Text="Imagen 3" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#475569"/>
+						</Border>
+						<Border Background="#13101E" Width="280" Height="180" CornerRadius="12" BorderBrush="#251F3D" BorderThickness="1">
+							<TextBlock Text="Imagen 4" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#475569"/>
+						</Border>
+					</StackPanel>
+				</ScrollViewer>
+			</StackPanel>
+
+			<!-- ABOUT TEXT -->
+			<Border Background="#0B0B13" Padding="40" CornerRadius="16" BorderBrush="#1E1B2E" BorderThickness="1" MaxWidth="800" HorizontalAlignment="Center">
+				<StackPanel Spacing="16">
+					<TextBlock Text="Acerca de MCto3D" FontSize="24" FontWeight="Bold" Foreground="#E2E8F0" HorizontalAlignment="Center"/>
+					<TextBlock Text="Esta aplicación te permite extraer tus creaciones de Minecraft a través de bloques de estructura (.nbt) y transformarlas en geometrías 3D (.stl, .3mf) listas para ser visualizadas y preparadas para impresión 3D a todo color o monocromático. Disfruta de un conversor intuitivo y un visor interactivo nativo." 
+							   Foreground="#94A3B8" FontSize="16" TextWrapping="Wrap" TextAlignment="Center" LineHeight="24"/>
+				</StackPanel>
+			</Border>
+
+			<!-- FOOTER -->
+			<StackPanel Spacing="8" Margin="0,32,0,0" HorizontalAlignment="Center">
+				<StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Center">
+					<Button Content="Twitter" Background="Transparent" Foreground="#64748B" Cursor="Hand"/>
+					<Button Content="GitHub" Background="Transparent" Foreground="#64748B" Cursor="Hand"/>
+					<Button Content="Discord" Background="Transparent" Foreground="#64748B" Cursor="Hand"/>
+				</StackPanel>
+				<TextBlock Text="© 2024 MCto3D Project. Todos los derechos reservados." Foreground="#475569" FontSize="12" HorizontalAlignment="Center"/>
+			</StackPanel>
+			
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>

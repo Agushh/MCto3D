@@ -1,142 +1,252 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:vm="using:MCto3D.ViewModels"
+			 xmlns:controls="using:MCto3D.Controls"
+			 xmlns:conv="using:MCto3D.Converters"
 			 x:Class="MCto3D.Views.DashboardView"
 			 x:DataType="vm:DashboardViewModel">
 
-	<Grid ColumnDefinitions="*,450" Margin="32">
-		<!-- Columna Izquierda (Centro de App): Configuraciones Expandible -->
-		<ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,32,0">
-			<StackPanel Spacing="24" >
-				<!-- Título -->
-				<StackPanel Spacing="6">
-					<TextBlock Text="Conversor Paramétrico" FontSize="28" FontWeight="Black" Foreground="#F8FAFC"/>
-					<TextBlock Text="Sube un archivo de Minecraft y ajusta los parámetros." Foreground="#94A3B8" FontSize="14" TextWrapping="Wrap"/>
-				</StackPanel>
+	<UserControl.Resources>
+		<conv:SelectedThumbnailConverter x:Key="SelectedThumbnailConverter" />
+	</UserControl.Resources>
 
-				<!-- Estado: No hay archivo cargado -->
-				<Border Background="#13101E" CornerRadius="12" Padding="40,48" BorderBrush="#251F3D" BorderThickness="1" IsVisible="{Binding !IsFileLoaded}">
-					<StackPanel Spacing="16" HorizontalAlignment="Center">
-						<TextBlock Text="📁" FontSize="56" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-						<TextBlock Text="Arrastra o busca tu estructura" Foreground="#E2E8F0" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
-						<TextBlock Text="Soporta archivos .nbt exportados de Structure Blocks" Foreground="#64748B" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="0,-4,0,8"/>
-						<Button Content="Seleccionar Archivo"
-								Command="{Binding LoadFileCommand}"
-								CommandParameter="{Binding $parent[UserControl]}"
-								Background="#7C3AED" Foreground="White" FontWeight="Bold"
-								Padding="32,16" CornerRadius="8" HorizontalAlignment="Center" Cursor="Hand"/>
-					</StackPanel>
-				</Border>
+	<Grid Margin="32" RowDefinitions="Auto,*">
+		<!-- HEADER -->
+		<Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,24">
+			<Button Grid.Column="0" Command="{Binding GoBackCommand}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="12,8" CornerRadius="8" Cursor="Hand" Margin="0,0,16,0" VerticalAlignment="Center">
+				<TextBlock Text="←" VerticalAlignment="Center" FontSize="20"/>
+			</Button>
+			<TextBlock Grid.Column="1" Text="Converter" FontSize="28" FontWeight="Black" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+		</Grid>
 
-				<!-- Estado: Archivo Cargado -->
-				<Border Background="#13101E" CornerRadius="12" Padding="20" BorderBrush="#7C3AED" BorderThickness="1" IsVisible="{Binding IsFileLoaded}">
-					<Grid ColumnDefinitions="Auto,*,Auto">
-						<TextBlock Grid.Column="0" Text="📄" FontSize="28" VerticalAlignment="Center" Margin="0,0,16,0"/>
-						<StackPanel Grid.Column="1" VerticalAlignment="Center">
-							<TextBlock Text="Archivo activo:" FontSize="12" Foreground="#94A3B8" FontWeight="SemiBold"/>
-							<TextBlock Text="{Binding OriginalFileName}" FontSize="16" Foreground="#E2E8F0" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
-						</StackPanel>
-						<Button Grid.Column="2" Content="✕" 
-								Command="{Binding CancelFileCommand}" 
-								Background="#1A1528" Foreground="#A855F7" 
-								FontWeight="Bold" Padding="12,8" CornerRadius="6" Cursor="Hand" VerticalAlignment="Center" ToolTip.Tip="Cancelar archivo"/>
-					</Grid>
-				</Border>
-
-				<!-- Controles de Geometría (Solo visibles si hay archivo) -->
-				<Border Background="#0B0B13" CornerRadius="12" Padding="24" BorderBrush="#1E1B2E" BorderThickness="1" IsVisible="{Binding IsFileLoaded}">
-					<StackPanel Spacing="24">
-						<TextBlock Text="Ajustes de Malla" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16"/>
-						
-						<Grid ColumnDefinitions="160,*">
-							<TextBlock Grid.Column="0" Text="Escala de Bloque (bs):" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
-							<NumericUpDown Grid.Column="1" Value="{Binding Bs}" Minimum="0.01" Maximum="10" Increment="0.05" HorizontalAlignment="Stretch"/>
-						</Grid>
-
-						<Grid ColumnDefinitions="160,*">
-							<TextBlock Grid.Column="0" Text="Modo de Geometría:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
-							<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding GeometryMode}">
-								<x:String>Bloques sólidos</x:String>
-								<x:String>Geometrías completas</x:String>
-							</ComboBox>
-						</Grid>
-
-						<Grid ColumnDefinitions="160,*">
-							<TextBlock Grid.Column="0" Text="Formato de salida:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
-							<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding ExportFormat}">
-								<x:String>STL</x:String>
-								<x:String>3MF</x:String>
-							</ComboBox>
-						</Grid>
-
-						<Grid ColumnDefinitions="160,*" IsVisible="{Binding Is3MfSelected}">
-							<TextBlock Grid.Column="0" Text="Gestión de color:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
-							<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
-								<RadioButton Content="Monocolor" IsChecked="{Binding IsSingleColorMode}" Foreground="#CBD5E1"/>
-								<RadioButton Content="Multicolor (NBT)" IsChecked="{Binding IsMultiColorMode}" Foreground="#CBD5E1"/>
-							</StackPanel>
-						</Grid>
-
-						<Border Height="1" Background="#1E1B2E" Margin="0,8"/>
-
-						<!-- Botones de Acción Integrados -->
-						<Grid ColumnDefinitions="*,*">
-							<SplitButton Grid.Column="0" Content="{Binding SelectedSlicer.ButtonText}"
-										 Command="{Binding OpenInSlicerCommand}"
-										 Background="{Binding SelectedSlicer.ColorHex}"
-										 Foreground="White"
-										 Padding="16,14"
-										 CornerRadius="8"
-										 Cursor="Hand"
-										 FontWeight="SemiBold"
-										 Margin="0,0,8,0"
-										 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
-								<SplitButton.Flyout>
-									<MenuFlyout Placement="BottomEdgeAlignedRight">
-										<MenuItem Header="OrcaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[0]}">
-											<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#027D52"/></MenuItem.Icon>
-										</MenuItem>
-										<MenuItem Header="BambuStudio" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[1]}">
-											<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#00AE42"/></MenuItem.Icon>
-										</MenuItem>
-										<MenuItem Header="PrusaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[2]}">
-											<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#EA6B24"/></MenuItem.Icon>
-										</MenuItem>
-										<MenuItem Header="Cura" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[3]}">
-											<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#0055FF"/></MenuItem.Icon>
-										</MenuItem>
-									</MenuFlyout>
-								</SplitButton.Flyout>
-							</SplitButton>
-
-							<Button Grid.Column="1" Content="Exportar Local" 
-									Command="{Binding ExportFileCommand}" 
+		<Grid Grid.Row="1" ColumnDefinitions="*,450">
+			<!-- Columna Izquierda (Centro de App): Configuraciones / Archivo -->
+			<ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,32,0">
+				<StackPanel Spacing="24">
+					
+					<!-- Estado: No hay archivo cargado -->
+					<Border Background="#13101E" CornerRadius="12" Padding="40,48" BorderBrush="#251F3D" BorderThickness="1" IsVisible="{Binding !IsFileLoaded}">
+						<StackPanel Spacing="16" HorizontalAlignment="Center">
+							<TextBlock Text="📁" FontSize="56" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+							<TextBlock Text="Arrastra o busca tu estructura" Foreground="#E2E8F0" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+							<TextBlock Text="Soporta archivos .nbt exportados de Structure Blocks" Foreground="#64748B" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="0,-4,0,8"/>
+							<Button Content="Seleccionar Archivo"
+									Command="{Binding LoadFileCommand}"
 									CommandParameter="{Binding $parent[UserControl]}"
-									Background="#7C3AED" Foreground="White" FontWeight="Bold" 
-									HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
-									Padding="16,14" CornerRadius="8" Cursor="Hand" Margin="8,0,0,0"/>
-						</Grid>
-						
-						<!-- Estado de Progreso -->
-						<TextBlock Text="{Binding StatusText}" Foreground="#10B981" FontWeight="Medium" FontSize="12" HorizontalAlignment="Center" Margin="0,-8,0,0" IsVisible="{Binding IsFileLoaded}"/>
-					</StackPanel>
-				</Border>
-			</StackPanel>
-		</ScrollViewer>
-
-		<!-- Columna Derecha: Renderizado Fijo -->
-		<Border Grid.Column="1" Background="#05050A" CornerRadius="12" Padding="20" BorderBrush="#1E1B2E" BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-			<Grid RowDefinitions="Auto,*">
-				<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
-					<TextBlock Grid.Column="0" Text="Visor Interactivo" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16" VerticalAlignment="Center"/>
-					<Border Grid.Column="1" Background="#10B98120" Padding="8,4" CornerRadius="4">
-						<TextBlock Text="Live Render" Foreground="#10B981" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+									Background="#7C3AED" Foreground="White" FontWeight="Bold"
+									Padding="32,16" CornerRadius="8" HorizontalAlignment="Center" Cursor="Hand"/>
+						</StackPanel>
 					</Border>
+					<TextBlock Text="Admitted types: .nbt, .schematic" Foreground="#64748B" FontSize="14" HorizontalAlignment="Center" IsVisible="{Binding !IsFileLoaded}"/>
+
+					<!-- Estado: Archivo Cargado -->
+					<Border Background="#13101E" CornerRadius="12" Padding="20" BorderBrush="#7C3AED" BorderThickness="1" IsVisible="{Binding IsFileLoaded}">
+						<Grid ColumnDefinitions="Auto,*,Auto">
+							<TextBlock Grid.Column="0" Text="📄" FontSize="28" VerticalAlignment="Center" Margin="0,0,16,0"/>
+							<StackPanel Grid.Column="1" VerticalAlignment="Center">
+								<TextBlock Text="Archivo activo:" FontSize="12" Foreground="#94A3B8" FontWeight="SemiBold"/>
+								<TextBlock Text="{Binding OriginalFileName}" FontSize="16" Foreground="#E2E8F0" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+							</StackPanel>
+							<Button Grid.Column="2" Content="✕" 
+									Command="{Binding CancelFileCommand}" 
+									Background="#1A1528" Foreground="#A855F7" 
+									FontWeight="Bold" Padding="12,8" CornerRadius="6" Cursor="Hand" VerticalAlignment="Center" ToolTip.Tip="Cancelar archivo"/>
+						</Grid>
+					</Border>
+
+					<!-- Controles de Geometría (Solo visibles si hay archivo) -->
+					<Border Background="#0B0B13" CornerRadius="12" Padding="24" BorderBrush="#1E1B2E" BorderThickness="1" IsVisible="{Binding IsFileLoaded}">
+						<StackPanel Spacing="24">
+							<TextBlock Text="Ajustes de Malla" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16"/>
+							
+							<Grid ColumnDefinitions="160,*">
+								<TextBlock Grid.Column="0" Text="Escala de Bloque (bs):" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
+								<NumericUpDown Grid.Column="1" Value="{Binding Bs}" Minimum="0.01" Maximum="10" Increment="0.05" HorizontalAlignment="Stretch"/>
+							</Grid>
+
+							<Grid ColumnDefinitions="160,*">
+								<TextBlock Grid.Column="0" Text="Modo de Geometría:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
+								<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding GeometryMode}">
+									<x:String>Bloques sólidos</x:String>
+									<x:String>Geometrías completas</x:String>
+								</ComboBox>
+							</Grid>
+
+							<Grid ColumnDefinitions="160,*">
+								<TextBlock Grid.Column="0" Text="Formato de salida:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
+								<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding ExportFormat}">
+									<x:String>STL</x:String>
+									<x:String>3MF</x:String>
+								</ComboBox>
+							</Grid>
+
+							<Grid ColumnDefinitions="160,*" IsVisible="{Binding Is3MfSelected}">
+								<TextBlock Grid.Column="0" Text="Gestión de color:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
+								<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+									<RadioButton Content="Monocolor" IsChecked="{Binding IsSingleColorMode}" Foreground="#CBD5E1"/>
+									<RadioButton Content="Multicolor (NBT)" IsChecked="{Binding IsMultiColorMode}" Foreground="#CBD5E1"/>
+								</StackPanel>
+							</Grid>
+
+							<!-- Ajustes de Modelo 3D -->
+							<Grid ColumnDefinitions="160,*">
+								<TextBlock Grid.Column="0" Text="Modelo 3D:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
+								<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+									<CheckBox Content="Forzar color" IsChecked="{Binding OverrideModelColor}" Foreground="#CBD5E1"/>
+									<ColorPicker Color="{Binding ModelColor}" IsVisible="{Binding OverrideModelColor}" Height="32"/>
+								</StackPanel>
+							</Grid>
+
+							<!-- Ajustes de Suelo -->
+							<Grid ColumnDefinitions="160,*">
+								<TextBlock Grid.Column="0" Text="Escenario:" VerticalAlignment="Center" Foreground="#94A3B8" FontWeight="Medium"/>
+								<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+									<CheckBox Content="Añadir suelo" IsChecked="{Binding ShowFloor}" Foreground="#CBD5E1"/>
+									<ColorPicker Color="{Binding FloorColor}" IsVisible="{Binding ShowFloor}" Height="32"/>
+								</StackPanel>
+							</Grid>
+
+							<Border Height="1" Background="#1E1B2E" Margin="0,8"/>
+
+							<!-- Botones de Acción Integrados -->
+							<Grid ColumnDefinitions="*,*">
+								<SplitButton Grid.Column="0" Content="{Binding SelectedSlicer.ButtonText}"
+											 Command="{Binding OpenInSlicerCommand}"
+											 Background="{Binding SelectedSlicer.ColorHex}"
+											 Foreground="White"
+											 Padding="16,14"
+											 CornerRadius="8"
+											 Cursor="Hand"
+											 FontWeight="SemiBold"
+											 Margin="0,0,8,0"
+											 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+									<SplitButton.Flyout>
+										<MenuFlyout Placement="BottomEdgeAlignedRight">
+											<MenuItem Header="OrcaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[0]}">
+												<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#027D52"/></MenuItem.Icon>
+											</MenuItem>
+											<MenuItem Header="BambuStudio" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[1]}">
+												<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#00AE42"/></MenuItem.Icon>
+											</MenuItem>
+											<MenuItem Header="PrusaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[2]}">
+												<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#EA6B24"/></MenuItem.Icon>
+											</MenuItem>
+											<MenuItem Header="Cura" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[3]}">
+												<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#0055FF"/></MenuItem.Icon>
+											</MenuItem>
+										</MenuFlyout>
+									</SplitButton.Flyout>
+								</SplitButton>
+
+								<Button Grid.Column="1" Content="Exportar Local" 
+										Command="{Binding ExportFileCommand}" 
+										CommandParameter="{Binding $parent[UserControl]}"
+										Background="#10B981" Foreground="White" FontWeight="Bold" 
+										HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+										Padding="16,14" CornerRadius="8" Cursor="Hand" Margin="8,0,0,0"/>
+							</Grid>
+							
+							<Button Content="⭐ Guardar en App" 
+									Command="{Binding OpenSavePopupCommand}" 
+									Background="#7C3AED" Foreground="White" FontWeight="Black" FontSize="14"
+									HorizontalAlignment="Center" HorizontalContentAlignment="Center" 
+									Padding="32,16" CornerRadius="8" Cursor="Hand" Margin="0,8,0,0"/>
+
+							<!-- Estado de Progreso -->
+							<TextBlock Text="{Binding StatusText}" Foreground="#10B981" FontWeight="Medium" FontSize="12" HorizontalAlignment="Center" Margin="0,-4,0,0" IsVisible="{Binding IsFileLoaded}"/>
+						</StackPanel>
+					</Border>
+				</StackPanel>
+			</ScrollViewer>
+
+			<!-- Columna Derecha: Renderizado Fijo o Ads -->
+			<Border Grid.Column="1" Background="#05050A" CornerRadius="12" Padding="20" BorderBrush="#1E1B2E" BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+				<Panel>
+					<!-- Empty State: Future Ads -->
+					<Border IsVisible="{Binding !IsFileLoaded}" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<!-- Rotate to vertical to match mockup -->
+						<TextBlock Text="Future Ads" Foreground="#1E1B2E" FontSize="48" FontWeight="Black" RenderTransform="rotate(-90deg)"/>
+					</Border>
+
+					<!-- Loaded State: Render -->
+					<Grid RowDefinitions="Auto,*" IsVisible="{Binding IsFileLoaded}">
+						<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+							<TextBlock Grid.Column="0" Text="Visor Interactivo" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16" VerticalAlignment="Center"/>
+							<Border Grid.Column="1" Background="#10B98120" Padding="8,4" CornerRadius="4">
+								<TextBlock Text="Live Render" Foreground="#10B981" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+							</Border>
+						</Grid>
+						<Border Grid.Row="1" Background="#0B0B13" CornerRadius="8" BorderBrush="#1E1B2E" BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClipToBounds="True">
+							<Grid Background="Transparent">
+								<controls:MinecraftRenderControl x:Name="MainRenderControl" Triangles="{Binding MeshTriangles}" AutoRotate="False" ShowFloor="{Binding ShowFloor}" FloorColor="{Binding FloorColor}" OverrideModelColor="{Binding OverrideModelColor}" ModelColor="{Binding ModelColor}"/>
+								
+								<!-- Controles Superpuestos -->
+								<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="16" Opacity="0.6" IsHitTestVisible="False">
+									<TextBlock Text="🖱️" FontSize="16" Foreground="#94A3B8" VerticalAlignment="Center"/>
+									<TextBlock Text="zoom" FontSize="14" Foreground="#94A3B8" VerticalAlignment="Center" FontFamily="Comic Sans MS, Cursive"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="16" Opacity="0.6" IsHitTestVisible="False">
+									<TextBlock Text="🖱️" FontSize="16" Foreground="#94A3B8" VerticalAlignment="Center"/>
+									<TextBlock Text="rotate" FontSize="14" Foreground="#94A3B8" VerticalAlignment="Center" FontFamily="Comic Sans MS, Cursive"/>
+								</StackPanel>
+							</Grid>
+						</Border>
+					</Grid>
+				</Panel>
+			</Border>
+		</Grid>
+
+		<!-- OVERLAY POPUP: Guardar Proyecto -->
+		<Border Grid.RowSpan="2" Background="#D0000000" IsVisible="{Binding IsSavePopupOpen}" ZIndex="100" Margin="-32">
+			<Border Background="#13101E" CornerRadius="16" Padding="40" BorderBrush="#251F3D" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="800">
+				<Grid ColumnDefinitions="*,*">
+					
+					<!-- Columna Izquierda: Input y Botones -->
+					<StackPanel Grid.Column="0" Spacing="24" Margin="0,0,32,0" VerticalAlignment="Center">
+						<TextBlock Text="Guardar en Mis Archivos" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC"/>
+						<TextBlock Text="Dale un nombre y elige el ángulo de miniatura para guardarlo en tu galería." Foreground="#94A3B8" FontSize="14" TextWrapping="Wrap"/>
+						
+						<TextBox Text="{Binding NewProjectName}" PlaceholderText="Nombre del proyecto..." Background="#0B0B13" Foreground="#E2E8F0" BorderBrush="#251F3D" Padding="16,12" CornerRadius="8" FontSize="16"/>
+
+						<Grid ColumnDefinitions="*,*" Margin="0,16,0,0">
+							<Button Grid.Column="0" Content="Cancelar" Command="{Binding CloseSavePopupCommand}" Background="Transparent" Foreground="#94A3B8" FontWeight="SemiBold" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Cursor="Hand" Margin="0,0,8,0"/>
+							<Button Grid.Column="1" Content="Guardar" Command="{Binding ConfirmSaveToAppCommand}" Background="#7C3AED" Foreground="White" FontWeight="Bold" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" CornerRadius="8" Cursor="Hand" Margin="8,0,0,0"/>
+						</Grid>
+					</StackPanel>
+
+					<!-- Columna Derecha: Selección de Miniaturas (Grid 2x2) -->
+					<Grid Grid.Column="1" RowDefinitions="*,*" ColumnDefinitions="*,*" RowSpacing="16" ColumnSpacing="16" Height="300" Width="300">
+						<!-- Img 1 (0) -->
+						<Button Grid.Row="0" Grid.Column="0" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=0}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding Thumbnails[0]}" Stretch="UniformToFill"/>
+							</Border>
+						</Button>
+						
+						<!-- Img 2 (1) -->
+						<Button Grid.Row="0" Grid.Column="1" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=1}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding Thumbnails[1]}" Stretch="UniformToFill"/>
+							</Border>
+						</Button>
+
+						<!-- Img 3 (2) -->
+						<Button Grid.Row="1" Grid.Column="0" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=2}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding Thumbnails[2]}" Stretch="UniformToFill"/>
+							</Border>
+						</Button>
+
+						<!-- Img 4 (3) -->
+						<Button Grid.Row="1" Grid.Column="1" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=3}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding Thumbnails[3]}" Stretch="UniformToFill"/>
+							</Border>
+						</Button>
+					</Grid>
+
 				</Grid>
-				<Border Grid.Row="1" Background="#0B0B13" CornerRadius="8" BorderBrush="#1E1B2E" BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-					<TextBlock Text="[Render Viewport]" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#334155" FontSize="18" FontWeight="Bold" LetterSpacing="2"/>
-				</Border>
-			</Grid>
+			</Border>
 		</Border>
 	</Grid>
 </UserControl>

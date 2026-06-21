@@ -4,12 +4,18 @@
 		xmlns:views="using:MCto3D.Views"
 		x:Class="MCto3D.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Title="MCto3D" Width="1200" Height="750" MinWidth="1400" MinHeight="650"
+		Title="MCto3D" Width="1200" Height="750" MinWidth="1100" MinHeight="650"
 		Background="#0B0F19" Foreground="#E2E8F0">
 
 	<Window.DataTemplates>
+		<DataTemplate DataType="{x:Type vm:HomeViewModel}">
+			<views:HomeView/>
+		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:DashboardViewModel}">
 			<views:DashboardView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:MyFilesViewModel}">
+			<views:MyFilesView/>
 		</DataTemplate>
 	</Window.DataTemplates>
 
@@ -23,29 +29,76 @@
 				</Transitions>
 			</Setter>
 		</Style>
-		<Style Selector="Button.SidebarBtn:pointerover">
+		<Style Selector="Button.SidebarBtn:pointerover /template/ ContentPresenter">
 			<Setter Property="Background" Value="#1A1528"/>
 			<Setter Property="Foreground" Value="#C084FC"/>
+		</Style>
+		<!-- Estilo para el botón activo (deshabilitado) -->
+		<Style Selector="Button.SidebarBtn:disabled /template/ ContentPresenter">
+			<Setter Property="Background" Value="#1A1528"/>
+			<Setter Property="Foreground" Value="#C084FC"/>
+			<Setter Property="Opacity" Value="1.0"/>
 		</Style>
 	</Window.Styles>
 
 	<Grid RowDefinitions="Auto,*">
-		<Border Grid.Row="0" Background="#05050A" Padding="20,16" BorderBrush="#1E1B2E" BorderThickness="0,0,0,1">
-			<TextBlock Text="MCto3D" Foreground="#F8FAFC" FontWeight="Black" FontSize="20" LetterSpacing="1"/>
+		<!-- HEADER -->
+		<Border Grid.Row="0" Background="#05050A" Padding="16,12" BorderBrush="#1E1B2E" BorderThickness="0,0,0,1">
+			<Grid ColumnDefinitions="Auto,*">
+				<!-- Hamburger Button -->
+				<Button Grid.Column="0" Command="{Binding ToggleSidebarCommand}" Background="Transparent" Foreground="#F8FAFC" FontSize="20" Padding="12,8" CornerRadius="8" Cursor="Hand" ToolTip.Tip="Expandir/Minimizar Menú">
+					<TextBlock Text="☰" VerticalAlignment="Center"/>
+				</Button>
+				
+				<TextBlock Grid.Column="1" Text="MCto3D" Foreground="#F8FAFC" FontWeight="Black" FontSize="20" LetterSpacing="1" VerticalAlignment="Center" Margin="16,0,0,0"/>
+			</Grid>
 		</Border>
 
-		<Grid Grid.Row="1" ColumnDefinitions="260,*">
-			<Border Grid.Column="0" Background="#0B0B13" Padding="20" BorderBrush="#1E1B2E" BorderThickness="0,0,1,0">
-				<StackPanel Spacing="10">
-					<TextBlock Text="MENÚ PRINCIPAL" Foreground="#64748B" FontWeight="Bold" FontSize="12" Margin="8,0,0,12" LetterSpacing="0.5"/>
-					<!-- El botón activo tiene colores primarios predefinidos, los demás tienen el Hover -->
-					<Button Content="Conversor NBT" HorizontalAlignment="Stretch" Background="#1A1528" Foreground="#A855F7" FontWeight="SemiBold" CornerRadius="8" Padding="16,12" Cursor="Hand"/>
-					<Button Classes="SidebarBtn" Content="Historial de Archivos" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="16,12" Cursor="Hand"/>
-					<Button Classes="SidebarBtn" Content="Ajustes" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="16,12" Cursor="Hand"/>
-				</StackPanel>
-			</Border>
+		<!-- CONTENIDO CON SPLITVIEW -->
+		<SplitView Grid.Row="1" IsPaneOpen="{Binding IsSidebarExpanded}" DisplayMode="CompactInline" CompactPaneLength="70" OpenPaneLength="260" PaneBackground="#0B0B13">
+			<SplitView.Pane>
+				<Border BorderBrush="#1E1B2E" BorderThickness="0,0,1,0" Padding="10,20">
+					<StackPanel Spacing="10">
+						<TextBlock Text="MENÚ" Foreground="#64748B" FontWeight="Bold" FontSize="12" Margin="12,0,0,12" LetterSpacing="0.5" IsVisible="{Binding IsSidebarExpanded}"/>
+						
+						<!-- Home Button -->
+						<Button Classes="SidebarBtn" Command="{Binding NavigateToHomeCommand}" IsEnabled="{Binding !IsHomeActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+							<Grid ColumnDefinitions="Auto,*">
+								<TextBlock Grid.Column="0" Text="🏠" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
+								<TextBlock Grid.Column="1" Text="Menú" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
+							</Grid>
+						</Button>
 
-			<ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
-		</Grid>
+						<!-- Dashboard Button -->
+						<Button Classes="SidebarBtn" Command="{Binding NavigateToDashboardCommand}" IsEnabled="{Binding !IsDashboardActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+							<Grid ColumnDefinitions="Auto,*">
+								<TextBlock Grid.Column="0" Text="⛭" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
+								<TextBlock Grid.Column="1" Text="Converter" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
+							</Grid>
+						</Button>
+						
+						<!-- Mis Archivos Button -->
+						<Button Classes="SidebarBtn" Command="{Binding NavigateToMyFilesCommand}" IsEnabled="{Binding !IsMyFilesActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+							<Grid ColumnDefinitions="Auto,*">
+								<TextBlock Grid.Column="0" Text="📁" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
+								<TextBlock Grid.Column="1" Text="Mis archivos" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
+							</Grid>
+						</Button>
+						
+						<!-- Ajustes Button -->
+						<Button Classes="SidebarBtn" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+							<Grid ColumnDefinitions="Auto,*">
+								<TextBlock Grid.Column="0" Text="⚙" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
+								<TextBlock Grid.Column="1" Text="Ajustes" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
+							</Grid>
+						</Button>
+					</StackPanel>
+				</Border>
+			</SplitView.Pane>
+
+			<SplitView.Content>
+				<ContentControl Content="{Binding CurrentPage}" />
+			</SplitView.Content>
+		</SplitView>
 	</Grid>
 </Window>

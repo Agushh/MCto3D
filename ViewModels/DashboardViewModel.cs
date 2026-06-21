@@ -7,11 +7,14 @@ using MCto3D.Services;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Avalonia.Media;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 
 namespace MCto3D.ViewModels;
 
@@ -36,12 +39,49 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty] private float _bs = 1.0f;
     [ObservableProperty] private string _geometryMode = "Bloques sólidos";
 
+    [ObservableProperty] private List<Triangle> _meshTriangles = new();
+
+    partial void OnBsChanged(float value)
+    {
+        if (IsFileLoaded)
+        {
+            UpdateLiveMesh();
+        }
+    }
+
+    private void UpdateLiveMesh()
+    {
+        if (string.IsNullOrEmpty(_selectedFilePath)) return;
+        try
+        {
+            Debug.WriteLine($"DashboardViewModel: Generating mesh for {_selectedFilePath} with Bs={Bs}");
+            var tris = Triangle.GenerateListTriangle(_selectedFilePath, Bs);
+            Debug.WriteLine($"DashboardViewModel: Mesh generated with {tris.Count} triangles.");
+            MeshTriangles = tris;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error updating mesh: {ex.Message}");
+        }
+    }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Is3MfSelected))]
     private string _exportFormat = "STL";
 
     [ObservableProperty] private bool _isSingleColorMode = true;
     [ObservableProperty] private bool _isMultiColorMode = false;
+
+    [ObservableProperty] private bool _showFloor = false;
+    [ObservableProperty] private Avalonia.Media.Color _floorColor = Avalonia.Media.Color.Parse("#1A1A1A");
+
+    [ObservableProperty] private bool _overrideModelColor = false;
+    [ObservableProperty] private Avalonia.Media.Color _modelColor = Avalonia.Media.Color.Parse("#FFFFFF");
+
+    // Thumbnails
+    [ObservableProperty] private int _selectedThumbnailIndex = 0;
+    [ObservableProperty] private ObservableCollection<WriteableBitmap>? _thumbnails;
+    public Func<Task<List<WriteableBitmap>>>? CaptureThumbnailsFunc { get; set; }
 
     public bool Is3MfSelected => ExportFormat == "3MF";
 
@@ -56,10 +96,97 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private SlicerOption _selectedSlicer;
 
+    [ObservableProperty] private bool _isSavePopupOpen = false;
+    [ObservableProperty] private string _newProjectName = string.Empty;
+
     public DashboardViewModel(MainWindowViewModel navigationController)
     {
         _navigationController = navigationController;
         _selectedSlicer = SlicerOptions[0];
+    }
+
+    [RelayCommand]
+    private void GoBack()
+    {
+        _navigationController.NavigateToHomeCommand.Execute(null);
+    }
+
+    [RelayCommand]
+    private async Task OpenSavePopup()
+    {
+        NewProjectName = OriginalFileName;
+        SelectedThumbnailIndex = 0; // Por defecto la 1
+        
+        if (CaptureThumbnailsFunc != null)
+        {
+            var images = await CaptureThumbnailsFunc();
+            Thumbnails = new ObservableCollection<WriteableBitmap>(images);
+        }
+
+        IsSavePopupOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseSavePopup()
+    {
+        IsSavePopupOpen = false;
+        NewProjectName = string.Empty;
+    }
+
+    [RelayCommand]
+    private void SelectThumbnail(string indexStr)
+    {
+        if (int.TryParse(indexStr, out int index))
+        {
+            SelectedThumbnailIndex = index;
+        }
+    }
+
+    [RelayCommand]
+    private void ConfirmSaveToApp()
+    {
+        if (string.IsNullOrWhiteSpace(NewProjectName) || string.IsNullOrWhiteSpace(_selectedFilePath)) return;
+
+        string thumbnailPath = string.Empty;
+
+        // Guardar miniatura si existe
+        if (Thumbnails != null && Thumbnails.Count > SelectedThumbnailIndex)
+        {
+            try
+            {
+                var bmp = Thumbnails[SelectedThumbnailIndex];
+                var appDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCto3D", "Thumbnails");
+                if (!Directory.Exists(appDataFolder)) Directory.CreateDirectory(appDataFolder);
+                
+                string fileName = $"{Guid.NewGuid()}.png";
+                thumbnailPath = Path.Combine(appDataFolder, fileName);
+                
+                bmp.Save(thumbnailPath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error guardando miniatura: {ex.Message}");
+            }
+        }
+
+        var newProject = new SavedProject
+        {
+            Name = NewProjectName,
+            OriginalFilePath = _selectedFilePath,
+            ThumbnailPath = thumbnailPath,
+            BlockScale = Bs,
+            GeometryMode = GeometryMode,
+            ExportFormat = ExportFormat,
+            IsSingleColorMode = IsSingleColorMode
+        };
+
+        ProjectStorageService.AddProject(newProject);
+        
+        IsSavePopupOpen = false;
+        StatusText = "¡Guardado en Mis Archivos exitosamente!";
+        
+        // Update MyFilesVM so the new project is listed immediately
+        _navigationController.MyFilesVM?.LoadData();
     }
 
     [RelayCommand]
@@ -96,6 +223,7 @@ public partial class DashboardViewModel : ViewModelBase
                     IsFileLoaded = true;
                     OriginalFileName = Path.GetFileNameWithoutExtension(_selectedFilePath);
                     StatusText = $"Archivo cargado: {Path.GetFileName(_selectedFilePath)}";
+                    UpdateLiveMesh();
                 }
             }
         }
@@ -112,6 +240,7 @@ public partial class DashboardViewModel : ViewModelBase
         _selectedFilePath = null;
         OriginalFileName = "";
         IsFileLoaded = false;
+        MeshTriangles = new List<Triangle>();
         StatusText = "Esperando archivo NBT...";
     }
 
@@ -135,7 +264,7 @@ public partial class DashboardViewModel : ViewModelBase
         try
         {
             StatusText = "Procesando geometría para exportar...";
-            List<Triangle> malla = Triangle.GenerateListTriangle(_selectedFilePath, Bs);
+            List<Triangle> malla = MeshTriangles;
 
             string extensionPorDefecto = ExportFormat.ToLower();
             string nombreFiltro = ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
@@ -165,7 +294,7 @@ public partial class DashboardViewModel : ViewModelBase
 
                 if (ExportFormat == "STL")
                 {
-                    StlGenerator.CreateBinaryStlWithColor(rutaDestino, malla, Color.Gray);
+                    StlGenerator.CreateBinaryStlWithColor(rutaDestino, malla, System.Drawing.Color.Gray);
                 }
                 StatusText = "¡Exportado con éxito!";
             }
@@ -216,7 +345,7 @@ public partial class DashboardViewModel : ViewModelBase
         try
         {
             StatusText = "Procesando geometría para Slicer...";
-            List<Triangle> malla = Triangle.GenerateListTriangle(_selectedFilePath, Bs);
+            List<Triangle> malla = MeshTriangles;
 
             string extension = ExportFormat.ToLower();
             string suggestedName = string.IsNullOrWhiteSpace(OriginalFileName) ? "modelo" : OriginalFileName;
@@ -224,7 +353,7 @@ public partial class DashboardViewModel : ViewModelBase
 
             if (ExportFormat == "STL")
             {
-                StlGenerator.CreateBinaryStlWithColor(tempFile, malla, Color.Gray);
+                StlGenerator.CreateBinaryStlWithColor(tempFile, malla, System.Drawing.Color.Gray);
             }
 
             string exePath = GetSlicerExecutableFromRegistry(SelectedSlicer.UriScheme);

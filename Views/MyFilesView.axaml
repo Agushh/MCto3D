@@ -1,0 +1,244 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:MCto3D.ViewModels"
+			 xmlns:conv="using:MCto3D.Converters"
+			 x:Class="MCto3D.Views.MyFilesView"
+			 x:DataType="vm:MyFilesViewModel">
+
+	<UserControl.Resources>
+		<conv:PathToBitmapConverter x:Key="PathToBitmapConverter"/>
+	</UserControl.Resources>
+
+	<Grid Margin="32">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- HEADER & CONTROLS -->
+		<Grid Grid.Row="0" Margin="0,0,0,24">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Title and Search -->
+			<StackPanel Grid.Column="0" Spacing="16" VerticalAlignment="Center">
+				<TextBlock Text="Mis Archivos" FontSize="28" FontWeight="Black" Foreground="#F8FAFC"/>
+				<Grid ColumnDefinitions="300,Auto,Auto" Margin="0,8,0,0">
+					<TextBox Grid.Column="0" Text="{Binding SearchText}" PlaceholderText="Buscar proyectos..." Background="#13101E" Foreground="#E2E8F0" BorderBrush="#251F3D" Padding="16,10" CornerRadius="8"/>
+					
+					<!-- Sort Selector -->
+					<ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedSortIndex}" Background="#1A1528" Foreground="#E2E8F0" BorderBrush="#251F3D" Padding="16,10" CornerRadius="8" Margin="16,0,0,0" VerticalAlignment="Center">
+						<x:String>Más Recientes</x:String>
+						<x:String>Nombre (A-Z)</x:String>
+					</ComboBox>
+
+					<!-- View Toggles -->
+					<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" Margin="16,0,0,0">
+						<Button Command="{Binding SetGridViewCommand}" Background="#1A1528" Foreground="#E2E8F0" Padding="12,8" CornerRadius="6" Cursor="Hand" ToolTip.Tip="Vista de Cuadrícula">
+							<TextBlock Text="⊞"/>
+						</Button>
+						<Button Command="{Binding SetListViewCommand}" Background="#1A1528" Foreground="#E2E8F0" Padding="12,8" CornerRadius="6" Cursor="Hand" ToolTip.Tip="Vista de Lista">
+							<TextBlock Text="☰"/>
+						</Button>
+					</StackPanel>
+				</Grid>
+			</StackPanel>
+
+			<!-- BACK BUTTON -->
+			<Button Grid.Column="1" Command="{Binding GoBackCommand}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand" VerticalAlignment="Top">
+				<StackPanel Orientation="Horizontal" Spacing="8">
+					<TextBlock Text="←" VerticalAlignment="Center"/>
+					<TextBlock Text="Volver al Conversor" VerticalAlignment="Center"/>
+				</StackPanel>
+			</Button>
+		</Grid>
+
+		<!-- CONTENT: EMPTY STATE OR ITEMS -->
+		<Grid Grid.Row="1">
+			<!-- Empty State -->
+			<StackPanel IsVisible="{Binding !Projects.Count}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+				<TextBlock Text="📭" FontSize="64" HorizontalAlignment="Center"/>
+				<TextBlock Text="No tienes archivos guardados aún." Foreground="#94A3B8" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+			</StackPanel>
+
+			<!-- GRID VIEW -->
+			<ScrollViewer IsVisible="{Binding IsGridView}">
+				<ItemsControl ItemsSource="{Binding Projects}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel Orientation="Horizontal" Margin="-8"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Button Command="{Binding $parent[UserControl].((vm:MyFilesViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
+									Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="12" 
+									Width="220" Margin="8" Padding="0" Cursor="Hand">
+								<StackPanel>
+									<!-- Image -->
+									<Border Background="#05050A" Height="140" CornerRadius="11,11,0,0" ClipToBounds="True">
+										<Panel>
+											<TextBlock Text="📸" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+											<Image Source="{Binding ThumbnailPath, Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
+										</Panel>
+									</Border>
+									<!-- Info -->
+									<Border Padding="16">
+										<StackPanel Spacing="4">
+											<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#F1F5F9" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Text="{Binding FormattedDate}" Foreground="#64748B" FontSize="11"/>
+										</StackPanel>
+									</Border>
+								</StackPanel>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+			<!-- LIST VIEW -->
+			<ScrollViewer IsVisible="{Binding IsListView}">
+				<ItemsControl ItemsSource="{Binding Projects}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Button Command="{Binding $parent[UserControl].((vm:MyFilesViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
+									Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="12" 
+									HorizontalAlignment="Stretch" Margin="0,0,0,12" Padding="0" Cursor="Hand">
+								<Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" Margin="12" VerticalAlignment="Center">
+									<!-- Image -->
+									<Border Grid.Column="0" Background="#05050A" Width="60" Height="60" CornerRadius="6" Margin="0,0,16,0" ClipToBounds="True">
+										<Panel>
+											<TextBlock Text="📸" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+											<Image Source="{Binding ThumbnailPath, Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
+										</Panel>
+									</Border>
+									
+									<!-- Name & Path -->
+									<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+										<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16" TextTrimming="CharacterEllipsis"/>
+										<TextBlock Text="{Binding FormattedDate}" Foreground="#64748B" FontSize="12"/>
+									</StackPanel>
+									
+									<!-- Format & Geometry -->
+									<StackPanel Grid.Column="2" VerticalAlignment="Center" Width="150" Margin="0,0,16,0">
+										<TextBlock Text="{Binding ExportFormat}" Foreground="#CBD5E1" FontWeight="SemiBold"/>
+										<TextBlock Text="{Binding GeometryMode}" Foreground="#94A3B8" FontSize="12"/>
+									</StackPanel>
+
+									<!-- Size -->
+									<TextBlock Grid.Column="3" Text="{Binding FileSizeStr}" Foreground="#64748B" Width="100" VerticalAlignment="Center"/>
+
+									<!-- Action -->
+									<Border Grid.Column="4" Background="#1A1528" Padding="12,8" CornerRadius="6">
+										<TextBlock Text="..." Foreground="#A855F7" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									</Border>
+								</Grid>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+		</Grid>
+
+		<!-- POP-UP DETAILS OVERLAY -->
+		<Border Grid.RowSpan="2" Background="#80000000" IsVisible="{Binding IsPopupOpen}" ZIndex="100" Margin="-32">
+			<Border Background="#13101E" CornerRadius="16" Padding="40" BorderBrush="#251F3D" BorderThickness="1" 
+					HorizontalAlignment="Center" VerticalAlignment="Center" Width="600" MinHeight="400">
+				
+				<Grid RowDefinitions="Auto,*,Auto">
+					<!-- Header: Edit / Close -->
+					<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,24">
+						<TextBlock Grid.Column="0" Text="Detalles del Proyecto" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+						<Button Grid.Column="1" Content="✕" Command="{Binding ClosePopupCommand}" Background="Transparent" Foreground="#94A3B8" FontWeight="Bold" FontSize="16" Cursor="Hand" Padding="8"/>
+					</Grid>
+
+					<!-- Content -->
+					<Grid Grid.Row="1" ColumnDefinitions="200,*">
+						<!-- Big Image -->
+						<Border Grid.Column="0" Background="#05050A" CornerRadius="12" Margin="0,0,24,0" Height="200" VerticalAlignment="Top" ClipToBounds="True">
+							<Panel>
+								<TextBlock Text="📸 Render" FontSize="24" Foreground="#334155" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+								<Image Source="{Binding SelectedProject.ThumbnailPath, FallbackValue={x:Null}, Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
+							</Panel>
+						</Border>
+
+						<!-- Info Vertical -->
+						<StackPanel Grid.Column="1" Spacing="16">
+							<!-- Name Editing Logic -->
+							<StackPanel IsVisible="{Binding !IsEditingName}">
+								<Grid ColumnDefinitions="*,Auto">
+									<TextBlock Grid.Column="0" Text="{Binding SelectedProject.Name, FallbackValue=''}" FontSize="24" FontWeight="Black" Foreground="#E2E8F0" TextWrapping="Wrap"/>
+									<Button Grid.Column="1" Content="✎" Command="{Binding StartEditNameCommand}" Background="Transparent" Foreground="#A855F7" FontSize="18" Cursor="Hand" Padding="8,0"/>
+								</Grid>
+							</StackPanel>
+							<StackPanel IsVisible="{Binding IsEditingName}" Spacing="8">
+								<TextBox Text="{Binding EditingNameText}" FontSize="18" Background="#0B0B13" Foreground="#E2E8F0" BorderBrush="#7C3AED"/>
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<Button Content="Guardar" Command="{Binding SaveEditNameCommand}" Background="#10B981" Foreground="White" Padding="12,6" CornerRadius="4" Cursor="Hand"/>
+									<Button Content="Cancelar" Command="{Binding CancelEditNameCommand}" Background="Transparent" Foreground="#94A3B8" Padding="12,6" Cursor="Hand"/>
+								</StackPanel>
+							</StackPanel>
+
+							<Border Height="1" Background="#251F3D"/>
+
+							<Grid ColumnDefinitions="100,*">
+								<TextBlock Grid.Column="0" Text="Fecha:" Foreground="#64748B"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.FormattedDate, FallbackValue=''}" Foreground="#CBD5E1"/>
+							</Grid>
+							<Grid ColumnDefinitions="100,*">
+								<TextBlock Grid.Column="0" Text="Geometría:" Foreground="#64748B"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.GeometryMode, FallbackValue=''}" Foreground="#CBD5E1"/>
+							</Grid>
+							<Grid ColumnDefinitions="100,*">
+								<TextBlock Grid.Column="0" Text="Formato:" Foreground="#64748B"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.ExportFormat, FallbackValue=''}" Foreground="#CBD5E1"/>
+							</Grid>
+							<Grid ColumnDefinitions="100,*">
+								<TextBlock Grid.Column="0" Text="Escala (bs):" Foreground="#64748B"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.BlockScale, FallbackValue=''}" Foreground="#CBD5E1"/>
+							</Grid>
+						</StackPanel>
+					</Grid>
+
+					<!-- Bottom Actions -->
+					<Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,32,0,0">
+						<!-- Delete -->
+						<Button Grid.Column="0" Content="🗑 Borrar" Command="{Binding DeleteProjectCommand}" Background="#450a0a" Foreground="#f87171" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand"/>
+						
+						<!-- Exporters -->
+						<SplitButton Grid.Column="2" Content="{Binding SelectedSlicer.ButtonText}"
+									 Command="{Binding OpenInSlicerCommand}"
+									 Background="{Binding SelectedSlicer.ColorHex}"
+									 Foreground="White"
+									 Padding="16,12"
+									 CornerRadius="8"
+									 Cursor="Hand"
+									 FontWeight="Bold"
+									 Margin="0,0,12,0">
+							<SplitButton.Flyout>
+								<MenuFlyout Placement="BottomEdgeAlignedRight">
+									<MenuItem Header="OrcaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[0]}">
+										<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#027D52"/></MenuItem.Icon>
+									</MenuItem>
+									<MenuItem Header="BambuStudio" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[1]}">
+										<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#00AE42"/></MenuItem.Icon>
+									</MenuItem>
+									<MenuItem Header="PrusaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[2]}">
+										<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#EA6B24"/></MenuItem.Icon>
+									</MenuItem>
+									<MenuItem Header="Cura" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[3]}">
+										<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#0055FF"/></MenuItem.Icon>
+									</MenuItem>
+								</MenuFlyout>
+							</SplitButton.Flyout>
+						</SplitButton>
+						
+						<Button Grid.Column="3" Content="Exportar Local" Command="{Binding ExportLocalCommand}" CommandParameter="{Binding $parent[UserControl]}" Background="#7C3AED" Foreground="White" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand"/>
+					</Grid>
+				</Grid>
+			</Border>
+		</Border>
+	</Grid>
+</UserControl>
