@@ -24,23 +24,23 @@
 
 			<!-- Title and Search -->
 			<StackPanel Grid.Column="0" Spacing="16" VerticalAlignment="Center">
-				<TextBlock Text="Mis Archivos" FontSize="28" FontWeight="Black" Foreground="#F8FAFC"/>
+				<TextBlock Text="{DynamicResource MyFilesTitle}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}"/>
 				<Grid ColumnDefinitions="300,Auto,Auto" Margin="0,8,0,0">
-					<TextBox Grid.Column="0" Text="{Binding SearchText}" PlaceholderText="Buscar proyectos..." Background="#13101E" Foreground="#E2E8F0" BorderBrush="#251F3D" Padding="16,10" CornerRadius="8"/>
+					<TextBox Grid.Column="0" Text="{Binding SearchText}" Watermark="{DynamicResource MyFilesSearch}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8"/>
 					
 					<!-- Sort Selector -->
-					<ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedSortIndex}" Background="#1A1528" Foreground="#E2E8F0" BorderBrush="#251F3D" Padding="16,10" CornerRadius="8" Margin="16,0,0,0" VerticalAlignment="Center">
+					<ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedSortIndex}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8" Margin="16,0,0,0" VerticalAlignment="Center">
 						<x:String>Más Recientes</x:String>
 						<x:String>Nombre (A-Z)</x:String>
 					</ComboBox>
 
 					<!-- View Toggles -->
 					<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" Margin="16,0,0,0">
-						<Button Command="{Binding SetGridViewCommand}" Background="#1A1528" Foreground="#E2E8F0" Padding="12,8" CornerRadius="6" Cursor="Hand" ToolTip.Tip="Vista de Cuadrícula">
-							<TextBlock Text="⊞"/>
+						<Button Command="{Binding SetGridViewCommand}" Classes="Ghost" Padding="12,8" ToolTip.Tip="{DynamicResource MyFilesViewGrid}">
+							<TextBlock Text="⊞" FontSize="16"/>
 						</Button>
-						<Button Command="{Binding SetListViewCommand}" Background="#1A1528" Foreground="#E2E8F0" Padding="12,8" CornerRadius="6" Cursor="Hand" ToolTip.Tip="Vista de Lista">
-							<TextBlock Text="☰"/>
+						<Button Command="{Binding SetListViewCommand}" Classes="Ghost" Padding="12,8" ToolTip.Tip="{DynamicResource MyFilesViewList}">
+							<TextBlock Text="☰" FontSize="16"/>
 						</Button>
 					</StackPanel>
 				</Grid>
@@ -48,10 +48,10 @@
 
 			<!-- BACK BUTTONS -->
 			<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
-				<Button Command="{Binding GoBackCommand}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand">
+				<Button Command="{Binding GoBackCommand}" Classes="Outline" Padding="16,12">
 					<StackPanel Orientation="Horizontal" Spacing="8">
-						<TextBlock Text="←" VerticalAlignment="Center"/>
-						<TextBlock Text="Volver" VerticalAlignment="Center"/>
+						<TextBlock Text="←" VerticalAlignment="Center" FontSize="16"/>
+						<TextBlock Text="{DynamicResource MyFilesBack}" VerticalAlignment="Center" FontWeight="Bold"/>
 					</StackPanel>
 				</Button>
 			</StackPanel>
@@ -62,7 +62,7 @@
 			<!-- Empty State -->
 			<StackPanel IsVisible="{Binding !Projects.Count}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
 				<TextBlock Text="📭" FontSize="64" HorizontalAlignment="Center"/>
-				<TextBlock Text="No tienes archivos guardados aún." Foreground="#94A3B8" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+				<TextBlock Text="{DynamicResource MyFilesEmpty}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
 			</StackPanel>
 
 			<!-- GRID VIEW -->
@@ -76,11 +76,20 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<Button Command="{Binding $parent[UserControl].((vm:MyFilesViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
-									Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="12" 
-									Width="220" Margin="8" Padding="0" Cursor="Hand">
+									Classes="Card" Width="220" Margin="8" Padding="0" Cursor="Hand">
+								<Button.Transitions>
+									<Transitions>
+										<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+									</Transitions>
+								</Button.Transitions>
+								<Button.Styles>
+									<Style Selector="Button:pointerover">
+										<Setter Property="RenderTransform" Value="scale(1.03)"/>
+									</Style>
+								</Button.Styles>
 								<StackPanel>
 									<!-- Image -->
-									<Border Background="#05050A" Height="140" CornerRadius="11,11,0,0" ClipToBounds="True">
+									<Border Background="{DynamicResource EnderSurfaceHover}" Height="140" CornerRadius="11,11,0,0" ClipToBounds="True">
 										<Panel>
 											<TextBlock Text="📸" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
 											<Image Source="{Binding ThumbnailPath, Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
@@ -89,8 +98,8 @@
 									<!-- Info -->
 									<Border Padding="16">
 										<StackPanel Spacing="4">
-											<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#F1F5F9" TextTrimming="CharacterEllipsis"/>
-											<TextBlock Text="{Binding FormattedDate}" Foreground="#64748B" FontSize="11"/>
+											<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Text="{Binding FormattedDate}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="11"/>
 										</StackPanel>
 									</Border>
 								</StackPanel>
@@ -106,11 +115,10 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<Button Command="{Binding $parent[UserControl].((vm:MyFilesViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
-									Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="12" 
-									HorizontalAlignment="Stretch" Margin="0,0,0,12" Padding="0" Cursor="Hand">
+									Classes="Card" HorizontalAlignment="Stretch" Margin="0,0,0,12" Padding="0" Cursor="Hand">
 								<Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" Margin="12" VerticalAlignment="Center">
 									<!-- Image -->
-									<Border Grid.Column="0" Background="#05050A" Width="60" Height="60" CornerRadius="6" Margin="0,0,16,0" ClipToBounds="True">
+									<Border Grid.Column="0" Background="{DynamicResource EnderSurfaceHover}" Width="60" Height="60" CornerRadius="6" Margin="0,0,16,0" ClipToBounds="True">
 										<Panel>
 											<TextBlock Text="📸" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
 											<Image Source="{Binding ThumbnailPath, Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
@@ -119,22 +127,22 @@
 									
 									<!-- Name & Path -->
 									<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
-										<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16" TextTrimming="CharacterEllipsis"/>
-										<TextBlock Text="{Binding FormattedDate}" Foreground="#64748B" FontSize="12"/>
+										<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" TextTrimming="CharacterEllipsis"/>
+										<TextBlock Text="{Binding FormattedDate}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12"/>
 									</StackPanel>
 									
 									<!-- Format & Geometry -->
 									<StackPanel Grid.Column="2" VerticalAlignment="Center" Width="150" Margin="0,0,16,0">
-										<TextBlock Text="{Binding ExportFormat}" Foreground="#CBD5E1" FontWeight="SemiBold"/>
-										<TextBlock Text="{Binding GeometryMode}" Foreground="#94A3B8" FontSize="12"/>
+										<TextBlock Text="{Binding ExportFormat}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="SemiBold"/>
+										<TextBlock Text="{Binding GeometryMode}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12"/>
 									</StackPanel>
 
 									<!-- Size -->
-									<TextBlock Grid.Column="3" Text="{Binding FileSizeStr}" Foreground="#64748B" Width="100" VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="3" Text="{Binding FileSizeStr}" Foreground="{DynamicResource EnderTextSecondary}" Width="100" VerticalAlignment="Center"/>
 
 									<!-- Action -->
-									<Border Grid.Column="4" Background="#1A1528" Padding="12,8" CornerRadius="6">
-										<TextBlock Text="..." Foreground="#A855F7" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									<Border Grid.Column="4" Background="{DynamicResource EnderSurfaceHover}" Padding="12,8" CornerRadius="6">
+										<TextBlock Text="..." Foreground="{DynamicResource EnderPrimary}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 									</Border>
 								</Grid>
 							</Button>
@@ -146,22 +154,21 @@
 
 		<!-- POP-UP DETAILS OVERLAY -->
 		<Border Grid.RowSpan="2" Background="#80000000" IsVisible="{Binding IsPopupOpen}" ZIndex="100" Margin="-32">
-			<Border Background="#13101E" CornerRadius="16" Padding="40" BorderBrush="#251F3D" BorderThickness="1" 
-					HorizontalAlignment="Center" VerticalAlignment="Center" Width="600" MinHeight="400">
+			<Border Classes="Card" Padding="40" HorizontalAlignment="Center" VerticalAlignment="Center" Width="600" MinHeight="400">
 				
 				<Grid RowDefinitions="Auto,*,Auto">
 					<!-- Header: Edit / Close -->
 					<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,24">
-						<TextBlock Grid.Column="0" Text="Detalles del Proyecto" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
-						<Button Grid.Column="1" Content="✕" Command="{Binding ClosePopupCommand}" Background="Transparent" Foreground="#94A3B8" FontWeight="Bold" FontSize="16" Cursor="Hand" Padding="8"/>
+						<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesProjectDetails}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center"/>
+						<Button Grid.Column="1" Content="✕" Command="{Binding ClosePopupCommand}" Classes="Ghost" Padding="8"/>
 					</Grid>
 
 					<!-- Content -->
 					<Grid Grid.Row="1" ColumnDefinitions="200,*">
 						<!-- Big Image -->
-						<Border Grid.Column="0" Background="#05050A" CornerRadius="12" Margin="0,0,24,0" Height="200" VerticalAlignment="Top" ClipToBounds="True">
+						<Border Grid.Column="0" Background="{DynamicResource EnderSurfaceHover}" CornerRadius="12" Margin="0,0,24,0" Height="200" VerticalAlignment="Top" ClipToBounds="True">
 							<Panel>
-								<TextBlock Text="📸 Render" FontSize="24" Foreground="#334155" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+								<TextBlock Text="📸 Render" FontSize="24" Foreground="{DynamicResource EnderTextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
 								<Image Source="{Binding SelectedProject.ThumbnailPath, FallbackValue={x:Null}, Converter={StaticResource PathToBitmapConverter}}" Stretch="UniformToFill"/>
 							</Panel>
 						</Border>
@@ -171,35 +178,35 @@
 							<!-- Name Editing Logic -->
 							<StackPanel IsVisible="{Binding !IsEditingName}">
 								<Grid ColumnDefinitions="*,Auto">
-									<TextBlock Grid.Column="0" Text="{Binding SelectedProject.Name, FallbackValue=''}" FontSize="24" FontWeight="Black" Foreground="#E2E8F0" TextWrapping="Wrap"/>
-									<Button Grid.Column="1" IsVisible="{Binding !SelectedProject.IsReadOnly}" Content="✎" Command="{Binding StartEditNameCommand}" Background="Transparent" Foreground="#A855F7" FontSize="18" Cursor="Hand" Padding="8,0"/>
+									<TextBlock Grid.Column="0" Text="{Binding SelectedProject.Name, FallbackValue=''}" FontSize="24" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" TextWrapping="Wrap"/>
+									<Button Grid.Column="1" IsVisible="{Binding !SelectedProject.IsReadOnly}" Content="✎" Command="{Binding StartEditNameCommand}" Classes="Ghost" Foreground="{DynamicResource EnderPrimary}" FontSize="18" Padding="8,0"/>
 								</Grid>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsEditingName}" Spacing="8">
-								<TextBox Text="{Binding EditingNameText}" FontSize="18" Background="#0B0B13" Foreground="#E2E8F0" BorderBrush="#7C3AED"/>
+								<TextBox Text="{Binding EditingNameText}" FontSize="18" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderPrimary}"/>
 								<StackPanel Orientation="Horizontal" Spacing="8">
-									<Button Content="Guardar" Command="{Binding SaveEditNameCommand}" Background="#10B981" Foreground="White" Padding="12,6" CornerRadius="4" Cursor="Hand"/>
-									<Button Content="Cancelar" Command="{Binding CancelEditNameCommand}" Background="Transparent" Foreground="#94A3B8" Padding="12,6" Cursor="Hand"/>
+									<Button Content="{DynamicResource MyFilesSave}" Command="{Binding SaveEditNameCommand}" Classes="Primary" Padding="12,6"/>
+									<Button Content="{DynamicResource MyFilesCancel}" Command="{Binding CancelEditNameCommand}" Classes="Ghost" Padding="12,6"/>
 								</StackPanel>
 							</StackPanel>
 
-							<Border Height="1" Background="#251F3D"/>
+							<Border Height="1" Background="{DynamicResource EnderBorder}"/>
 
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="Fecha:" Foreground="#64748B"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.FormattedDate, FallbackValue=''}" Foreground="#CBD5E1"/>
+								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesDate}" Foreground="{DynamicResource EnderTextSecondary}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.FormattedDate, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
 							</Grid>
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="Geometría:" Foreground="#64748B"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.GeometryMode, FallbackValue=''}" Foreground="#CBD5E1"/>
+								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesGeometry}" Foreground="{DynamicResource EnderTextSecondary}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.GeometryMode, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
 							</Grid>
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="Formato:" Foreground="#64748B"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.ExportFormat, FallbackValue=''}" Foreground="#CBD5E1"/>
+								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesFormat}" Foreground="{DynamicResource EnderTextSecondary}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.ExportFormat, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
 							</Grid>
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="Escala (bs):" Foreground="#64748B"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.BlockScale, FallbackValue=''}" Foreground="#CBD5E1"/>
+								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesScale}" Foreground="{DynamicResource EnderTextSecondary}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.BlockScale, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
 							</Grid>
 						</StackPanel>
 					</Grid>
@@ -207,7 +214,7 @@
 					<!-- Bottom Actions -->
 					<Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,32,0,0">
 						<!-- Delete -->
-						<Button Grid.Column="0" Content="🗑 Borrar" Command="{Binding DeleteProjectCommand}" Background="#450a0a" Foreground="#f87171" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand"/>
+						<Button Grid.Column="0" Content="{DynamicResource MyFilesDelete}" Command="{Binding DeleteProjectCommand}" Background="#450a0a" Foreground="#f87171" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand"/>
 						
 						<!-- Exporters -->
 						<SplitButton Grid.Column="2" Content="{Binding SelectedSlicer.ButtonText}"
@@ -237,7 +244,7 @@
 							</SplitButton.Flyout>
 						</SplitButton>
 						
-						<Button Grid.Column="3" Content="Exportar Local" Command="{Binding ExportLocalCommand}" CommandParameter="{Binding $parent[UserControl]}" Background="#7C3AED" Foreground="White" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand"/>
+						<Button Grid.Column="3" Content="{DynamicResource MyFilesExportLocal}" Command="{Binding ExportLocalCommand}" CommandParameter="{Binding $parent[UserControl]}" Classes="Primary" Padding="16,12"/>
 					</Grid>
 				</Grid>
 			</Border>

@@ -1,4 +1,6 @@
 using Avalonia.Threading;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Models;
@@ -19,10 +21,29 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private List<Triangle> _meshTriangles = new();
 
+    public List<Bitmap> CarouselImages { get; } = new();
+
+    [ObservableProperty]
+    private int _currentCarouselIndex = 0;
+
+    [ObservableProperty]
+    private Bitmap? _prevImage;
+
+    [ObservableProperty]
+    private Bitmap? _currentImage;
+
+    [ObservableProperty]
+    private Bitmap? _nextImage;
+
+    public bool IsDot0Active => CurrentCarouselIndex == 0;
+    public bool IsDot1Active => CurrentCarouselIndex == 1;
+    public bool IsDot2Active => CurrentCarouselIndex == 2;
+
     public HomeViewModel(MainWindowViewModel navigationController)
     {
         _navigationController = navigationController;
         LoadRandomDemoModel();
+        InitializeCarousel();
         
         // Timer for changing models every 5 seconds
         _demoTimer = new DispatcherTimer
@@ -91,5 +112,54 @@ public partial class HomeViewModel : ViewModelBase
     private void StartConverter()
     {
         _navigationController.NavigateToDashboardCommand.Execute(null);
+    }
+
+    private void InitializeCarousel()
+    {
+        try
+        {
+            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/mc_house.png"))));
+            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/mc_castle.png"))));
+            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/mc_village.png"))));
+            
+            UpdateCarouselImages();
+        }
+        catch(Exception ex) 
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private void UpdateCarouselImages()
+    {
+        if (CarouselImages.Count == 0) return;
+
+        int count = CarouselImages.Count;
+        int prevIdx = (CurrentCarouselIndex - 1 + count) % count;
+        int nextIdx = (CurrentCarouselIndex + 1) % count;
+
+        PrevImage = CarouselImages[prevIdx];
+        CurrentImage = CarouselImages[CurrentCarouselIndex];
+        NextImage = CarouselImages[nextIdx];
+
+        OnPropertyChanged(nameof(IsDot0Active));
+        OnPropertyChanged(nameof(IsDot1Active));
+        OnPropertyChanged(nameof(IsDot2Active));
+    }
+
+    [RelayCommand]
+    private void NextCarouselImage()
+    {
+        if (CarouselImages.Count == 0) return;
+        CurrentCarouselIndex = (CurrentCarouselIndex + 1) % CarouselImages.Count;
+        UpdateCarouselImages();
+    }
+
+    [RelayCommand]
+    private void PrevCarouselImage()
+    {
+        if (CarouselImages.Count == 0) return;
+        CurrentCarouselIndex = (CurrentCarouselIndex - 1 + CarouselImages.Count) % CarouselImages.Count;
+        UpdateCarouselImages();
     }
 }

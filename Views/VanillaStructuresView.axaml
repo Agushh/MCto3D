@@ -11,8 +11,8 @@
 		<!-- HEADER -->
 		<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,24">
 			<StackPanel Grid.Column="0" Spacing="8">
-				<TextBlock Text="Estructuras Vanilla" FontSize="28" FontWeight="Bold" Foreground="#F8FAFC"/>
-				<TextBlock Text="Explora y convierte estructuras internas del juego" Foreground="#94A3B8" FontSize="14"/>
+				<TextBlock Text="{DynamicResource VanillaTitle}" FontSize="28" FontWeight="Bold" Foreground="#F8FAFC"/>
+				<TextBlock Text="{DynamicResource VanillaDesc}" Foreground="#94A3B8" FontSize="14"/>
 			</StackPanel>
 
 			<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
@@ -20,7 +20,7 @@
 				<Border Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="8" Width="250" Padding="12,8">
 					<Grid ColumnDefinitions="Auto,*">
 						<TextBlock Grid.Column="0" Text="🔍" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,8,0"/>
-						<TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="Buscar..." Background="Transparent" BorderThickness="0" Foreground="#F1F5F9" VerticalAlignment="Center"/>
+						<TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="{DynamicResource VanillaSearch}" Background="Transparent" BorderThickness="0" Foreground="#F1F5F9" VerticalAlignment="Center"/>
 					</Grid>
 				</Border>
 				
@@ -28,7 +28,7 @@
 				<Button Command="{Binding GoUpFolderCommand}" IsVisible="{Binding CanGoUp}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="16,8" CornerRadius="8" Cursor="Hand" VerticalAlignment="Center">
 					<StackPanel Orientation="Horizontal" Spacing="8">
 						<TextBlock Text="←" VerticalAlignment="Center"/>
-						<TextBlock Text="Volver" VerticalAlignment="Center"/>
+						<TextBlock Text="{DynamicResource VanillaBack}" VerticalAlignment="Center"/>
 					</StackPanel>
 				</Button>
 			</StackPanel>
@@ -42,7 +42,7 @@
 				<!-- Empty State -->
 				<StackPanel IsVisible="{Binding !Projects.Count}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Margin="0,64,0,0">
 					<TextBlock Text="📭" FontSize="64" HorizontalAlignment="Center"/>
-					<TextBlock Text="No hay estructuras en esta carpeta." Foreground="#94A3B8" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+					<TextBlock Text="{DynamicResource VanillaEmpty}" Foreground="#94A3B8" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
 				</StackPanel>
 
 				<!-- LIST VIEW -->
@@ -66,7 +66,7 @@
 										<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16" TextTrimming="CharacterEllipsis"/>
 										
 										<!-- Action -->
-										<Button Grid.Column="2" IsVisible="{Binding !IsFolder}" Command="{Binding $parent[UserControl].((vm:VanillaStructuresViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" Content="⚙ Abrir" Background="#1E3A8A" Foreground="#60A5FA" FontWeight="Bold" Padding="12,8" CornerRadius="8" Cursor="Hand" ToolTip.Tip="Carga esta estructura en el Conversor 3D"/>
+										<Button Grid.Column="2" IsVisible="{Binding !IsFolder}" Command="{Binding $parent[UserControl].((vm:VanillaStructuresViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" Content="{DynamicResource VanillaOpen}" Background="#1E3A8A" Foreground="#60A5FA" FontWeight="Bold" Padding="12,8" CornerRadius="8" Cursor="Hand" ToolTip.Tip="{DynamicResource VanillaOpenTooltip}"/>
 									</Grid>
 								</Button>
 							</DataTemplate>

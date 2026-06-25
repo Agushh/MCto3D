@@ -12,18 +12,7 @@
         
         <StackPanel Grid.Row="1" Spacing="15">
             <Border Background="#1A1528" BorderBrush="#2D2445" BorderThickness="1" CornerRadius="12" Padding="20">
-                <Grid ColumnDefinitions="*,Auto">
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="Models Extractor Service" FontSize="18" FontWeight="Bold" Foreground="#F8FAFC"/>
-                        <TextBlock Text="Ejecuta la extracción y generación de modelos crudos basados en los assets de Minecraft." FontSize="14" Foreground="#94A3B8" Margin="0,4,0,0" TextWrapping="Wrap"/>
-                    </StackPanel>
-                    
-                    <Button Grid.Column="1" 
-                            Content="Generate Crude Models" 
-                            Background="#9333EA" Foreground="White" 
-                            FontWeight="SemiBold" Padding="20,12" CornerRadius="8"
-                            Cursor="Hand" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                </Grid>
+                <TextBlock Text="No hay herramientas de desarrollo activas en este momento." FontSize="16" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,20"/>
             </Border>
         </StackPanel>
     </Grid>

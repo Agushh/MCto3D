@@ -9,7 +9,7 @@ namespace MCto3D.Services
 {
     public class NativeModelResolver_Service
     {
-        private static string BasePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCto3D", "MinecraftExtractedAssets", "assets", "minecraft");
+        private static string BasePath => Path.Combine(AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets", "assets", "minecraft");
         private static string BlockstatesPath => Path.Combine(BasePath, "blockstates");
         private static string ModelsPath => Path.Combine(BasePath, "models");
 

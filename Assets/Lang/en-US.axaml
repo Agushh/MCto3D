@@ -1,0 +1,120 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System">
+    
+    <!-- App General -->
+    <sys:String x:Key="AppTitle">MCto3D</sys:String>
+    
+    <!-- Sidebar -->
+    <sys:String x:Key="SidebarMenu">MENU</sys:String>
+    <sys:String x:Key="SidebarHome">Home</sys:String>
+    <sys:String x:Key="SidebarConverter">Converter</sys:String>
+    <sys:String x:Key="SidebarMyFiles">My Files</sys:String>
+    <sys:String x:Key="SidebarVanillaStructures">Vanilla Structures</sys:String>
+    <sys:String x:Key="SidebarWalkthrough">Walkthrough</sys:String>
+    <sys:String x:Key="SidebarFaq">FAQ</sys:String>
+    <sys:String x:Key="SidebarSettings">Settings</sys:String>
+    <sys:String x:Key="SidebarDevTools">Dev Tools</sys:String>
+
+    <!-- Home Menu -->
+    <sys:String x:Key="HomeTitle">Minecraft to 3D Model</sys:String>
+    <sys:String x:Key="HomeSubtitle">Make your builds alive!</sys:String>
+    <sys:String x:Key="HomeConvertBtn">CONVERT!</sys:String>
+    <sys:String x:Key="HomeLearnMore">learn more...</sys:String>
+    <sys:String x:Key="HomeDescription">A powerful tool to convert Minecraft structures into high-quality 3D models for rendering, printing, and more.</sys:String>
+
+    <!-- Welcome Screen -->
+    <sys:String x:Key="WelcomeTitle">Welcome to MCto3D!</sys:String>
+    <sys:String x:Key="WelcomeDesc">Since we are a third-party software, we cannot include certain configurations and we need to process a Minecraft version file. Therefore, it is vital that you have Minecraft installed on your computer.</sys:String>
+    <sys:String x:Key="WelcomeContinueBtn">Continue</sys:String>
+    <sys:String x:Key="WelcomeContinueTooltip">Will try to find Minecraft in the default folder</sys:String>
+    <sys:String x:Key="WelcomeCustomFolderBtn">Do you have Minecraft installed in another folder? Click here to find it.</sys:String>
+
+    <!-- Converter (Dashboard) -->
+    <sys:String x:Key="ConverterTitle">Converter</sys:String>
+    <sys:String x:Key="ConverterNoFileTitle">Drag or search your structure</sys:String>
+    <sys:String x:Key="ConverterNoFileDesc">Supports .nbt files exported from Structure Blocks</sys:String>
+    <sys:String x:Key="ConverterSelectFileBtn">Select File</sys:String>
+    <sys:String x:Key="ConverterAdmittedTypes">Admitted types: .nbt, .schematic</sys:String>
+    <sys:String x:Key="ConverterActiveFile">Active file:</sys:String>
+    <sys:String x:Key="ConverterMeshSettings">Mesh Settings</sys:String>
+    <sys:String x:Key="ConverterBlockScale">Block Scale (bs):</sys:String>
+    <sys:String x:Key="ConverterGeomMode">Geometry Mode:</sys:String>
+    <sys:String x:Key="ConverterGeomSolid">Solid blocks</sys:String>
+    <sys:String x:Key="ConverterGeomFull">Full geometries</sys:String>
+    <sys:String x:Key="ConverterOutFormat">Output format:</sys:String>
+    <sys:String x:Key="ConverterColorMgmt">Color management:</sys:String>
+    <sys:String x:Key="ConverterMono">Single color</sys:String>
+    <sys:String x:Key="ConverterMulti">Multi color (NBT)</sys:String>
+    <sys:String x:Key="Converter3DModel">3D Model:</sys:String>
+    <sys:String x:Key="ConverterForceColor">Force color</sys:String>
+    <sys:String x:Key="ConverterScene">Scene:</sys:String>
+    <sys:String x:Key="ConverterAddFloor">Add floor</sys:String>
+    <sys:String x:Key="ConverterExportLocal">Export Local</sys:String>
+    <sys:String x:Key="ConverterSaveApp">⭐ Save in App</sys:String>
+    <sys:String x:Key="ConverterFutureAds">Future Ads</sys:String>
+    <sys:String x:Key="ConverterInteractiveViewer">Interactive Viewer</sys:String>
+    <sys:String x:Key="ConverterLiveRender">Live Render</sys:String>
+    <sys:String x:Key="ConverterGeneratingMesh">Generating 3D Mesh...</sys:String>
+    <sys:String x:Key="ConverterWaitMsg">Please wait, this may take a few seconds on large structures.</sys:String>
+    <sys:String x:Key="ConverterSavePopupTitle">Save in My Files</sys:String>
+    <sys:String x:Key="ConverterSavePopupDesc">Give it a name and choose the thumbnail angle to save it in your gallery.</sys:String>
+    <sys:String x:Key="ConverterSavePopupPlaceholder">Project name...</sys:String>
+    <sys:String x:Key="ConverterCancelBtn">Cancel</sys:String>
+    <sys:String x:Key="ConverterSaveBtn">Save</sys:String>
+
+    <!-- Settings -->
+    <sys:String x:Key="SettingsTitle">Settings</sys:String>
+    <sys:String x:Key="SettingsGeneral">General</sys:String>
+    <sys:String x:Key="SettingsLanguage">Language</sys:String>
+    <sys:String x:Key="SettingsLanguageDesc">Select the application language.</sys:String>
+    <sys:String x:Key="SettingsLocalFiles">Local Files</sys:String>
+    <sys:String x:Key="SettingsMCVersion">Minecraft Version</sys:String>
+    <sys:String x:Key="SettingsMCVersionDesc">Currently extracted version from which models are read.</sys:String>
+    <sys:String x:Key="SettingsLocalPath">Local files path</sys:String>
+    <sys:String x:Key="SettingsLocalPathDesc">Folder where extracted models, cache, and user projects are saved.</sys:String>
+    <sys:String x:Key="SettingsChangePathBtn">Change Path</sys:String>
+    <sys:String x:Key="SettingsOpenFolder">Open Local Folder</sys:String>
+    <sys:String x:Key="SettingsRestoreFolder">Restore default path</sys:String>
+    <sys:String x:Key="SettingsReloadActions">Reload Actions</sys:String>
+    <sys:String x:Key="SettingsReloadBaseFiles">Reload base game files</sys:String>
+    <sys:String x:Key="SettingsReloadBaseFilesDesc">Opens the picker to extract Minecraft assets again.</sys:String>
+    <sys:String x:Key="SettingsReloadBtn">Reload</sys:String>
+    <sys:String x:Key="SettingsRenderer">Renderer</sys:String>
+    <sys:String x:Key="SettingsRendererComingSoon">Rendering settings coming soon...</sys:String>
+    <sys:String x:Key="SettingsAbout">About</sys:String>
+    <sys:String x:Key="SettingsMovingFiles">Moving Files...</sys:String>
+    <sys:String x:Key="SettingsCalculatingFiles">Calculating files...</sys:String>
+    <sys:String x:Key="SettingsMovingProgress">Moving files... ({0} / {1})</sys:String>
+    <sys:String x:Key="SettingsCleaningOldFiles">Cleaning old files...</sys:String>
+    <sys:String x:Key="SettingsMovingError">Error: {0}</sys:String>
+
+    <!-- My Files -->
+    <sys:String x:Key="MyFilesTitle">My Files</sys:String>
+    <sys:String x:Key="MyFilesSearch">Search projects...</sys:String>
+    <sys:String x:Key="MyFilesSortRecent">Most Recent</sys:String>
+    <sys:String x:Key="MyFilesSortName">Name (A-Z)</sys:String>
+    <sys:String x:Key="MyFilesViewGrid">Grid View</sys:String>
+    <sys:String x:Key="MyFilesViewList">List View</sys:String>
+    <sys:String x:Key="MyFilesBack">Back</sys:String>
+    <sys:String x:Key="MyFilesEmpty">You don't have any saved files yet.</sys:String>
+    <sys:String x:Key="MyFilesProjectDetails">Project Details</sys:String>
+    <sys:String x:Key="MyFilesSave">Save</sys:String>
+    <sys:String x:Key="MyFilesCancel">Cancel</sys:String>
+    <sys:String x:Key="MyFilesDate">Date:</sys:String>
+    <sys:String x:Key="MyFilesGeometry">Geometry:</sys:String>
+    <sys:String x:Key="MyFilesFormat">Format:</sys:String>
+    <sys:String x:Key="MyFilesScale">Scale (bs):</sys:String>
+    <sys:String x:Key="MyFilesDelete">🗑 Delete</sys:String>
+    <sys:String x:Key="MyFilesExportLocal">Export Local</sys:String>
+
+    <!-- Vanilla Structures -->
+    <sys:String x:Key="VanillaTitle">Vanilla Structures</sys:String>
+    <sys:String x:Key="VanillaDesc">Explore and convert internal game structures</sys:String>
+    <sys:String x:Key="VanillaSearch">Search...</sys:String>
+    <sys:String x:Key="VanillaBack">Back</sys:String>
+    <sys:String x:Key="VanillaEmpty">No structures in this folder.</sys:String>
+    <sys:String x:Key="VanillaOpen">⚙ Open</sys:String>
+    <sys:String x:Key="VanillaOpenTooltip">Loads this structure in the 3D Converter</sys:String>
+
+</ResourceDictionary>

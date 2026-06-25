@@ -1,0 +1,10 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MCto3D.ViewModels"
+             x:Class="MCto3D.Views.FaqView"
+             x:DataType="vm:FaqViewModel">
+    <Grid Margin="32">
+        <TextBlock Text="FAQ" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}"/>
+        <!-- Contenido de FAQ a definir más adelante -->
+    </Grid>
+</UserControl>

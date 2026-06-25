@@ -1,12 +1,106 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="MCto3D.App"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
+             
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://MCto3D/Assets/Lang/en-US.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Ender Theme Colors -->
+            <SolidColorBrush x:Key="EnderBackgroundBase">#05050A</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderSurface">#0B0B13</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderSurfaceHover">#13101E</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderPrimary">#7C3AED</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderPrimaryHover">#6D28D9</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderSecondary">#10B981</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderTextPrimary">#F8FAFC</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderTextSecondary">#94A3B8</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderBorder">#1E1B2E</SolidColorBrush>
+        </ResourceDictionary>
+    </Application.Resources>
 
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
-    </Application.Styles>
+        
+        <!-- Ender Theme Global Styles -->
+        
+        <!-- Primary Button -->
+        <Style Selector="Button.Primary">
+            <Setter Property="Background" Value="{DynamicResource EnderPrimary}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="SineEaseInOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource EnderPrimaryHover}"/>
+        </Style>
 
+        <!-- Secondary Outline Button -->
+        <Style Selector="Button.Outline">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource EnderPrimary}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Outline:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+        </Style>
+
+        <!-- Ghost / Sidebar Button -->
+        <Style Selector="Button.Ghost">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Ghost:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderPrimary}"/>
+        </Style>
+        <Style Selector="Button.Ghost:disabled /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderPrimary}"/>
+            <Setter Property="Opacity" Value="1.0"/>
+        </Style>
+
+        <!-- Card Border -->
+        <Style Selector="Border.Card">
+            <Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="SineEaseInOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.Card:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource EnderPrimary}"/>
+        </Style>
+    </Application.Styles>
 </Application>

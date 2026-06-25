@@ -4,57 +4,166 @@
              x:Class="MCto3D.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
     
-    <Grid Margin="30" RowDefinitions="Auto,*">
-        <StackPanel Grid.Row="0" Margin="0,0,0,30">
-            <TextBlock Text="Ajustes" FontSize="32" FontWeight="Black" Foreground="#F8FAFC" LetterSpacing="0.5"/>
-            <TextBlock Text="Configuración general del programa." FontSize="14" Foreground="#94A3B8" Margin="0,5,0,0"/>
+    <Grid Margin="32" RowDefinitions="Auto,*">
+        <StackPanel Grid.Row="0" Margin="0,0,0,32">
+            <TextBlock Text="{DynamicResource SettingsTitle}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" LetterSpacing="0.5"/>
+            <TextBlock Text="{DynamicResource SettingsLanguageDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,5,0,0"/>
         </StackPanel>
         
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Spacing="25">
-                <!-- APARTADO ARCHIVOS -->
-                <StackPanel Spacing="15">
-                    <TextBlock Text="ARCHIVOS" Foreground="#64748B" FontWeight="Bold" FontSize="14" LetterSpacing="1"/>
-                    
-                    <Border Background="#1A1528" BorderBrush="#2D2445" BorderThickness="1" CornerRadius="12" Padding="20">
-                        <StackPanel Spacing="15">
-                            
-                            <!-- Botón 1 -->
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Recargar archivos del juego base" FontSize="16" FontWeight="SemiBold" Foreground="#F8FAFC"/>
-                                    <TextBlock Text="Abre el seleccionador de carpetas para extraer los assets de Minecraft nuevamente." FontSize="14" Foreground="#94A3B8" Margin="0,4,0,0" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <Button Grid.Column="1" 
-                                        Content="Recargar" 
-                                        Command="{Binding ReloadBaseFilesCommand}"
-                                        Background="#334155" Foreground="White" 
-                                        FontWeight="SemiBold" Padding="20,10" CornerRadius="8"
-                                        Cursor="Hand" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                            </Grid>
-
-                            <Border Height="1" Background="#2D2445" Margin="0,5"/>
-
-                            <!-- Botón 2 -->
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Recargar modelos" FontSize="16" FontWeight="SemiBold" Foreground="#F8FAFC"/>
-                                    <TextBlock Text="Vuelve a procesar los modelos estáticos en memoria utilizando la ruta actualmente configurada." FontSize="14" Foreground="#94A3B8" Margin="0,4,0,0" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <Button Grid.Column="1" 
-                                        Content="Re-procesar" 
-                                        Command="{Binding ReloadModelsCommand}"
-                                        Background="#9333EA" Foreground="White" 
-                                        FontWeight="SemiBold" Padding="20,10" CornerRadius="8"
-                                        Cursor="Hand" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                            </Grid>
-                            
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+        <TabControl Grid.Row="1" TabStripPlacement="Left" Background="Transparent" IsEnabled="{Binding !IsMovingFiles}">
+            <TabControl.Styles>
+                <Style Selector="TabItem">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                    <Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/>
+                    <Setter Property="Margin" Value="0,0,0,8"/>
+                    <Setter Property="Padding" Value="16,12"/>
+                    <Setter Property="CornerRadius" Value="8"/>
+                    <Setter Property="MinWidth" Value="160"/>
+                    <Setter Property="MinHeight" Value="46"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
                 
-                <!-- OTROS APARTADOS PODRÍAN IR AQUÍ -->
+                <Style Selector="TabItem /template/ Border#PART_LayoutRoot">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+
+                <!-- Normal Pointerover -->
+                <Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+                    <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+                </Style>
+                <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource EnderPrimary}"/>
+                </Style>
+
+                <!-- Selected -->
+                <Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
+                    <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+                </Style>
+                <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource EnderPrimary}"/>
+                </Style>
+
+                <!-- Selected + Pointerover -->
+                <Style Selector="TabItem:selected:pointerover /template/ Border#PART_LayoutRoot">
+                    <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+                </Style>
+                <Style Selector="TabItem:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource EnderPrimary}"/>
+                </Style>
+
+                <!-- Hide the left vertical bar -->
+                <Style Selector="TabItem /template/ Border#PART_SelectedPipe">
+                    <Setter Property="IsVisible" Value="False"/>
+                </Style>
+            </TabControl.Styles>
+
+            <!-- TAB: GENERAL -->
+            <TabItem Header="{DynamicResource SettingsGeneral}">
+                <ScrollViewer Margin="32,0,0,0">
+                    <StackPanel Spacing="24">
+                        <Border Classes="Card" Padding="24">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource SettingsLanguage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                    <TextBlock Text="{DynamicResource SettingsLanguageDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedLanguageIndex}" Width="150" VerticalAlignment="Center">
+                                    <ComboBoxItem Content="English" />
+                                    <ComboBoxItem Content="Español" />
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- TAB: FILES -->
+            <TabItem Header="{DynamicResource SettingsLocalFiles}">
+                <ScrollViewer Margin="32,0,0,0">
+                    <StackPanel Spacing="24">
+                        
+                        <!-- MC Version -->
+                        <Border Classes="Card" Padding="24">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource SettingsMCVersion}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                    <TextBlock Text="{DynamicResource SettingsMCVersionDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{DynamicResource EnderSurfaceHover}" BorderBrush="{DynamicResource EnderBorder}" BorderThickness="1" CornerRadius="8" Padding="16,8" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding LoadedMinecraftVersion}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource EnderPrimary}"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Local Path -->
+                        <Border Classes="Card" Padding="24">
+                            <StackPanel Spacing="16">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                        <TextBlock Text="{DynamicResource SettingsLocalPath}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                        <TextBlock Text="{DynamicResource SettingsLocalPathDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                                
+                                <TextBox Text="{Binding LocalFilesPath}" IsReadOnly="True" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextSecondary}" BorderBrush="{DynamicResource EnderBorder}" Padding="12,10" CornerRadius="8"/>
+                                
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                                        <Button Content="{DynamicResource SettingsOpenFolder}" Command="{Binding OpenLocalFilesFolderCommand}" Classes="Ghost" Padding="16,10"/>
+                                        <Button Content="{DynamicResource SettingsRestoreFolder}" Command="{Binding RestoreDefaultLocalFilesPathCommand}" Classes="Ghost" Foreground="{DynamicResource EnderPrimary}" Padding="16,10" IsVisible="{Binding IsNotDefaultPath}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="{DynamicResource SettingsChangePathBtn}" Command="{Binding ChangeLocalFilesPathCommand}" Classes="Outline" Padding="16,10" VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Reload Actions -->
+                        <Border Classes="Card" Padding="24">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="{DynamicResource SettingsReloadActions}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource SettingsReloadBaseFiles}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                        <TextBlock Text="{DynamicResource SettingsReloadBaseFilesDesc}" FontSize="12" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="{DynamicResource SettingsReloadBtn}" Command="{Binding ReloadBaseFilesCommand}" Classes="Outline" Padding="16,8" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- TAB: RENDERER -->
+            <TabItem Header="{DynamicResource SettingsRenderer}">
+                <ScrollViewer Margin="32,0,0,0">
+                    <Border Classes="Card" Padding="24">
+                        <TextBlock Text="{DynamicResource SettingsRendererComingSoon}" Foreground="{DynamicResource EnderTextSecondary}"/>
+                    </Border>
+                </ScrollViewer>
+            </TabItem>
+            
+            <!-- TAB: ABOUT -->
+            <TabItem Header="{DynamicResource SettingsAbout}">
+                <ScrollViewer Margin="32,0,0,0">
+                    <Border Classes="Card" Padding="24">
+                        <TextBlock Text="MCto3D Version 1.0.0" Foreground="{DynamicResource EnderTextSecondary}"/>
+                    </Border>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- PANTALLA DE CARGA (MOVIMIENTO DE ARCHIVOS) -->
+        <Border Grid.Row="0" Grid.RowSpan="2" Background="#D9000000" IsVisible="{Binding IsMovingFiles}" ZIndex="100" Margin="-32">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="24">
+                <TextBlock Text="{DynamicResource SettingsMovingFiles}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding MovingProgressMessage}" FontSize="16" Foreground="{DynamicResource EnderTextSecondary}" HorizontalAlignment="Center"/>
+                <ProgressBar IsIndeterminate="True" Foreground="{DynamicResource EnderPrimary}" Background="{DynamicResource EnderSurfaceHover}" Height="4" Width="300" CornerRadius="2"/>
             </StackPanel>
-        </ScrollViewer>
+        </Border>
+
     </Grid>
 </UserControl>

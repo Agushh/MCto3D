@@ -4,8 +4,8 @@
 		xmlns:views="using:MCto3D.Views"
 		x:Class="MCto3D.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Title="MCto3D" Width="1200" Height="750" MinWidth="1100" MinHeight="650"
-		Background="#0B0F19" Foreground="#E2E8F0">
+		Title="MCto3D" Width="1300" Height="750" MinWidth="1250" MinHeight="715"
+		Background="{DynamicResource EnderBackgroundBase}" Foreground="{DynamicResource EnderTextPrimary}">
 
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type vm:HomeViewModel}">
@@ -32,107 +32,128 @@
 		<DataTemplate DataType="{x:Type vm:SettingsViewModel}">
 			<views:SettingsView/>
 		</DataTemplate>
+		<!-- Nuevas vistas -->
+		<DataTemplate DataType="{x:Type vm:WalkthroughViewModel}">
+			<views:WalkthroughView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:FaqViewModel}">
+			<views:FaqView/>
+		</DataTemplate>
 	</Window.DataTemplates>
-
-	<Window.Styles>
-		<!-- Efectos Hover dinámicos estilo Web para botones laterales -->
-		<Style Selector="Button.SidebarBtn">
-			<Setter Property="Transitions">
-				<Transitions>
-					<BrushTransition Property="Background" Duration="0:0:0.2"/>
-					<BrushTransition Property="Foreground" Duration="0:0:0.2"/>
-				</Transitions>
-			</Setter>
-		</Style>
-		<Style Selector="Button.SidebarBtn:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="#1A1528"/>
-			<Setter Property="Foreground" Value="#C084FC"/>
-		</Style>
-		<!-- Estilo para el botón activo (deshabilitado) -->
-		<Style Selector="Button.SidebarBtn:disabled /template/ ContentPresenter">
-			<Setter Property="Background" Value="#1A1528"/>
-			<Setter Property="Foreground" Value="#C084FC"/>
-			<Setter Property="Opacity" Value="1.0"/>
-		</Style>
-	</Window.Styles>
 
 	<Grid>
 		<!-- MAIN LAYOUT (Sólo visible cuando no está activa la pantalla de bienvenida ni la de carga) -->
-		<Grid RowDefinitions="Auto,*" IsVisible="{Binding IsMainContentVisible}">
-			<!-- HEADER -->
-		<Border Grid.Row="0" Background="#05050A" Padding="16,12" BorderBrush="#1E1B2E" BorderThickness="0,0,0,1">
-			<Grid ColumnDefinitions="Auto,*">
-				<!-- Hamburger Button -->
-				<Button Grid.Column="0" Command="{Binding ToggleSidebarCommand}" Background="Transparent" Foreground="#F8FAFC" FontSize="20" Padding="12,8" CornerRadius="8" Cursor="Hand" ToolTip.Tip="Expandir/Minimizar Menú">
-					<TextBlock Text="☰" VerticalAlignment="Center"/>
-				</Button>
-				
-				<TextBlock Grid.Column="1" Text="MCto3D" Foreground="#F8FAFC" FontWeight="Black" FontSize="20" LetterSpacing="1" VerticalAlignment="Center" Margin="16,0,0,0"/>
-			</Grid>
-		</Border>
+		<Grid IsVisible="{Binding IsMainContentVisible}">
+			<!-- CONTENIDO CON SPLITVIEW (Ahora ocupa toda la pantalla) -->
+			<SplitView IsPaneOpen="{Binding IsSidebarExpanded}" DisplayMode="CompactInline" CompactPaneLength="70" OpenPaneLength="260" PaneBackground="{DynamicResource EnderBackgroundBase}">
+				<SplitView.Pane>
+					<Border BorderBrush="{DynamicResource EnderBorder}" BorderThickness="0,0,1,0" Padding="0,20">
+						<Grid RowDefinitions="Auto,*,Auto">
+							<!-- Sidebar Header -->
+							<Grid Grid.Row="0" ColumnDefinitions="70,*" Margin="0,0,0,24">
+								<Button Grid.Column="0" Command="{Binding ToggleSidebarCommand}" Classes="Ghost" Padding="0" Width="46" Height="46" CornerRadius="8" Cursor="Hand" ToolTip.Tip="Expandir/Minimizar Menú" HorizontalAlignment="Center">
+									<TextBlock Text="☰" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="{DynamicResource EnderTextPrimary}"/>
+								</Button>
+								<!-- Title -->
+								<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0" IsVisible="{Binding IsSidebarExpanded}">
+									<Border Width="24" Height="24" Background="{DynamicResource EnderPrimary}" CornerRadius="4" Margin="0,0,8,0">
+										<TextBlock Text="M" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									</Border>
+									<TextBlock Text="{DynamicResource AppTitle}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Black" FontSize="18" LetterSpacing="1" VerticalAlignment="Center"/>
+								</StackPanel>
+							</Grid>
 
-		<!-- CONTENIDO CON SPLITVIEW -->
-		<SplitView Grid.Row="1" IsPaneOpen="{Binding IsSidebarExpanded}" DisplayMode="CompactInline" CompactPaneLength="70" OpenPaneLength="260" PaneBackground="#0B0B13">
-			<SplitView.Pane>
-				<Border BorderBrush="#1E1B2E" BorderThickness="0,0,1,0" Padding="10,20">
-					<StackPanel Spacing="10">
-						<TextBlock Text="MENÚ" Foreground="#64748B" FontWeight="Bold" FontSize="12" Margin="12,0,0,12" LetterSpacing="0.5" IsVisible="{Binding IsSidebarExpanded}"/>
-						
-						<!-- Home Button -->
-						<Button Classes="SidebarBtn" Command="{Binding NavigateToHomeCommand}" IsEnabled="{Binding !IsHomeActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
-							<Grid ColumnDefinitions="Auto,*">
-								<TextBlock Grid.Column="0" Text="🏠" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
-								<TextBlock Grid.Column="1" Text="Menú" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
-							</Grid>
-						</Button>
+							<!-- Top Navigation -->
+							<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+								<StackPanel Spacing="8">
+									<TextBlock Text="{DynamicResource SidebarMenu}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12" FontWeight="SemiBold" Margin="24,0,0,16" IsVisible="{Binding IsSidebarExpanded}"/>
+									
+									<!-- Navigation Buttons -->
+									<StackPanel Spacing="8">
+										<!-- Home -->
+										<Button Classes="Ghost" Command="{Binding NavigateToHomeCommand}" IsEnabled="{Binding !IsHomeActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+											<Grid ColumnDefinitions="70,*">
+												<TextBlock Grid.Column="0" Text="🏠" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarHome}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											</Grid>
+										</Button>
+										
+										<!-- Converter -->
+										<Button Classes="Ghost" Command="{Binding NavigateToDashboardCommand}" IsEnabled="{Binding !IsDashboardActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+											<Grid ColumnDefinitions="70,*">
+												<TextBlock Grid.Column="0" Text="🧊" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarConverter}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											</Grid>
+										</Button>
+										
+										<!-- My Files -->
+										<Button Classes="Ghost" Command="{Binding NavigateToMyFilesCommand}" IsEnabled="{Binding !IsMyFilesActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+											<Grid ColumnDefinitions="70,*">
+												<TextBlock Grid.Column="0" Text="📁" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarMyFiles}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											</Grid>
+										</Button>
 
-						<!-- Dashboard Button -->
-						<Button Classes="SidebarBtn" Command="{Binding NavigateToDashboardCommand}" IsEnabled="{Binding !IsDashboardActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
-							<Grid ColumnDefinitions="Auto,*">
-								<TextBlock Grid.Column="0" Text="⛭" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
-								<TextBlock Grid.Column="1" Text="Converter" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
-							</Grid>
-						</Button>
-						
-						<!-- Mis Archivos Button -->
-						<Button Classes="SidebarBtn" Command="{Binding NavigateToMyFilesCommand}" IsEnabled="{Binding !IsMyFilesActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
-							<Grid ColumnDefinitions="Auto,*">
-								<TextBlock Grid.Column="0" Text="📁" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
-								<TextBlock Grid.Column="1" Text="Mis archivos" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
-							</Grid>
-						</Button>
+										<!-- Vanilla Structures -->
+										<Button Classes="Ghost" Command="{Binding NavigateToVanillaStructuresCommand}" IsEnabled="{Binding !IsVanillaStructuresActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+											<Grid ColumnDefinitions="70,*">
+												<TextBlock Grid.Column="0" Text="🏛️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarVanillaStructures}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											</Grid>
+										</Button>
+									</StackPanel>
+								</StackPanel>
+							</ScrollViewer>
 
-						<!-- Vanilla Structures Button -->
-						<Button Classes="SidebarBtn" Command="{Binding NavigateToVanillaStructuresCommand}" IsEnabled="{Binding !IsVanillaStructuresActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
-							<Grid ColumnDefinitions="Auto,*">
-								<TextBlock Grid.Column="0" Text="🏛" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
-								<TextBlock Grid.Column="1" Text="Estructuras Vanilla" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
-							</Grid>
-						</Button>
-						
-						<!-- Ajustes Button -->
-						<Button Classes="SidebarBtn" Command="{Binding NavigateToSettingsCommand}" IsEnabled="{Binding !IsSettingsActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
-							<Grid ColumnDefinitions="Auto,*">
-								<TextBlock Grid.Column="0" Text="⚙" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
-								<TextBlock Grid.Column="1" Text="Ajustes" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
-							</Grid>
-						</Button>
-						
-						<!-- DevTools Button -->
-						<Button Classes="SidebarBtn" Command="{Binding NavigateToDevToolsCommand}" IsEnabled="{Binding !IsDevToolsActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
-							<Grid ColumnDefinitions="Auto,*">
-								<TextBlock Grid.Column="0" Text="🔧" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
-								<TextBlock Grid.Column="1" Text="Dev Tools" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
-							</Grid>
-						</Button>
-					</StackPanel>
-				</Border>
-			</SplitView.Pane>
+							<!-- Bottom Navigation (Settings & DevTools) -->
+							<StackPanel Grid.Row="2" Spacing="8">
+								<Border Height="1" Background="{DynamicResource EnderBorder}" Margin="0,0,0,16"/>
+								
+								<StackPanel Spacing="8">
+									<!-- Walkthrough -->
+									<Button Classes="Ghost" Command="{Binding NavigateToWalkthroughCommand}" IsEnabled="{Binding !IsWalkthroughActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+										<Grid ColumnDefinitions="70,*">
+											<TextBlock Grid.Column="0" Text="📖" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarWalkthrough}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+										</Grid>
+									</Button>
 
-			<SplitView.Content>
-				<ContentControl Content="{Binding CurrentPage}" />
-			</SplitView.Content>
-		</SplitView>
+									<!-- FAQ -->
+									<Button Classes="Ghost" Command="{Binding NavigateToFaqCommand}" IsEnabled="{Binding !IsFaqActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+										<Grid ColumnDefinitions="70,*">
+											<TextBlock Grid.Column="0" Text="❓" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarFaq}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+										</Grid>
+									</Button>
+									
+									<!-- Settings -->
+									<Button Classes="Ghost" Command="{Binding NavigateToSettingsCommand}" IsEnabled="{Binding !IsSettingsActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+										<Grid ColumnDefinitions="70,*">
+											<TextBlock Grid.Column="0" Text="⚙️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarSettings}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+										</Grid>
+									</Button>
+
+									<!-- DevTools Button -->
+									<Button Classes="Ghost" Command="{Binding NavigateToDevToolsCommand}" IsEnabled="{Binding !IsDevToolsActive}" IsVisible="{Binding IsDevelopmentMode}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
+										<Grid ColumnDefinitions="70,*">
+											<TextBlock Grid.Column="0" Text="🛠️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
+											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarDevTools}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+										</Grid>
+									</Button>
+								</StackPanel>
+							</StackPanel>
+
+                            <!-- OVERLAY: Prevents clicks while moving files but does not disable the UI style -->
+                            <Border Grid.RowSpan="3" Background="Transparent" ZIndex="100" IsVisible="{Binding SettingsVM.IsMovingFiles}"/>
+						</Grid>
+					</Border>
+				</SplitView.Pane>
+
+				<SplitView.Content>
+					<ContentControl Content="{Binding CurrentPage}" />
+				</SplitView.Content>
+			</SplitView>
 		</Grid>
 
 		<!-- OVERLAY PANTALLA DE BIENVENIDA -->

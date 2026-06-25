@@ -14,6 +14,13 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isSidebarExpanded = true;
 
+    public bool IsDevelopmentMode { get; } =
+#if DEBUG
+        true;
+#else
+        false;
+#endif
+
     // Singleton instances for persistence across navigation
     public HomeViewModel HomeVM { get; }
     public DashboardViewModel DashboardVM { get; }
@@ -23,6 +30,8 @@ public partial class MainWindowViewModel : ViewModelBase
     public WelcomeViewModel WelcomeVM { get; }
     public LoadingViewModel LoadingVM { get; }
     public SettingsViewModel SettingsVM { get; }
+    public WalkthroughViewModel WalkthroughVM { get; }
+    public FaqViewModel FaqVM { get; }
 
     [ObservableProperty]
     private bool _loadedModelsSuccessfully = false;
@@ -46,6 +55,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _isVanillaStructuresActive = false;
 
     [ObservableProperty]
+    private bool _isWalkthroughActive = false;
+
+    [ObservableProperty]
+    private bool _isFaqActive = false;
+
+    [ObservableProperty]
     private bool _isDevToolsActive = false;
 
     [ObservableProperty]
@@ -61,6 +76,8 @@ public partial class MainWindowViewModel : ViewModelBase
         WelcomeVM = new WelcomeViewModel(this);
         LoadingVM = new LoadingViewModel(this);
         SettingsVM = new SettingsViewModel(this);
+        WalkthroughVM = new WalkthroughViewModel(this);
+        FaqVM = new FaqViewModel(this);
         
         _currentPage = HomeVM;
 
@@ -68,11 +85,10 @@ public partial class MainWindowViewModel : ViewModelBase
         CheckInitialAssets();
     }
 
-    private async void CheckInitialAssets()
+    private void CheckInitialAssets()
     {
         // TODO: Implementa aquí tu lógica para verificar si los assets ya existen.
-        // Ejemplo: bool assetsCargados = System.IO.Directory.Exists(@"ruta\a\los\archivos");
-        bool assetsCargados = System.IO.Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCto3D", "MinecraftExtractedAssets", "assets")); // Cambia esto por tu comprobación real
+        bool assetsCargados = System.IO.Directory.Exists(Path.Combine(MCto3D.Services.AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets", "assets"));
 
         if (assetsCargados)
         {
@@ -88,6 +104,8 @@ public partial class MainWindowViewModel : ViewModelBase
         IsDashboardActive = CurrentPage == DashboardVM;
         IsMyFilesActive = CurrentPage == MyFilesVM;
         IsVanillaStructuresActive = CurrentPage == VanillaStructuresVM;
+        IsWalkthroughActive = CurrentPage == WalkthroughVM;
+        IsFaqActive = CurrentPage == FaqVM;
         IsDevToolsActive = CurrentPage == DevToolsVM;
         IsSettingsActive = CurrentPage == SettingsVM;
     }
@@ -126,6 +144,20 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentPage = VanillaStructuresVM;
         UpdateActiveStates();
         VanillaStructuresVM.LoadData();
+    }
+
+    [RelayCommand]
+    private void NavigateToWalkthrough()
+    {
+        CurrentPage = WalkthroughVM;
+        UpdateActiveStates();
+    }
+
+    [RelayCommand]
+    private void NavigateToFaq()
+    {
+        CurrentPage = FaqVM;
+        UpdateActiveStates();
     }
 
     [RelayCommand]

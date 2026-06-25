@@ -32,10 +32,19 @@ build_property.EnableCodeStyleSeverity =
 [C:/Users/agust/Desktop/Avalonia Testing/MCto3D/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Assets/Lang/en-US.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Assets/Lang/es-ES.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/DashboardView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/DevToolsView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/FaqView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/HomeView.axaml]
@@ -54,6 +63,9 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/VanillaStructuresView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/WalkthroughView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/agust/Desktop/Avalonia Testing/MCto3D/Views/WelcomeView.axaml]

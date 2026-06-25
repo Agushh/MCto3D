@@ -177,7 +177,7 @@ public partial class DashboardViewModel : ViewModelBase
             try
             {
                 var bmp = Thumbnails[SelectedThumbnailIndex];
-                var appDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCto3D", "Thumbnails");
+                var appDataFolder = Path.Combine(MCto3D.Services.AppSettings_Service.LocalFilesPath, "Thumbnails");
                 if (!Directory.Exists(appDataFolder)) Directory.CreateDirectory(appDataFolder);
                 
                 string fileName = $"{Guid.NewGuid()}.png";

@@ -42,7 +42,7 @@ namespace MCto3D.Services
                 throw new FileNotFoundException($"Error: No se encontró el archivo .jar de la versión {latestVersion} en la ruta {jarPath}");
             }
 
-            string localAppFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCto3D", "MinecraftExtractedAssets");
+            string localAppFolder = Path.Combine(AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets");
 
             if (Directory.Exists(localAppFolder))
             {
@@ -104,6 +104,7 @@ namespace MCto3D.Services
             }
             System.Diagnostics.Debug.WriteLine("¡Extracción completada con éxito!");
 
+            File.WriteAllText(Path.Combine(localAppFolder, "version.txt"), latestVersion);
             progress?.Report("¡Extracción completada con éxito!");
             return localAppFolder;
         }

@@ -8,7 +8,7 @@ namespace MCto3D.Services;
 
 public static class ProjectStorageService
 {
-    private static readonly string AppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MCto3D");
+    private static readonly string AppDataFolder = MCto3D.Services.AppSettings_Service.LocalFilesPath;
     private static readonly string DbFilePath = Path.Combine(AppDataFolder, "projects.json");
 
     public static List<SavedProject> LoadProjects()

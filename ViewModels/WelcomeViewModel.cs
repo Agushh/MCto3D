@@ -38,6 +38,9 @@ public partial class WelcomeViewModel : ViewModelBase
             location = await Task.Run(() => AssetExtractor_Service.ExtractLegalAssets(progressReporter));
             await Task.Delay(1500); // Dar un poco de tiempo para leer el mensaje final de extracción
             
+            // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
+            _mainViewModel.SettingsVM.UpdateMinecraftVersion();
+            
             // Ocultamos la bienvenida y pasamos directo al Dashboard (el Loading de modelos ya no existe)
             _mainViewModel.IsWelcomeScreenActive = false;
             _mainViewModel.IsMainContentVisible = true;
@@ -85,6 +88,9 @@ public partial class WelcomeViewModel : ViewModelBase
                         // Extracción de archivos
                         location = await Task.Run(() => AssetExtractor_Service.ExtractLegalAssets(progressReporter, selectedFolderPath));
                         await Task.Delay(1500);
+                        
+                        // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
+                        _mainViewModel.SettingsVM.UpdateMinecraftVersion();
                         
                         // Ocultamos bienvenida y pasamos directo
                         _mainViewModel.IsWelcomeScreenActive = false;
