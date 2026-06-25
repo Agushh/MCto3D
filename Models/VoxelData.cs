@@ -41,5 +41,7 @@ namespace MCto3D.Models
             [0, 0, 1],  // 4: Front neighbor
             [0, 0, -1]  // 5: Back neighbor
         ];
+        
     }
+
 }

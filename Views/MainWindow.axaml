@@ -17,6 +17,21 @@
 		<DataTemplate DataType="{x:Type vm:MyFilesViewModel}">
 			<views:MyFilesView/>
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:VanillaStructuresViewModel}">
+			<views:VanillaStructuresView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:DevToolsViewModel}">
+			<views:DevToolsView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:WelcomeViewModel}">
+			<views:WelcomeView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:LoadingViewModel}">
+			<views:LoadingView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+			<views:SettingsView/>
+		</DataTemplate>
 	</Window.DataTemplates>
 
 	<Window.Styles>
@@ -41,8 +56,10 @@
 		</Style>
 	</Window.Styles>
 
-	<Grid RowDefinitions="Auto,*">
-		<!-- HEADER -->
+	<Grid>
+		<!-- MAIN LAYOUT (Sólo visible cuando no está activa la pantalla de bienvenida ni la de carga) -->
+		<Grid RowDefinitions="Auto,*" IsVisible="{Binding IsMainContentVisible}">
+			<!-- HEADER -->
 		<Border Grid.Row="0" Background="#05050A" Padding="16,12" BorderBrush="#1E1B2E" BorderThickness="0,0,0,1">
 			<Grid ColumnDefinitions="Auto,*">
 				<!-- Hamburger Button -->
@@ -84,12 +101,28 @@
 								<TextBlock Grid.Column="1" Text="Mis archivos" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
 							</Grid>
 						</Button>
+
+						<!-- Vanilla Structures Button -->
+						<Button Classes="SidebarBtn" Command="{Binding NavigateToVanillaStructuresCommand}" IsEnabled="{Binding !IsVanillaStructuresActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+							<Grid ColumnDefinitions="Auto,*">
+								<TextBlock Grid.Column="0" Text="🏛" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
+								<TextBlock Grid.Column="1" Text="Estructuras Vanilla" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
+							</Grid>
+						</Button>
 						
 						<!-- Ajustes Button -->
-						<Button Classes="SidebarBtn" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+						<Button Classes="SidebarBtn" Command="{Binding NavigateToSettingsCommand}" IsEnabled="{Binding !IsSettingsActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
 							<Grid ColumnDefinitions="Auto,*">
 								<TextBlock Grid.Column="0" Text="⚙" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
 								<TextBlock Grid.Column="1" Text="Ajustes" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
+							</Grid>
+						</Button>
+						
+						<!-- DevTools Button -->
+						<Button Classes="SidebarBtn" Command="{Binding NavigateToDevToolsCommand}" IsEnabled="{Binding !IsDevToolsActive}" HorizontalAlignment="Stretch" Background="Transparent" Foreground="#94A3B8" FontWeight="Medium" CornerRadius="8" Padding="12" Cursor="Hand">
+							<Grid ColumnDefinitions="Auto,*">
+								<TextBlock Grid.Column="0" Text="🔧" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Width="26"/>
+								<TextBlock Grid.Column="1" Text="Dev Tools" VerticalAlignment="Center" Margin="12,0,0,0" IsVisible="{Binding IsSidebarExpanded}"/>
 							</Grid>
 						</Button>
 					</StackPanel>
@@ -100,5 +133,12 @@
 				<ContentControl Content="{Binding CurrentPage}" />
 			</SplitView.Content>
 		</SplitView>
+		</Grid>
+
+		<!-- OVERLAY PANTALLA DE BIENVENIDA -->
+		<ContentControl Content="{Binding WelcomeVM}" IsVisible="{Binding IsWelcomeScreenActive}"/>
+
+		<!-- OVERLAY PANTALLA DE CARGA GLOBAL -->
+		<ContentControl Content="{Binding LoadingVM}" IsVisible="{Binding LoadingVM.IsActive}"/>
 	</Grid>
 </Window>

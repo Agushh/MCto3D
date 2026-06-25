@@ -212,7 +212,7 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            List<Triangle> malla = Triangle.GenerateListTriangle(SelectedProject.OriginalFilePath, SelectedProject.BlockScale);
+            List<Triangle> malla = Mesh_Service.GenerateMesh(FileReader_Service.readNBT(SelectedProject.OriginalFilePath), SelectedProject.BlockScale);
 
             string extensionPorDefecto = SelectedProject.ExportFormat.ToLower();
             string nombreFiltro = SelectedProject.ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
@@ -286,7 +286,7 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            List<Triangle> malla = Triangle.GenerateListTriangle(SelectedProject.OriginalFilePath, SelectedProject.BlockScale);
+            List<Triangle> malla = Mesh_Service.GenerateMesh(FileReader_Service.readNBT(SelectedProject.OriginalFilePath), SelectedProject.BlockScale);
 
             string extension = SelectedProject.ExportFormat.ToLower();
             string suggestedName = string.IsNullOrWhiteSpace(SelectedProject.Name) ? "modelo" : SelectedProject.Name;

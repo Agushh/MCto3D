@@ -7,13 +7,13 @@ namespace MCto3D.Services
 {
     internal class StlGenerator
     {
-        public static void CreateAsciiStl(string filePath, List<Triangle> triangles)
+        public static void CreateAsciiStl(string filePath, List<Triangle> mesh)
         {
             using (StreamWriter writer = new StreamWriter(filePath))
             {
                 writer.WriteLine("solid CustomModel");
 
-                foreach (var t in triangles)
+                foreach (var t in mesh)
                 {
                     var culture = System.Globalization.CultureInfo.InvariantCulture;
 

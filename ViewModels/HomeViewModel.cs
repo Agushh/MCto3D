@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Models;
+using MCto3D.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,7 +50,7 @@ public partial class HomeViewModel : ViewModelBase
                 string randomFile = files[_random.Next(files.Length)];
                 try
                 {
-                    MeshTriangles = Triangle.GenerateListTriangle(randomFile, 1.0f);
+                    MeshTriangles = Mesh_Service.GenerateMesh(FileReader_Service.readNBT(randomFile), 1.0f);
                     return;
                 }
                 catch { } // Fallback to cube on error

@@ -38,6 +38,7 @@ public partial class DashboardViewModel : ViewModelBase
     
     [ObservableProperty] private float _bs = 1.0f;
     [ObservableProperty] private string _geometryMode = "Bloques sólidos";
+    [ObservableProperty] private bool _isLoadingMesh = false;
 
     [ObservableProperty] private List<Triangle> _meshTriangles = new();
 
@@ -49,19 +50,40 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
-    private void UpdateLiveMesh()
+    partial void OnGeometryModeChanged(string value)
+    {
+        if (IsFileLoaded)
+        {
+            UpdateLiveMesh();
+        }
+    }
+
+    private async void UpdateLiveMesh()
     {
         if (string.IsNullOrEmpty(_selectedFilePath)) return;
         try
         {
+            IsLoadingMesh = true;
             Debug.WriteLine($"DashboardViewModel: Generating mesh for {_selectedFilePath} with Bs={Bs}");
-            var tris = Triangle.GenerateListTriangle(_selectedFilePath, Bs);
+            
+            var tris = await Task.Run(() => 
+            {
+                var strData = FileReader_Service.readNBT(_selectedFilePath);
+                return GeometryMode == "Geometrías completas" 
+                         ? Mesh_Service.GenerateFullGeometryMesh(strData, Bs)
+                         : Mesh_Service.GenerateMesh(strData, Bs);
+            });
+                     
             Debug.WriteLine($"DashboardViewModel: Mesh generated with {tris.Count} triangles.");
             MeshTriangles = tris;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error updating mesh: {ex.Message}");
+        }
+        finally
+        {
+            IsLoadingMesh = false;
         }
     }
 
@@ -305,8 +327,20 @@ public partial class DashboardViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusText = $"Error al exportar: {ex.Message}";
-            System.Diagnostics.Debug.WriteLine($"Error al exportar: {ex.Message}");
+            StatusText = "Error al cargar el archivo.";
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+        }
+    }
+
+    public void LoadDirectFile(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            _selectedFilePath = filePath;
+            IsFileLoaded = true;
+            OriginalFileName = Path.GetFileNameWithoutExtension(filePath);
+            StatusText = $"Archivo cargado directo: {Path.GetFileName(filePath)}";
+            UpdateLiveMesh();
         }
     }
 

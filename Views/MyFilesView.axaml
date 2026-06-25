@@ -46,13 +46,15 @@
 				</Grid>
 			</StackPanel>
 
-			<!-- BACK BUTTON -->
-			<Button Grid.Column="1" Command="{Binding GoBackCommand}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand" VerticalAlignment="Top">
-				<StackPanel Orientation="Horizontal" Spacing="8">
-					<TextBlock Text="←" VerticalAlignment="Center"/>
-					<TextBlock Text="Volver al Conversor" VerticalAlignment="Center"/>
-				</StackPanel>
-			</Button>
+			<!-- BACK BUTTONS -->
+			<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+				<Button Command="{Binding GoBackCommand}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="16,12" CornerRadius="8" Cursor="Hand">
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<TextBlock Text="←" VerticalAlignment="Center"/>
+						<TextBlock Text="Volver" VerticalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+			</StackPanel>
 		</Grid>
 
 		<!-- CONTENT: EMPTY STATE OR ITEMS -->
@@ -170,7 +172,7 @@
 							<StackPanel IsVisible="{Binding !IsEditingName}">
 								<Grid ColumnDefinitions="*,Auto">
 									<TextBlock Grid.Column="0" Text="{Binding SelectedProject.Name, FallbackValue=''}" FontSize="24" FontWeight="Black" Foreground="#E2E8F0" TextWrapping="Wrap"/>
-									<Button Grid.Column="1" Content="✎" Command="{Binding StartEditNameCommand}" Background="Transparent" Foreground="#A855F7" FontSize="18" Cursor="Hand" Padding="8,0"/>
+									<Button Grid.Column="1" IsVisible="{Binding !SelectedProject.IsReadOnly}" Content="✎" Command="{Binding StartEditNameCommand}" Background="Transparent" Foreground="#A855F7" FontSize="18" Cursor="Hand" Padding="8,0"/>
 								</Grid>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsEditingName}" Spacing="8">

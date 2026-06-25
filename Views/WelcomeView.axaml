@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MCto3D.ViewModels"
+             x:Class="MCto3D.Views.WelcomeView"
+             x:DataType="vm:WelcomeViewModel"
+             Background="#05050A">
+
+    <!-- Animaciones y estilos -->
+    <UserControl.Styles>
+        <Style Selector="Button.Hyperlink">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#9333EA"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"/>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Hyperlink:pointerover /template/ TextBlock">
+            <Setter Property="Foreground" Value="#C084FC"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <!-- CONTENIDO PRINCIPAL -->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="30" MaxWidth="700">
+            
+            <TextBlock Text="¡Bienvenido a MCto3D!" 
+                       FontSize="42" 
+                       FontWeight="Black" 
+                       Foreground="#F8FAFC" 
+                       HorizontalAlignment="Center" 
+                       LetterSpacing="1"/>
+            
+            <Border Background="#1A1528" BorderBrush="#2D2445" BorderThickness="1" CornerRadius="12" Padding="25">
+                <TextBlock Text="Al ser un programa externo a Mojang, no podemos incluir ciertas configuraciones y necesitamos procesar un archivo de versión de Minecraft, por lo que es vital que tengas Minecraft instalado en tu computadora."
+                           Foreground="#E2E8F0"
+                           FontSize="16"
+                           TextWrapping="Wrap"
+                           LineHeight="24"
+                           TextAlignment="Center"/>
+            </Border>
+
+            <!-- BOTONES Y ACCIONES (Se ocultan cuando está procesando) -->
+            <StackPanel Spacing="15" IsVisible="{Binding !IsProcessing}" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Content="Continuar" 
+                        Command="{Binding ContinueWithDefaultFolderCommand}"
+                        Background="#9333EA" 
+                        Foreground="White" 
+                        FontWeight="Bold" 
+                        FontSize="18"
+                        Padding="40,15" 
+                        CornerRadius="8"
+                        Cursor="Hand" 
+                        HorizontalAlignment="Center"
+                        ToolTip.Tip="Intentará buscar Minecraft en la ruta por defecto"/>
+
+                <Button Classes="Hyperlink"
+                        Content="¿Tienes instalado Minecraft en otra carpeta? Haz click aquí y búscala."
+                        Command="{Binding SelectCustomFolderCommand}"
+                        HorizontalAlignment="Center"
+                        Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <!-- INDICADOR DE CARGA (Visible cuando IsProcessing = true) -->
+            <StackPanel Spacing="15" IsVisible="{Binding IsProcessing}" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <!-- Como Avalonia puro no tiene ProgressRing por defecto, usamos un ProgressBar indeterminado -->
+                <ProgressBar IsIndeterminate="True" 
+                             Width="300" 
+                             Height="6" 
+                             Foreground="#9333EA" 
+                             Background="#1E1B2E" 
+                             CornerRadius="3"/>
+                <TextBlock Text="{Binding LoadingMessage}" 
+                           Foreground="#94A3B8" 
+                           FontSize="14" 
+                           HorizontalAlignment="Center" 
+                           FontStyle="Italic"/>
+            </StackPanel>
+            
+        </StackPanel>
+    </Grid>
+</UserControl>

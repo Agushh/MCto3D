@@ -189,6 +189,15 @@
 									<TextBlock Text="🖱️" FontSize="16" Foreground="#94A3B8" VerticalAlignment="Center"/>
 									<TextBlock Text="rotate" FontSize="14" Foreground="#94A3B8" VerticalAlignment="Center" FontFamily="Comic Sans MS, Cursive"/>
 								</StackPanel>
+
+                                <!-- OVERLAY DE CARGA -->
+                                <Border Background="#D00B0B13" IsVisible="{Binding IsLoadingMesh}">
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+                                        <TextBlock Text="Generando Malla 3D..." Foreground="#A855F7" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center"/>
+                                        <ProgressBar IsIndeterminate="True" Foreground="#A855F7" HorizontalAlignment="Stretch" MinWidth="150"/>
+                                        <TextBlock Text="Por favor espera, esto puede tardar unos segundos en estructuras grandes." Foreground="#94A3B8" FontSize="12" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
 							</Grid>
 						</Border>
 					</Grid>

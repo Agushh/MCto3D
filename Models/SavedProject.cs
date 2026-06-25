@@ -17,6 +17,8 @@ public class SavedProject
     public bool IsSingleColorMode { get; set; } = true;
     
     // UI helpers
+    public bool IsFolder { get; set; } = false;
+    public bool IsReadOnly { get; set; } = false;
     public string FormattedDate => CreationDate.ToString("dd MMM yyyy, HH:mm");
     public string FileSizeStr => "Aprox 2.4 MB"; // Mock para el peso
 }

@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MCto3D.ViewModels"
+             x:Class="MCto3D.Views.LoadingView"
+             x:DataType="vm:LoadingViewModel"
+             Background="#0B0F19"> <!-- Fondo completamente opaco -->
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="25" IsVisible="{Binding !HasError}">
+            <TextBlock Text="Generando modelos..." 
+                       FontSize="36" 
+                       FontWeight="Black" 
+                       Foreground="#F8FAFC" 
+                       HorizontalAlignment="Center" 
+                       LetterSpacing="1"/>
+            
+            <ProgressBar IsIndeterminate="True" 
+                         Width="400" 
+                         Height="8" 
+                         Foreground="#9333EA" 
+                         Background="#1E1B2E" 
+                         CornerRadius="4"/>
+            
+            <TextBlock Text="{Binding StatusMessage}" 
+                       Foreground="#C084FC" 
+                       FontSize="16" 
+                       FontWeight="Medium"
+                       HorizontalAlignment="Center" 
+                       FontStyle="Italic"/>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" IsVisible="{Binding HasError}">
+            <TextBlock Text="Ha ocurrido un error" 
+                       FontSize="32" 
+                       FontWeight="Black" 
+                       Foreground="#EF4444" 
+                       HorizontalAlignment="Center"/>
+            
+            <Border Background="#2A1015" BorderBrush="#7F1D1D" BorderThickness="1" CornerRadius="8" Padding="20" MaxWidth="600">
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="#FCA5A5" TextWrapping="Wrap"/>
+            </Border>
+            
+            <Button Content="Cerrar y continuar" 
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).HideLoadingScreenCommand}"
+                    Background="#DC2626" 
+                    Foreground="White" 
+                    FontWeight="Bold" 
+                    Padding="20,10" 
+                    CornerRadius="8"
+                    Cursor="Hand" 
+                    HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

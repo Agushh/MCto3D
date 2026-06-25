@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:MCto3D.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+			 x:Class="MCto3D.Views.VanillaStructuresView"
+			 x:DataType="vm:VanillaStructuresViewModel">
+
+	<Grid RowDefinitions="Auto,*" Margin="24">
+		<!-- HEADER -->
+		<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,24">
+			<StackPanel Grid.Column="0" Spacing="8">
+				<TextBlock Text="Estructuras Vanilla" FontSize="28" FontWeight="Bold" Foreground="#F8FAFC"/>
+				<TextBlock Text="Explora y convierte estructuras internas del juego" Foreground="#94A3B8" FontSize="14"/>
+			</StackPanel>
+
+			<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
+				<!-- Search -->
+				<Border Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="8" Width="250" Padding="12,8">
+					<Grid ColumnDefinitions="Auto,*">
+						<TextBlock Grid.Column="0" Text="🔍" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,8,0"/>
+						<TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="Buscar..." Background="Transparent" BorderThickness="0" Foreground="#F1F5F9" VerticalAlignment="Center"/>
+					</Grid>
+				</Border>
+				
+				<!-- BACK BUTTON -->
+				<Button Command="{Binding GoUpFolderCommand}" IsVisible="{Binding CanGoUp}" Background="#1A1528" Foreground="#A855F7" FontWeight="Bold" Padding="16,8" CornerRadius="8" Cursor="Hand" VerticalAlignment="Center">
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<TextBlock Text="←" VerticalAlignment="Center"/>
+						<TextBlock Text="Volver" VerticalAlignment="Center"/>
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Grid>
+
+		<!-- CONTENT -->
+		<Grid Grid.Row="1" RowDefinitions="Auto,*">
+			<TextBlock Grid.Row="0" Text="{Binding CurrentFolderName}" FontSize="18" FontWeight="SemiBold" Foreground="#CBD5E1" Margin="0,0,0,16"/>
+			
+			<Grid Grid.Row="1">
+				<!-- Empty State -->
+				<StackPanel IsVisible="{Binding !Projects.Count}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Margin="0,64,0,0">
+					<TextBlock Text="📭" FontSize="64" HorizontalAlignment="Center"/>
+					<TextBlock Text="No hay estructuras en esta carpeta." Foreground="#94A3B8" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+				</StackPanel>
+
+				<!-- LIST VIEW -->
+				<ScrollViewer>
+					<ItemsControl ItemsSource="{Binding Projects}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Button Command="{Binding $parent[UserControl].((vm:VanillaStructuresViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
+										Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="12" 
+										HorizontalAlignment="Stretch" Margin="0,0,0,12" Padding="0" Cursor="Hand">
+									<Grid ColumnDefinitions="Auto,*,Auto" Margin="16" VerticalAlignment="Center">
+										<!-- Icon -->
+										<Border Grid.Column="0" Background="#05050A" Width="48" Height="48" CornerRadius="6" Margin="0,0,16,0">
+											<Panel>
+												<TextBlock Text="📁" IsVisible="{Binding IsFolder}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.8"/>
+												<TextBlock Text="🏛" IsVisible="{Binding !IsFolder}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.8"/>
+											</Panel>
+										</Border>
+										
+										<!-- Name -->
+										<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" FontWeight="Bold" Foreground="#F1F5F9" FontSize="16" TextTrimming="CharacterEllipsis"/>
+										
+										<!-- Action -->
+										<Button Grid.Column="2" IsVisible="{Binding !IsFolder}" Command="{Binding $parent[UserControl].((vm:VanillaStructuresViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" Content="⚙ Abrir" Background="#1E3A8A" Foreground="#60A5FA" FontWeight="Bold" Padding="12,8" CornerRadius="8" Cursor="Hand" ToolTip.Tip="Carga esta estructura en el Conversor 3D"/>
+									</Grid>
+								</Button>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+			</Grid>
+		</Grid>
+	</Grid>
+</UserControl>
