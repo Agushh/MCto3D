@@ -99,3 +99,4 @@ C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\refint\MCto3D.d
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.pdb
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.genruntimeconfig.cache
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\ref\MCto3D.dll
+C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\StbImageSharp.dll

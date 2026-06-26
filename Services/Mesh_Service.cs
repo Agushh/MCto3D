@@ -10,6 +10,8 @@ namespace MCto3D.Services
 {
     public class Mesh_Service()
     {
+        public static Dictionary<string, byte[]> colores = new();
+
         private static bool IsAirOrInvisible(string blockName)
         {
             string clean = blockName.Replace("minecraft:", "");

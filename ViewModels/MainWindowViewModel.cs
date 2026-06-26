@@ -83,6 +83,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         // Comprobar estado inicial
         CheckInitialAssets();
+        Mesh_Service.colores = ColorGenerator_Service.LoadColorsSync(AppSettings_Service.LocalFilesPath);
     }
 
     private void CheckInitialAssets()

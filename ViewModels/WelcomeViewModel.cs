@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -37,7 +38,13 @@ public partial class WelcomeViewModel : ViewModelBase
 
             location = await Task.Run(() => AssetExtractor_Service.ExtractLegalAssets(progressReporter));
             await Task.Delay(1500); // Dar un poco de tiempo para leer el mensaje final de extracción
-            
+
+
+            //procesar colores y guardarlos en JSON.
+            Mesh_Service.colores = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
+
+            await Task.Delay(1500);
+
             // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
             _mainViewModel.SettingsVM.UpdateMinecraftVersion();
             
@@ -88,7 +95,11 @@ public partial class WelcomeViewModel : ViewModelBase
                         // Extracción de archivos
                         location = await Task.Run(() => AssetExtractor_Service.ExtractLegalAssets(progressReporter, selectedFolderPath));
                         await Task.Delay(1500);
-                        
+
+                        //procesar colores y guardarlos en JSON.
+                        Mesh_Service.colores = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
+                        await Task.Delay(1500);
+
                         // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
                         _mainViewModel.SettingsVM.UpdateMinecraftVersion();
                         

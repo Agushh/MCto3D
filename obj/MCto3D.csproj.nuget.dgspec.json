@@ -76,6 +76,10 @@
               "target": "Package",
               "version": "[8.4.2, )"
             },
+            "StbImageSharp": {
+              "target": "Package",
+              "version": "[2.30.15, )"
+            },
             "fNbt": {
               "target": "Package",
               "version": "[1.0.0, )"

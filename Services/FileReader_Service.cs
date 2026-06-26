@@ -1,6 +1,7 @@
 using fNbt;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 using System.Text;
 using Tmds.DBus.Protocol;
@@ -32,6 +33,19 @@ namespace MCto3D.Services
         public BlockState[] palette;
 
         public structureData(Vector3 size, int[,,] voxelGrid, BlockState[] palette)
+        {
+            Size = size;
+            this.voxelGrid = voxelGrid;
+            this.palette = palette;
+        }
+    }
+
+    public struct multiColorStructureData
+    {
+        public Vector3 Size;
+        public Dictionary<byte[], int[,,]> voxelGrid;
+        public BlockState[] palette;
+        public multiColorStructureData(Vector3 size, Dictionary<byte[], int[,,]> voxelGrid, BlockState[] palette)
         {
             Size = size;
             this.voxelGrid = voxelGrid;
@@ -107,5 +121,9 @@ namespace MCto3D.Services
             return new structureData(new(sizeX, sizeY, sizeZ), voxelGrid, customPalette);
 
         }
+
+
     }
+
+
 }
