@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace MCto3D.Services
 {
-    public static class Topology_Service
+    public class TopologyService : ITopologyService
     {
         public struct Vector3Int
         {
@@ -10,7 +10,7 @@ namespace MCto3D.Services
             public Vector3Int(int x, int y, int z) { X = x; Y = y; Z = z; }
         }
 
-        public static void ProcessEnclosedSpaces(int[,,] grid)
+        public void ProcessEnclosedSpaces(int[,,] grid)
         {
             int sizeX = grid.GetLength(0);
             int sizeY = grid.GetLength(1);
@@ -125,3 +125,4 @@ namespace MCto3D.Services
         }
     }
 }
+

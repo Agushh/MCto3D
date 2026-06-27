@@ -1,0 +1,119 @@
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MCto3D.Models;
+using MCto3D.Services;
+
+namespace MCto3D.ViewModels;
+
+public partial class ProjectSaveViewModel : ViewModelBase
+{
+    private readonly IAppSettingsService _appSettings;
+    private readonly IProjectStorageService _projectStorage;
+    private readonly MainWindowViewModel _navigationController;
+
+    public Func<Task<System.Collections.Generic.List<WriteableBitmap>>>? CaptureThumbnailsFunc { get; set; }
+    public Func<string>? GetOriginalFileNameFunc { get; set; }
+    public Func<string?>? GetSelectedFilePathFunc { get; set; }
+    public Func<float>? GetBlockScaleFunc { get; set; }
+    public Func<int>? GetSelectedGeometryModeIndexFunc { get; set; }
+    public Func<string>? GetExportFormatFunc { get; set; }
+    public Func<bool>? GetIsSingleColorModeFunc { get; set; }
+    
+    public event EventHandler<string>? StatusTextChanged;
+
+    public ProjectSaveViewModel(MainWindowViewModel navigationController, IAppSettingsService appSettings, IProjectStorageService projectStorage)
+    {
+        _navigationController = navigationController;
+        _appSettings = appSettings;
+        _projectStorage = projectStorage;
+    }
+
+    [ObservableProperty] private bool _isSavePopupOpen = false;
+    [ObservableProperty] private string _newProjectName = string.Empty;
+    [ObservableProperty] private int _selectedThumbnailIndex = 0;
+    [ObservableProperty] private ObservableCollection<WriteableBitmap>? _thumbnails;
+
+    [RelayCommand]
+    private async Task OpenSavePopup()
+    {
+        NewProjectName = GetOriginalFileNameFunc?.Invoke() ?? string.Empty;
+        SelectedThumbnailIndex = 0; // Por defecto la 1
+        
+        if (CaptureThumbnailsFunc != null)
+        {
+            var images = await CaptureThumbnailsFunc();
+            Thumbnails = new ObservableCollection<WriteableBitmap>(images);
+        }
+
+        IsSavePopupOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseSavePopup()
+    {
+        IsSavePopupOpen = false;
+        NewProjectName = string.Empty;
+    }
+
+    [RelayCommand]
+    private void SelectThumbnail(string indexStr)
+    {
+        if (int.TryParse(indexStr, out int index))
+        {
+            SelectedThumbnailIndex = index;
+        }
+    }
+
+    [RelayCommand]
+    private void ConfirmSaveToApp()
+    {
+        string? selectedFilePath = GetSelectedFilePathFunc?.Invoke();
+        if (string.IsNullOrWhiteSpace(NewProjectName) || string.IsNullOrWhiteSpace(selectedFilePath)) return;
+
+        string thumbnailPath = string.Empty;
+
+        // Guardar miniatura si existe
+        if (Thumbnails != null && Thumbnails.Count > SelectedThumbnailIndex)
+        {
+            try
+            {
+                var bmp = Thumbnails[SelectedThumbnailIndex];
+                var appDataFolder = Path.Combine(_appSettings.LocalFilesPath, "Thumbnails");
+                if (!Directory.Exists(appDataFolder)) Directory.CreateDirectory(appDataFolder);
+                
+                string fileName = $"{Guid.NewGuid()}.png";
+                thumbnailPath = Path.Combine(appDataFolder, fileName);
+                
+                bmp.Save(thumbnailPath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error guardando miniatura: {ex.Message}");
+            }
+        }
+
+        var newProject = new SavedProject
+        {
+            Name = NewProjectName,
+            OriginalFilePath = selectedFilePath,
+            ThumbnailPath = thumbnailPath,
+            BlockScale = GetBlockScaleFunc?.Invoke() ?? 1.0f,
+            GeometryMode = (GetSelectedGeometryModeIndexFunc?.Invoke() ?? 0) == 1 ? "Geometrías completas" : "Bloques sólidos",
+            ExportFormat = GetExportFormatFunc?.Invoke() ?? "STL",
+            IsSingleColorMode = GetIsSingleColorModeFunc?.Invoke() ?? true
+        };
+
+        _projectStorage.AddProject(newProject);
+        
+        IsSavePopupOpen = false;
+        StatusTextChanged?.Invoke(this, "¡Guardado en Mis Archivos exitosamente!");
+        
+        // Update MyFilesVM so the new project is listed immediately
+        _navigationController.MyFilesVM?.LoadData();
+    }
+}

@@ -38,10 +38,14 @@ public partial class HomeViewModel : ViewModelBase
     public bool IsDot0Active => CurrentCarouselIndex == 0;
     public bool IsDot1Active => CurrentCarouselIndex == 1;
     public bool IsDot2Active => CurrentCarouselIndex == 2;
+    private readonly IProjectStorageService _projectStorage;
+    private readonly IModelReader _modelReader;
 
-    public HomeViewModel(MainWindowViewModel navigationController)
+    public HomeViewModel(MainWindowViewModel navigationController, IProjectStorageService projectStorage, IModelReader modelReader)
     {
         _navigationController = navigationController;
+        _projectStorage = projectStorage;
+        _modelReader = modelReader;
         LoadRandomDemoModel();
         InitializeCarousel();
         
@@ -74,7 +78,10 @@ public partial class HomeViewModel : ViewModelBase
                 string randomFile = files[_random.Next(files.Length)];
                 try
                 {
-                    ColoredMeshes = ThreeMfReader_Service.Read3Mf(randomFile);
+                    if (randomFile != null)
+                    {
+                        ColoredMeshes = _modelReader.Read(randomFile);
+                    }
                     MeshTriangles = new List<Triangle>(); // Clear raw triangles if using colored
                     return;
                 }
@@ -167,3 +174,4 @@ public partial class HomeViewModel : ViewModelBase
         UpdateCarouselImages();
     }
 }
+

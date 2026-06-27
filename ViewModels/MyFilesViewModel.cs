@@ -62,16 +62,23 @@ public partial class MyFilesViewModel : ViewModelBase
     [ObservableProperty]
     private SlicerOption _selectedSlicer;
 
-    public MyFilesViewModel(MainWindowViewModel navigationController)
+    private readonly IProjectStorageService _projectStorage;
+    private readonly IFileReaderService _fileReaderService;
+    private readonly IMeshService _meshService;
+
+    public MyFilesViewModel(MainWindowViewModel navigationController, IProjectStorageService projectStorage, IFileReaderService fileReaderService, IMeshService meshService)
     {
         _navigationController = navigationController;
+        _projectStorage = projectStorage;
+        _fileReaderService = fileReaderService;
+        _meshService = meshService;
         _selectedSlicer = SlicerOptions[0];
         LoadData();
     }
 
     public void LoadData()
     {
-        _allProjects = ProjectStorageService.LoadProjects();
+        _allProjects = _projectStorage.LoadProjects();
         ApplyFilters();
     }
 
@@ -157,7 +164,7 @@ public partial class MyFilesViewModel : ViewModelBase
         if (SelectedProject != null && !string.IsNullOrWhiteSpace(EditingNameText))
         {
             SelectedProject.Name = EditingNameText;
-            ProjectStorageService.UpdateProject(SelectedProject);
+            _projectStorage.UpdateProject(SelectedProject);
             IsEditingName = false;
             
             // Trigger refresh
@@ -180,7 +187,7 @@ public partial class MyFilesViewModel : ViewModelBase
         if (SelectedProject != null)
         {
             // Simple direct delete. Could add a confirmation state if needed.
-            ProjectStorageService.DeleteProject(SelectedProject.Id);
+            _projectStorage.DeleteProject(SelectedProject.Id);
             ClosePopup();
             LoadData();
         }
@@ -216,13 +223,13 @@ public partial class MyFilesViewModel : ViewModelBase
             if (SelectedProject.OriginalFilePath.EndsWith(".litematic", StringComparison.OrdinalIgnoreCase) || 
                 SelectedProject.OriginalFilePath.EndsWith(".schematic", StringComparison.OrdinalIgnoreCase))
             {
-                strData = FileReader_Service.readLitematic(SelectedProject.OriginalFilePath);
+                strData = _fileReaderService.readLitematic(SelectedProject.OriginalFilePath);
             }
             else
             {
-                strData = FileReader_Service.readNBT(SelectedProject.OriginalFilePath);
+                strData = _fileReaderService.readNBT(SelectedProject.OriginalFilePath);
             }
-            List<Triangle> malla = Mesh_Service.GenerateMesh(strData, SelectedProject.BlockScale);
+            List<Triangle> malla = _meshService.GenerateMesh(strData, SelectedProject.BlockScale);
             string extensionPorDefecto = SelectedProject.ExportFormat.ToLower();
             string nombreFiltro = SelectedProject.ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
             string patronExtension = $"*.{extensionPorDefecto}";
@@ -299,13 +306,13 @@ public partial class MyFilesViewModel : ViewModelBase
             if (SelectedProject.OriginalFilePath.EndsWith(".litematic", StringComparison.OrdinalIgnoreCase) || 
                 SelectedProject.OriginalFilePath.EndsWith(".schematic", StringComparison.OrdinalIgnoreCase))
             {
-                strData = FileReader_Service.readLitematic(SelectedProject.OriginalFilePath);
+                strData = _fileReaderService.readLitematic(SelectedProject.OriginalFilePath);
             }
             else
             {
-                strData = FileReader_Service.readNBT(SelectedProject.OriginalFilePath);
+                strData = _fileReaderService.readNBT(SelectedProject.OriginalFilePath);
             }
-            List<Triangle> malla = Mesh_Service.GenerateMesh(strData, SelectedProject.BlockScale);
+            List<Triangle> malla = _meshService.GenerateMesh(strData, SelectedProject.BlockScale);
 
             string extension = SelectedProject.ExportFormat.ToLower();
             string suggestedName = string.IsNullOrWhiteSpace(SelectedProject.Name) ? "modelo" : SelectedProject.Name;
@@ -342,3 +349,4 @@ public partial class MyFilesViewModel : ViewModelBase
         }
     }
 }
+

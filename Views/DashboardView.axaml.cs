@@ -11,7 +11,7 @@ public partial class DashboardView : UserControl
         {
             if (DataContext is ViewModels.DashboardViewModel vm)
             {
-                vm.CaptureThumbnailsFunc = () => MainRenderControl.GenerateThumbnails(512, 512);
+                vm.ProjectSaveVM.CaptureThumbnailsFunc = () => MainRenderControl.GenerateThumbnails(512, 512);
             }
         };
     }

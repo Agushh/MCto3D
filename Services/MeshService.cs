@@ -8,8 +8,14 @@ using System.Text;
 
 namespace MCto3D.Services
 {
-    public class Mesh_Service()
+    public class MeshService : IMeshService
     {
+        private readonly INativeModelResolverService _nativeModelResolverService;
+
+        public MeshService(INativeModelResolverService nativeModelResolverService)
+        {
+            _nativeModelResolverService = nativeModelResolverService;
+        }
 
 
         private static bool IsAirOrInvisible(string blockName)
@@ -20,7 +26,7 @@ namespace MCto3D.Services
                    clean == "water" || clean == "lava";
         }
 
-        public static List<Triangle> GenerateFullGeometryMesh(structureData strData, float scale)
+        public List<Triangle> GenerateFullGeometryMesh(structureData strData, float scale)
         {
             List<Triangle> triangles = new();
 
@@ -48,7 +54,7 @@ namespace MCto3D.Services
                             string cleanName = strData.palette[blockState].Name.Split('[')[0].Replace("minecraft:", "");
 
                             // Resolutor Nativo: Lee el JSON directamente y aplica rotaciones oficiales
-                            geometryCuboids = NativeModelResolver_Service.ResolveGeometry(strData.palette[blockState].Name, strData.palette[blockState].Properties);
+                            geometryCuboids = _nativeModelResolverService.ResolveGeometry(strData.palette[blockState].Name, strData.palette[blockState].Properties);
                             isSolid = (geometryCuboids.Count == 1 && geometryCuboids[0].from == Vector3.Zero && geometryCuboids[0].to == new Vector3(16, 16, 16));
                         }
                         
@@ -57,7 +63,7 @@ namespace MCto3D.Services
                         foreach (var cuboid in geometryCuboids)
                         {
                             Vector3[] localVertices = GetCuboidVertices(cuboid.from, cuboid.to);
-                            // Ya no usamos BlockTransform_Service porque NativeModelResolver rota nativamente desde el JSON.
+                            // Ya no usamos BlockTransformService porque NativeModelResolver rota nativamente desde el JSON.
 
                             for (int f = 0; f < 6; f++)
                             {
@@ -78,7 +84,7 @@ namespace MCto3D.Services
                                         }
                                         else if (nState >= 0 && !IsAirOrInvisible(strData.palette[nState].Name))
                                         {
-                                            var nCuboids = NativeModelResolver_Service.ResolveGeometry(strData.palette[nState].Name, strData.palette[nState].Properties);
+                                            var nCuboids = _nativeModelResolverService.ResolveGeometry(strData.palette[nState].Name, strData.palette[nState].Properties);
                                             bool nIsSolid = (nCuboids.Count == 1 && nCuboids[0].from == Vector3.Zero && nCuboids[0].to == new Vector3(16, 16, 16));
                                             if (nIsSolid)
                                             {
@@ -190,7 +196,7 @@ namespace MCto3D.Services
             return new Vector3(x, y, z);
         }
 
-        public static List<Triangle> GenerateMesh(structureData strData, float scale)
+        public List<Triangle> GenerateMesh(structureData strData, float scale)
         {
             List<Triangle> triangles = new();
 
@@ -263,11 +269,11 @@ namespace MCto3D.Services
             } 
             return triangles;
         }
-        public static Dictionary<System.Drawing.Color, List<Triangle>> GenerateMultiColorMeshes(multiColorStructureData mData, structureData originalData, float scale, bool fullGeom)
+        public Dictionary<System.Drawing.Color, List<Triangle>> GenerateMultiColorMeshes(multiColorStructureData multiData, structureData originalData, float scale, bool useFullGeom = false)
         {
             var meshes = new Dictionary<System.Drawing.Color, List<Triangle>>();
 
-            foreach (var kvp in mData.voxelGrid)
+            foreach (var kvp in multiData.voxelGrid)
             {
                 var color = kvp.Key;
                 var colorGrid = kvp.Value;
@@ -279,7 +285,7 @@ namespace MCto3D.Services
                 // Reutilizamos la lógica original, logrando:
                 // 1. Cero repetición de código.
                 // 2. Mallas independientes cerradas (watertight) por color (vital para Slicers).
-                if (fullGeom)
+                if (useFullGeom)
                 {
                     meshes[color] = GenerateFullGeometryMesh(colorStrData, scale);
                 }

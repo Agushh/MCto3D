@@ -78,11 +78,30 @@
 
 											<Grid ColumnDefinitions="160,*">
 												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterOutFormat}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
-												<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding ExportFormat}">
+												<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding ExportVM.ExportFormat}">
 													<x:String>STL</x:String>
 													<x:String>3MF</x:String>
 												</ComboBox>
 											</Grid>
+
+											<!-- Llenar Huecos -->
+											<Grid ColumnDefinitions="160,*" Margin="0,8,0,0">
+												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillHoles}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+												<ToggleSwitch Grid.Column="1" IsChecked="{Binding FillHoles}" OnContent="{DynamicResource GlobalYes}" OffContent="{DynamicResource GlobalNo}" />
+											</Grid>
+											
+											<StackPanel IsVisible="{Binding FillHoles}" Margin="0,8,0,0">
+												<!-- Custom fill color logic: only relevant if not in single color mode -->
+												<StackPanel IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static vm:ColorAlgorithm.SingleColor}}">
+													<Grid ColumnDefinitions="160,*">
+														<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+														<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+															<CheckBox Content="{DynamicResource ConverterUseCustom}" IsChecked="{Binding UseCustomFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextPrimary}"/>
+															<ColorPicker IsVisible="{Binding UseCustomFillColor}" Color="{Binding CustomFillColor}" Height="32" VerticalAlignment="Center"/>
+														</StackPanel>
+													</Grid>
+												</StackPanel>
+											</StackPanel>
 
 											<!-- Botón extra o espacio extra si es necesario -->
 
@@ -93,9 +112,9 @@
 								<StackPanel Grid.Row="1" Spacing="8" Margin="0,16,0,0">
 									<Border Height="1" Background="{DynamicResource EnderBorder}" Margin="0,0,0,8"/>
 									<Grid ColumnDefinitions="*,*">
-										<SplitButton Grid.Column="0" Content="{Binding SelectedSlicer.ButtonText}"
-													 Command="{Binding OpenInSlicerCommand}"
-													 Background="{Binding SelectedSlicer.ColorHex}"
+										<SplitButton Grid.Column="0" Content="{Binding ExportVM.SelectedSlicer.ButtonText}"
+													 Command="{Binding ExportVM.OpenInSlicerCommand}"
+													 Background="{Binding ExportVM.SelectedSlicer.ColorHex}"
 													 Foreground="White"
 													 Padding="12,10"
 													 CornerRadius="8"
@@ -105,16 +124,16 @@
 													 HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
 											<SplitButton.Flyout>
 												<MenuFlyout Placement="BottomEdgeAlignedRight">
-													<MenuItem Header="OrcaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[0]}">
+													<MenuItem Header="OrcaSlicer" Command="{Binding ExportVM.ChangeSlicerCommand}" CommandParameter="{Binding ExportVM.SlicerOptions[0]}">
 														<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#027D52"/></MenuItem.Icon>
 													</MenuItem>
-													<MenuItem Header="BambuStudio" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[1]}">
+													<MenuItem Header="BambuStudio" Command="{Binding ExportVM.ChangeSlicerCommand}" CommandParameter="{Binding ExportVM.SlicerOptions[1]}">
 														<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#00AE42"/></MenuItem.Icon>
 													</MenuItem>
-													<MenuItem Header="PrusaSlicer" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[2]}">
+													<MenuItem Header="PrusaSlicer" Command="{Binding ExportVM.ChangeSlicerCommand}" CommandParameter="{Binding ExportVM.SlicerOptions[2]}">
 														<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#EA6B24"/></MenuItem.Icon>
 													</MenuItem>
-													<MenuItem Header="Cura" Command="{Binding ChangeSlicerCommand}" CommandParameter="{Binding SlicerOptions[3]}">
+													<MenuItem Header="Cura" Command="{Binding ExportVM.ChangeSlicerCommand}" CommandParameter="{Binding ExportVM.SlicerOptions[3]}">
 														<MenuItem.Icon><Ellipse Width="12" Height="12" Fill="#0055FF"/></MenuItem.Icon>
 													</MenuItem>
 												</MenuFlyout>
@@ -122,7 +141,7 @@
 										</SplitButton>
 
 										<Button Grid.Column="1" Content="{DynamicResource ConverterExportLocal}" 
-												Command="{Binding ExportFileCommand}" 
+												Command="{Binding ExportVM.ExportFileCommand}" 
 												CommandParameter="{Binding $parent[UserControl]}"
 												Background="{DynamicResource EnderSecondary}" Foreground="White" FontWeight="Bold" 
 												HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
@@ -130,44 +149,26 @@
 									</Grid>
 									
 									<Button Content="{DynamicResource ConverterSaveApp}" 
-											Command="{Binding OpenSavePopupCommand}" 
+											Command="{Binding ProjectSaveVM.OpenSavePopupCommand}" 
 											Classes="Primary"
 											HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
 											Padding="12,10"/>
 
 									<!-- Estado de Progreso -->
 									<TextBlock Text="{Binding StatusText}" Foreground="{DynamicResource EnderSecondary}" FontWeight="Medium" FontSize="12" HorizontalAlignment="Center"/>
-									<!-- Llenar Huecos -->
-									<Grid ColumnDefinitions="160,*" Margin="0,8,0,0">
-										<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillHoles}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
-										<ToggleSwitch Grid.Column="1" IsChecked="{Binding FillHoles}" OnContent="{DynamicResource GlobalYes}" OffContent="{DynamicResource GlobalNo}" />
-									</Grid>
-									
-									<StackPanel IsVisible="{Binding FillHoles}" Margin="0,8,0,0">
-										<!-- Custom fill color logic: only relevant if not in single color mode -->
-										<StackPanel IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static vm:ColorAlgorithm.SingleColor}}">
-											<Grid ColumnDefinitions="160,*">
-												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
-												<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-													<CheckBox Content="{DynamicResource ConverterUseCustom}" IsChecked="{Binding UseCustomFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextPrimary}"/>
-													<ColorPicker IsVisible="{Binding UseCustomFillColor}" Color="{Binding CustomFillColor}" Height="32" VerticalAlignment="Center"/>
-												</StackPanel>
-											</Grid>
-										</StackPanel>
-									</StackPanel>
 								</StackPanel>
 							</Grid>
 						</Border>
 
 						<!-- Card 2: Colores 3MF (Nueva Tarjeta) -->
-						<Border Classes="Card" Padding="24" MinWidth="350" VerticalAlignment="Top" IsVisible="{Binding Is3MfSelected}">
+						<Border Classes="Card" Padding="24" MinWidth="350" VerticalAlignment="Top" IsVisible="{Binding ExportVM.Is3MfSelected}">
 							<ScrollViewer VerticalScrollBarVisibility="Auto">
 								<StackPanel Spacing="16">
 									<TextBlock Text="{DynamicResource Converter3MfOptions}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" Margin="0,0,0,8"/>
 									
 									<Grid ColumnDefinitions="160,*">
 										<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAlgorithm}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
-										<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedAlgorithm}">
+										<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding PaletteVM.SelectedAlgorithm}">
 											<ComboBoxItem Content="{DynamicResource ConverterMono}" />
 											<ComboBoxItem Content="{DynamicResource ConverterCustomPalette}" />
 											<ComboBoxItem Content="{DynamicResource ConverterPredefinedPalette}" />
@@ -179,9 +180,9 @@
 
 									<Border Height="1" Background="{DynamicResource EnderBorder}" Margin="0,8"/>
 
-									<StackPanel IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static vm:ColorAlgorithm.SingleColor}}" Spacing="16">
+									<StackPanel IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static vm:ColorAlgorithm.SingleColor}}" Spacing="16">
 									
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.RawColors}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.RawColors}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterInfo}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 												<TextBlock Text="{DynamicResource ConverterColorCount}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Bold"/>
@@ -189,25 +190,25 @@
 											</StackPanel>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.KMeansAverage}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.KMeansAverage}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAmountK}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
-												<Slider Minimum="2" Maximum="16" Value="{Binding KMeansCount}" Width="120" VerticalAlignment="Center"/>
-												<TextBlock Text="{Binding KMeansCount}" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center" FontWeight="Bold" Width="20"/>
+												<Slider Minimum="2" Maximum="16" Value="{Binding PaletteVM.KMeansCount}" Width="120" VerticalAlignment="Center"/>
+												<TextBlock Text="{Binding PaletteVM.KMeansCount}" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center" FontWeight="Bold" Width="20"/>
 											</StackPanel>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.KMeansReal}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.KMeansReal}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAmountK}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
-												<Slider Minimum="2" Maximum="16" Value="{Binding KMeansCount}" Width="120" VerticalAlignment="Center"/>
-												<TextBlock Text="{Binding KMeansCount}" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center" FontWeight="Bold" Width="20"/>
+												<Slider Minimum="2" Maximum="16" Value="{Binding PaletteVM.KMeansCount}" Width="120" VerticalAlignment="Center"/>
+												<TextBlock Text="{Binding PaletteVM.KMeansCount}" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center" FontWeight="Bold" Width="20"/>
 											</StackPanel>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.PredefinedPalette}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.PredefinedPalette}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterPaletteSize}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
-											<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding PredefinedPaletteSize}">
+											<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding PaletteVM.PredefinedPaletteSize}">
 												<x:Int32>4</x:Int32>
 												<x:Int32>8</x:Int32>
 												<x:Int32>16</x:Int32>
@@ -215,10 +216,10 @@
 											</ComboBox>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.CustomPalette}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.CustomPalette}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterPalette}" VerticalAlignment="Top" Margin="0,8,0,0" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Spacing="16">
-												<ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding AvailablePalettes}" SelectedItem="{Binding SelectedPalette}">
+												<ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PaletteVM.AvailablePalettes}" SelectedItem="{Binding PaletteVM.SelectedPalette}">
 													<ComboBox.ItemTemplate>
 														<DataTemplate>
 															<TextBlock Text="{Binding Name}" />
@@ -227,44 +228,44 @@
 												</ComboBox>
 												
 												<!-- Guardadas -->
-												<StackPanel Spacing="8" IsVisible="{Binding IsSavedPaletteSelected}">
-													<TextBox Text="{Binding SelectedPaletteNameInput}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
-													<ItemsControl ItemsSource="{Binding UserDefinedColors}">
+												<StackPanel Spacing="8" IsVisible="{Binding PaletteVM.IsSavedPaletteSelected}">
+													<TextBox Text="{Binding PaletteVM.SelectedPaletteNameInput}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
+													<ItemsControl ItemsSource="{Binding PaletteVM.UserDefinedColors}">
 														<ItemsControl.ItemTemplate>
 															<DataTemplate>
 																<StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
 																	<ColorPicker Color="{Binding Color}" Height="32"/>
-																	<Button Command="{Binding $parent[UserControl].((vm:DashboardViewModel)DataContext).RemoveUserColorCommand}" CommandParameter="{Binding}" Classes="Ghost" Padding="8">
+																	<Button Command="{Binding $parent[UserControl].((vm:DashboardViewModel)DataContext).PaletteVM.RemoveUserColorCommand}" CommandParameter="{Binding}" Classes="Ghost" Padding="8">
 																		<TextBlock Text="🗑️" FontSize="14"/>
 																	</Button>
 																</StackPanel>
 															</DataTemplate>
 														</ItemsControl.ItemTemplate>
 													</ItemsControl>
-													<Button Content="{DynamicResource ConverterAddColor}" Command="{Binding AddUserColorCommand}" Classes="Ghost" HorizontalAlignment="Left" Foreground="{DynamicResource EnderPrimary}" Padding="8,4"/>
+													<Button Content="{DynamicResource ConverterAddColor}" Command="{Binding PaletteVM.AddUserColorCommand}" Classes="Ghost" HorizontalAlignment="Left" Foreground="{DynamicResource EnderPrimary}" Padding="8,4"/>
 													<StackPanel Orientation="Horizontal" Spacing="8">
-														<Button Content="{DynamicResource GlobalUpdate}" Command="{Binding UpdateSavedPaletteCommand}" IsVisible="{Binding HasUnsavedPaletteChanges}" Classes="Primary"/>
-														<Button Content="{DynamicResource GlobalDelete}" Command="{Binding DeleteSavedPaletteCommand}" Background="#EF4444" Foreground="White" FontWeight="Bold"/>
+														<Button Content="{DynamicResource GlobalUpdate}" Command="{Binding PaletteVM.UpdateSavedPaletteCommand}" IsVisible="{Binding PaletteVM.HasUnsavedPaletteChanges}" Classes="Primary"/>
+														<Button Content="{DynamicResource GlobalDelete}" Command="{Binding PaletteVM.DeleteSavedPaletteCommand}" Background="#EF4444" Foreground="White" FontWeight="Bold"/>
 													</StackPanel>
 												</StackPanel>
 
 												<!-- Personalizada (Nueva) -->
-												<StackPanel Spacing="8" IsVisible="{Binding IsCustomPaletteSelected}">
-													<TextBox Text="{Binding NewPaletteName}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
-													<ItemsControl ItemsSource="{Binding UserDefinedColors}">
+												<StackPanel Spacing="8" IsVisible="{Binding PaletteVM.IsCustomPaletteSelected}">
+													<TextBox Text="{Binding PaletteVM.NewPaletteName}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
+													<ItemsControl ItemsSource="{Binding PaletteVM.UserDefinedColors}">
 														<ItemsControl.ItemTemplate>
 															<DataTemplate>
 																<StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
 																	<ColorPicker Color="{Binding Color}" Height="32"/>
-																	<Button Command="{Binding $parent[UserControl].((vm:DashboardViewModel)DataContext).RemoveUserColorCommand}" CommandParameter="{Binding}" Classes="Ghost" Padding="8">
+																	<Button Command="{Binding $parent[UserControl].((vm:DashboardViewModel)DataContext).PaletteVM.RemoveUserColorCommand}" CommandParameter="{Binding}" Classes="Ghost" Padding="8">
 																		<TextBlock Text="🗑️" FontSize="14"/>
 																	</Button>
 																</StackPanel>
 															</DataTemplate>
 														</ItemsControl.ItemTemplate>
 													</ItemsControl>
-													<Button Content="{DynamicResource ConverterAddColor}" Command="{Binding AddUserColorCommand}" Classes="Ghost" HorizontalAlignment="Left" Foreground="{DynamicResource EnderPrimary}" Padding="8,4"/>
-													<Button Content="{DynamicResource GlobalSave}" Command="{Binding SaveCustomPaletteCommand}" CommandParameter="{Binding NewPaletteName}" Classes="Primary" HorizontalAlignment="Left"/>
+													<Button Content="{DynamicResource ConverterAddColor}" Command="{Binding PaletteVM.AddUserColorCommand}" Classes="Ghost" HorizontalAlignment="Left" Foreground="{DynamicResource EnderPrimary}" Padding="8,4"/>
+													<Button Content="{DynamicResource GlobalSave}" Command="{Binding PaletteVM.SaveCustomPaletteCommand}" CommandParameter="{Binding PaletteVM.NewPaletteName}" Classes="Primary" HorizontalAlignment="Left"/>
 												</StackPanel>
 											</StackPanel>
 										</Grid>
@@ -296,7 +297,7 @@
 						</Grid>
 						<Border Grid.Row="1" Background="{DynamicResource EnderSurfaceHover}" CornerRadius="8" BorderBrush="{DynamicResource EnderBorder}" BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClipToBounds="True">
 							<Grid Background="Transparent">
-								<controls:MinecraftRenderControl x:Name="MainRenderControl" Triangles="{Binding MeshTriangles}" ColoredMeshes="{Binding ColoredMeshes}" AutoRotate="False" ShowFloor="{Binding ShowFloor}" FloorColor="{Binding FloorColor}" OverrideModelColor="{Binding IsSingleColorMode}" ModelColor="{Binding ModelColor}"/>
+								<controls:MinecraftRenderControl x:Name="MainRenderControl" Triangles="{Binding MeshTriangles}" ColoredMeshes="{Binding ColoredMeshes}" AutoRotate="False" ShowFloor="{Binding ShowFloor}" FloorColor="{Binding FloorColor}" OverrideModelColor="{Binding PaletteVM.IsSingleColorMode}" ModelColor="{Binding ModelColor}"/>
 								
 
 								<!-- Controles Superpuestos -->
@@ -325,7 +326,7 @@
 		</Grid>
 
 		<!-- OVERLAY POPUP: Guardar Proyecto -->
-		<Border Grid.RowSpan="2" Background="#D0000000" IsVisible="{Binding IsSavePopupOpen}" ZIndex="100" Margin="-32">
+		<Border Grid.RowSpan="2" Background="#D0000000" IsVisible="{Binding ProjectSaveVM.IsSavePopupOpen}" ZIndex="100" Margin="-32">
 			<Border Classes="Card" Padding="40" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="800">
 				<Grid ColumnDefinitions="*,*">
 					
@@ -334,41 +335,41 @@
 						<TextBlock Text="{DynamicResource ConverterSavePopupTitle}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}"/>
 						<TextBlock Text="{DynamicResource ConverterSavePopupDesc}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="14" TextWrapping="Wrap"/>
 						
-						<TextBox Text="{Binding NewProjectName}" Watermark="{DynamicResource ConverterSavePopupPlaceholder}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,12" CornerRadius="8" FontSize="16"/>
+						<TextBox Text="{Binding ProjectSaveVM.NewProjectName}" Watermark="{DynamicResource ConverterSavePopupPlaceholder}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,12" CornerRadius="8" FontSize="16"/>
 
 						<Grid ColumnDefinitions="*,*" Margin="0,16,0,0">
-							<Button Grid.Column="0" Content="{DynamicResource ConverterCancelBtn}" Command="{Binding CloseSavePopupCommand}" Classes="Ghost" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Margin="0,0,8,0"/>
-							<Button Grid.Column="1" Content="{DynamicResource ConverterSaveBtn}" Command="{Binding ConfirmSaveToAppCommand}" Classes="Primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Margin="8,0,0,0"/>
+							<Button Grid.Column="0" Content="{DynamicResource ConverterCancelBtn}" Command="{Binding ProjectSaveVM.CloseSavePopupCommand}" Classes="Ghost" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Margin="0,0,8,0"/>
+							<Button Grid.Column="1" Content="{DynamicResource ConverterSaveBtn}" Command="{Binding ProjectSaveVM.ConfirmSaveToAppCommand}" Classes="Primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Margin="8,0,0,0"/>
 						</Grid>
 					</StackPanel>
 
 					<!-- Columna Derecha: Selección de Miniaturas (Grid 2x2) -->
 					<Grid Grid.Column="1" RowDefinitions="*,*" ColumnDefinitions="*,*" RowSpacing="16" ColumnSpacing="16" Height="300" Width="300">
 						<!-- Img 1 (0) -->
-						<Button Grid.Row="0" Grid.Column="0" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
-							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=0}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
-								<Image Source="{Binding Thumbnails[0]}" Stretch="UniformToFill"/>
+						<Button Grid.Row="0" Grid.Column="0" Padding="0" CornerRadius="8" Command="{Binding ProjectSaveVM.SelectThumbnailCommand}" CommandParameter="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+							<Border BorderBrush="{Binding ProjectSaveVM.SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=0}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding ProjectSaveVM.Thumbnails[0]}" Stretch="UniformToFill"/>
 							</Border>
 						</Button>
 						
 						<!-- Img 2 (1) -->
-						<Button Grid.Row="0" Grid.Column="1" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
-							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=1}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
-								<Image Source="{Binding Thumbnails[1]}" Stretch="UniformToFill"/>
+						<Button Grid.Row="0" Grid.Column="1" Padding="0" CornerRadius="8" Command="{Binding ProjectSaveVM.SelectThumbnailCommand}" CommandParameter="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+							<Border BorderBrush="{Binding ProjectSaveVM.SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=1}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding ProjectSaveVM.Thumbnails[1]}" Stretch="UniformToFill"/>
 							</Border>
 						</Button>
 
 						<!-- Img 3 (2) -->
-						<Button Grid.Row="1" Grid.Column="0" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
-							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=2}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
-								<Image Source="{Binding Thumbnails[2]}" Stretch="UniformToFill"/>
+						<Button Grid.Row="1" Grid.Column="0" Padding="0" CornerRadius="8" Command="{Binding ProjectSaveVM.SelectThumbnailCommand}" CommandParameter="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+							<Border BorderBrush="{Binding ProjectSaveVM.SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=2}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding ProjectSaveVM.Thumbnails[2]}" Stretch="UniformToFill"/>
 							</Border>
 						</Button>
 
 						<!-- Img 4 (3) -->
-						<Button Grid.Row="1" Grid.Column="1" Padding="0" CornerRadius="8" Command="{Binding SelectThumbnailCommand}" CommandParameter="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
-							<Border BorderBrush="{Binding SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=3}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
-								<Image Source="{Binding Thumbnails[3]}" Stretch="UniformToFill"/>
+						<Button Grid.Row="1" Grid.Column="1" Padding="0" CornerRadius="8" Command="{Binding ProjectSaveVM.SelectThumbnailCommand}" CommandParameter="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
+							<Border BorderBrush="{Binding ProjectSaveVM.SelectedThumbnailIndex, Converter={StaticResource SelectedThumbnailConverter}, ConverterParameter=3}" BorderThickness="3" CornerRadius="8" ClipToBounds="True">
+								<Image Source="{Binding ProjectSaveVM.Thumbnails[3]}" Stretch="UniformToFill"/>
 							</Border>
 						</Button>
 					</Grid>

@@ -52,9 +52,18 @@ namespace MCto3D.Services
             this.palette = palette;
         }
     }
-    public class FileReader_Service
+    public class FileReaderService : IFileReaderService
     {
-        public static structureData readNBT(string filePath)
+        private readonly IColorMappingService _colorMappingService;
+        private readonly IColorClusteringService _colorClusteringService;
+
+        public FileReaderService(IColorMappingService colorMappingService, IColorClusteringService colorClusteringService)
+        {
+            _colorMappingService = colorMappingService;
+            _colorClusteringService = colorClusteringService;
+        }
+
+        public structureData readNBT(string filePath)
         {
             var myFile = new NbtFile();
             myFile.LoadFromFile(filePath);
@@ -121,7 +130,7 @@ namespace MCto3D.Services
             return new structureData(new(sizeX, sizeY, sizeZ), voxelGrid, customPalette);
         }
 
-        public static structureData readLitematic(string filePath)
+        public structureData readLitematic(string filePath)
         {
             var myFile = new NbtFile();
             myFile.LoadFromFile(filePath);
@@ -325,7 +334,7 @@ namespace MCto3D.Services
             return new structureData(new(totalSizeX, totalSizeY, totalSizeZ), voxelGrid, globalPalette.ToArray());
         }
 
-        public static multiColorStructureData CreateMultiColorData(structureData strData, int? k, List<System.Drawing.Color> userColors, bool useKMedoids = false, bool useRawColors = false, bool fillHoles = false, bool useCustomFillColor = false, System.Drawing.Color customFillColor = default)
+        public multiColorStructureData CreateMultiColorData(structureData strData, int? k, List<System.Drawing.Color> userColors, bool useKMedoids = false, bool useRawColors = false, bool fillHoles = false, bool useCustomFillColor = false, System.Drawing.Color customFillColor = default)
         {
             Dictionary<int, System.Drawing.Color> indexToColorMap;
             
@@ -334,16 +343,16 @@ namespace MCto3D.Services
                 indexToColorMap = new Dictionary<int, System.Drawing.Color>();
                 for (int i = 0; i < strData.palette.Length; i++)
                 {
-                    indexToColorMap[i] = ColorMapping_Service.GetColorForBlock(strData.palette[i].Name, strData.palette[i].Properties);
+                    indexToColorMap[i] = _colorMappingService.GetColorForBlock(strData.palette[i].Name, strData.palette[i].Properties);
                 }
             }
             else if (k.HasValue)
             {
-                indexToColorMap = ColorClustering_Service.ClusterByKMeans(strData.palette, k.Value, useKMedoids);
+                indexToColorMap = _colorClusteringService.ClusterByKMeans(strData.palette, k.Value, useKMedoids);
             }
             else
             {
-                indexToColorMap = ColorClustering_Service.ClusterByPalette(strData.palette, userColors);
+                indexToColorMap = _colorClusteringService.ClusterByPalette(strData.palette, userColors);
             }
             
             var voxelGrids = new Dictionary<System.Drawing.Color, int[,,]>();
@@ -424,7 +433,7 @@ namespace MCto3D.Services
                         }
                         else if (blockState == -2 && fillHoles)
                         {
-                            voxelGrids[fillColor][ix, iy, iz] = -2; // Keep -2 so Mesh_Service handles it natively
+                            voxelGrids[fillColor][ix, iy, iz] = -2; // Keep -2 so MeshService handles it natively
                         }
                     }
                 }
@@ -434,3 +443,4 @@ namespace MCto3D.Services
         }
     }
 }
+

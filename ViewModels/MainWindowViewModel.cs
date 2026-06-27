@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using MCto3D.Services;
 using System;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MCto3D.ViewModels;
 
@@ -69,38 +70,42 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private double _windowWidth = 1300;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(IServiceProvider provider)
     {
-        HomeVM = new HomeViewModel(this);
-        DashboardVM = new DashboardViewModel(this);
-        MyFilesVM = new MyFilesViewModel(this);
-        VanillaStructuresVM = new VanillaStructuresViewModel(this);
-        DevToolsVM = new DevToolsViewModel(this);
-        WelcomeVM = new WelcomeViewModel(this);
-        LoadingVM = new LoadingViewModel(this);
-        SettingsVM = new SettingsViewModel(this);
-        WalkthroughVM = new WalkthroughViewModel(this);
-        FaqVM = new FaqViewModel(this);
+        HomeVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<HomeViewModel>(provider, this);
+        DashboardVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<DashboardViewModel>(provider, this);
+        MyFilesVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<MyFilesViewModel>(provider, this);
+        VanillaStructuresVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<VanillaStructuresViewModel>(provider, this);
+        DevToolsVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<DevToolsViewModel>(provider, this);
+        WelcomeVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<WelcomeViewModel>(provider, this);
+        LoadingVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<LoadingViewModel>(provider, this);
+        SettingsVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<SettingsViewModel>(provider, this);
+        WalkthroughVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<WalkthroughViewModel>(provider, this);
+        FaqVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<FaqViewModel>(provider, this);
         
         _currentPage = HomeVM;
 
-        // Comprobar estado inicial
-        CheckInitialAssets();
-        ColorMapping_Service.BlockColors = ColorGenerator_Service.LoadColorsSync(AppSettings_Service.LocalFilesPath);
+        var appSettings = provider.GetRequiredService<IAppSettingsService>();
 
-        DashboardVM.PropertyChanged += (s, e) =>
+        // Comprobar estado inicial
+        CheckInitialAssets(appSettings);
+        var colorGenerator = provider.GetRequiredService<IColorGeneratorService>();
+        var colorMapping = provider.GetRequiredService<IColorMappingService>();
+        colorMapping.BlockColors = colorGenerator.LoadColorsSync(appSettings.LocalFilesPath);
+
+        DashboardVM.ExportVM.PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == nameof(DashboardViewModel.Is3MfSelected))
+            if (e.PropertyName == nameof(ExportViewModel.Is3MfSelected))
             {
                 UpdateWindowWidth();
             }
         };
     }
 
-    private void CheckInitialAssets()
+    private void CheckInitialAssets(IAppSettingsService appSettings)
     {
         // TODO: Implementa aquí tu lógica para verificar si los assets ya existen.
-        bool assetsCargados = System.IO.Directory.Exists(Path.Combine(MCto3D.Services.AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets", "assets"));
+        bool assetsCargados = System.IO.Directory.Exists(Path.Combine(appSettings.LocalFilesPath, "MinecraftExtractedAssets", "assets"));
 
         if (assetsCargados)
         {
@@ -125,7 +130,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void UpdateWindowWidth()
     {
-        if (IsDashboardActive && DashboardVM.Is3MfSelected)
+        if (IsDashboardActive && DashboardVM.ExportVM.Is3MfSelected)
         {
             WindowWidth = 1650;
         }

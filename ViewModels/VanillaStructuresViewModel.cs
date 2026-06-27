@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using MCto3D.Services;
 
 namespace MCto3D.ViewModels;
 
@@ -30,16 +31,19 @@ public partial class VanillaStructuresViewModel : ViewModelBase
     [ObservableProperty]
     private string _currentFolderName = "Structures";
 
-    public VanillaStructuresViewModel(MainWindowViewModel navigationController)
+    private readonly IAppSettingsService _appSettings;
+
+    public VanillaStructuresViewModel(MainWindowViewModel navigationController, IAppSettingsService appSettings)
     {
         _navigationController = navigationController;
+        _appSettings = appSettings;
         LoadData();
     }
 
     public void LoadData()
     {
         _allProjects.Clear();
-        string baseDir = Path.Combine(MCto3D.Services.AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets", "data", "minecraft", "structure");
+        string baseDir = Path.Combine(_appSettings.LocalFilesPath, "MinecraftExtractedAssets", "data", "minecraft", "structure");
         
         string targetDir = string.IsNullOrEmpty(_currentVanillaPath) ? baseDir : _currentVanillaPath;
         CanGoUp = targetDir != baseDir;
@@ -119,7 +123,7 @@ public partial class VanillaStructuresViewModel : ViewModelBase
     [RelayCommand]
     private void GoUpFolder()
     {
-        string baseDir = Path.Combine(MCto3D.Services.AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets", "data", "minecraft", "structure");
+        string baseDir = Path.Combine(_appSettings.LocalFilesPath, "MinecraftExtractedAssets", "data", "minecraft", "structure");
         
         if (!string.IsNullOrEmpty(_currentVanillaPath) && _currentVanillaPath != baseDir)
         {

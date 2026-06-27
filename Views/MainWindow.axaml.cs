@@ -8,7 +8,6 @@ namespace MCto3D
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
         }
     }
 }

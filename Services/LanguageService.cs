@@ -2,7 +2,7 @@ using Avalonia;
 
 namespace MCto3D.Services
 {
-    public static class Language_Service
+    public static class LanguageService
     {
         public static string GetString(string key, string fallback = "")
         {
@@ -14,3 +14,4 @@ namespace MCto3D.Services
         }
     }
 }
+

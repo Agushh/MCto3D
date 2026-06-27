@@ -9,8 +9,15 @@ using MCto3D.Models;
 
 namespace MCto3D.Services
 {
-    public class ThreeMfWriter_Service : IModelWriter
+    public class ThreeMfWriterService : IModelWriter
     {
+        private readonly bool _use3MfAssemblyMode;
+
+        public ThreeMfWriterService(bool use3MfAssemblyMode)
+        {
+            _use3MfAssemblyMode = use3MfAssemblyMode;
+        }
+
         public void Write(string filePath, Dictionary<Color, List<Triangle>> coloredMeshes)
         {
             if (File.Exists(filePath)) File.Delete(filePath);
@@ -124,7 +131,7 @@ namespace MCto3D.Services
                     }
 
                     int masterObjectId = currentObjectId;
-                    if (meshObjectIds.Count > 1 && AppSettings_Service.Use3MfAssemblyMode)
+                    if (meshObjectIds.Count > 1 && _use3MfAssemblyMode)
                     {
                         xml.AppendLine($@"    <object id=""{masterObjectId}"" type=""model"" name=""MCto3D_Model"">");
                         xml.AppendLine(@"      <components>");
@@ -143,7 +150,7 @@ namespace MCto3D.Services
                     xml.AppendLine(@"  </resources>");
                     
                     xml.AppendLine(@"  <build>");
-                    if (meshObjectIds.Count > 1 && AppSettings_Service.Use3MfAssemblyMode)
+                    if (meshObjectIds.Count > 1 && _use3MfAssemblyMode)
                     {
                         xml.AppendLine($@"    <item objectid=""{masterObjectId}"" />");
                     }
@@ -224,3 +231,4 @@ namespace MCto3D.Services
         }
     }
 }
+

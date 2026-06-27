@@ -5,12 +5,23 @@ using System;
 
 namespace MCto3D.Services;
 
-public static class ColorMapping_Service
+public class ColorMappingService : IColorMappingService
 {
-    public static Dictionary<string, byte[]> BlockColors { get; set; } = new();
-    private static Dictionary<string, Color> _computedColorsCache = new();
+    public Dictionary<string, byte[]> BlockColors { get; set; } = new();
+    private Dictionary<string, Color> _computedColorsCache = new();
+    
+    private readonly INativeModelResolverService _nativeModelResolverService;
 
-    public static Color GetColorForBlock(string blockName, Dictionary<string, string> properties = null)
+    public ColorMappingService(INativeModelResolverService nativeModelResolverService)
+    {
+        _nativeModelResolverService = nativeModelResolverService;
+    }
+
+    public void Initialize(string localFilesPath)
+    {
+    }
+
+    public Color GetColorForBlock(string blockName, Dictionary<string, string> properties = null)
     {
         string cleanName = blockName.Split('[')[0].Replace("minecraft:", "");
         string propString = properties != null && properties.Count > 0 
@@ -40,7 +51,7 @@ public static class ColorMapping_Service
         }
 
         // Intentar resolver colores por texturas JSON
-        List<string> textures = NativeModelResolver_Service.GetTexturesForBlock(blockName, properties);
+        List<string> textures = _nativeModelResolverService.GetTexturesForBlock(blockName, properties);
         if (textures.Count > 0)
         {
             long totalR = 0, totalG = 0, totalB = 0;
@@ -99,3 +110,4 @@ public static class ColorMapping_Service
         return Color.Gray; // Default fallback
     }
 }
+

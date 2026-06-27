@@ -7,21 +7,28 @@ using System.Text.Json.Nodes;
 
 namespace MCto3D.Services
 {
-    public class NativeModelResolver_Service
+    public class NativeModelResolverService : INativeModelResolverService
     {
-        private static string BasePath => Path.Combine(AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets", "assets", "minecraft");
-        private static string BlockstatesPath => Path.Combine(BasePath, "blockstates");
-        private static string ModelsPath => Path.Combine(BasePath, "models");
+        private readonly IAppSettingsService _appSettings;
+
+        public NativeModelResolverService(IAppSettingsService appSettings)
+        {
+            _appSettings = appSettings;
+        }
+
+        private string BasePath => Path.Combine(_appSettings.LocalFilesPath, "MinecraftExtractedAssets", "assets", "minecraft");
+        private string BlockstatesPath => Path.Combine(BasePath, "blockstates");
+        private string ModelsPath => Path.Combine(BasePath, "models");
 
         // Caché: BlockStateKey -> Cuboides
-        private static Dictionary<string, List<(Vector3 from, Vector3 to)>> _cache = new();
+        private Dictionary<string, List<(Vector3 from, Vector3 to)>> _cache = new();
 
-        public static void ClearCache()
+        public void ClearCache()
         {
             _cache.Clear();
         }
 
-        public static List<(Vector3 from, Vector3 to)> ResolveGeometry(string blockName, Dictionary<string, string> properties)
+        public List<(Vector3 from, Vector3 to)> ResolveGeometry(string blockName, Dictionary<string, string> properties)
         {
             string cleanName = blockName.Split('[')[0].Replace("minecraft:", "");
             
@@ -85,7 +92,7 @@ namespace MCto3D.Services
             return _cache[cacheKey];
         }
 
-        private static List<(Vector3 from, Vector3 to)> ResolveVariants(JsonObject variants, Dictionary<string, string> properties)
+        private List<(Vector3 from, Vector3 to)> ResolveVariants(JsonObject variants, Dictionary<string, string> properties)
         {
             // Intentamos buscar una variante que coincida con todas las propiedades
             foreach (var variant in variants)
@@ -146,7 +153,7 @@ namespace MCto3D.Services
             return new List<(Vector3, Vector3)>();
         }
 
-        private static List<(Vector3 from, Vector3 to)> ResolveMultipart(JsonArray multipart, Dictionary<string, string> properties)
+        private List<(Vector3 from, Vector3 to)> ResolveMultipart(JsonArray multipart, Dictionary<string, string> properties)
         {
             List<(Vector3 from, Vector3 to)> finalCuboids = new();
 
@@ -187,7 +194,7 @@ namespace MCto3D.Services
             return finalCuboids;
         }
 
-        private static bool EvaluateWhenCondition(JsonObject whenObj, Dictionary<string, string> properties)
+        private bool EvaluateWhenCondition(JsonObject whenObj, Dictionary<string, string> properties)
         {
             if (whenObj.ContainsKey("OR") && whenObj["OR"] is JsonArray orArray)
             {
@@ -202,7 +209,7 @@ namespace MCto3D.Services
             return EvaluateSingleCondition(whenObj, properties);
         }
 
-        private static bool EvaluateSingleCondition(JsonObject condObj, Dictionary<string, string> properties)
+        private bool EvaluateSingleCondition(JsonObject condObj, Dictionary<string, string> properties)
         {
             if (properties == null) return false;
 
@@ -230,7 +237,7 @@ namespace MCto3D.Services
             return true;
         }
 
-        private static List<(Vector3 from, Vector3 to)> ResolveModelAndElements(string modelName, int rotX, int rotY, int depth = 0)
+        private List<(Vector3 from, Vector3 to)> ResolveModelAndElements(string modelName, int rotX, int rotY, int depth = 0)
         {
             if (depth > 10) return new List<(Vector3, Vector3)>(); // Prevenir loop infinito
             if (string.IsNullOrEmpty(modelName)) return new List<(Vector3, Vector3)>();
@@ -295,7 +302,7 @@ namespace MCto3D.Services
             return new List<(Vector3, Vector3)>();
         }
 
-        private static Vector3 RotateNativePoint(Vector3 point, int rotX, int rotY)
+        private Vector3 RotateNativePoint(Vector3 point, int rotX, int rotY)
         {
             Vector3 center = new Vector3(8f, 8f, 8f);
             Vector3 centered = point - center;
@@ -309,7 +316,7 @@ namespace MCto3D.Services
             Vector3 rotated = Vector3.Transform(centered, rot);
             return rotated + center;
         }
-        public static List<string> GetTexturesForBlock(string blockName, Dictionary<string, string> properties)
+        public List<string> GetTexturesForBlock(string blockName, Dictionary<string, string> properties)
         {
             string cleanName = blockName.Split('[')[0].Replace("minecraft:", "");
             string bsFile = Path.Combine(BlockstatesPath, cleanName + ".json");
@@ -395,7 +402,7 @@ namespace MCto3D.Services
             return textures.Distinct().ToList();
         }
 
-        private static List<string> GetTexturesFromModel(string modelName, int depth)
+        private List<string> GetTexturesFromModel(string modelName, int depth)
         {
             if (depth > 10 || string.IsNullOrEmpty(modelName)) return new List<string>();
             string cleanName = modelName.Replace("minecraft:", "");
@@ -435,3 +442,4 @@ namespace MCto3D.Services
         }
     }
 }
+

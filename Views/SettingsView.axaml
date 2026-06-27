@@ -223,7 +223,7 @@
 						<DataTemplate>
 							<Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
 								<TextBox Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-								<Button Grid.Column="1" Command="{ReflectionBinding #RootControl.DataContext.DeletePaletteCommand}" CommandParameter="{Binding}" Classes="Danger" Padding="8">
+								<Button Grid.Column="1" Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).DeletePaletteCommand}" CommandParameter="{Binding}" Classes="Danger" Padding="8">
 									<TextBlock Text="🗑️" FontSize="14"/>
 								</Button>
 							</Grid>

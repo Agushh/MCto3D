@@ -34,24 +34,61 @@ public class SlicerOption
     public string Name { get; set; } = "";
     public string ColorHex { get; set; } = "";
     public string UriScheme { get; set; } = "";
-    public string ButtonText => $"{MCto3D.Services.Language_Service.GetString("ConverterOpenIn")} {Name}";
+    public string ButtonText => $"{MCto3D.Services.LanguageService.GetString("ConverterOpenIn")} {Name}";
 }
 
 public partial class DashboardViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _navigationController;
 
-    public DashboardViewModel(MainWindowViewModel navigationController)
+    private readonly IAppSettingsService _appSettings;
+    private readonly IProjectStorageService _projectStorage;
+    private readonly IFileReaderService _fileReaderService;
+    private readonly IMeshService _meshService;
+    private readonly ITopologyService _topologyService;
+    private readonly IColorClusteringService _colorClusteringService;
+
+    public PaletteManagerViewModel PaletteVM { get; }
+    public ExportViewModel ExportVM { get; }
+    public ProjectSaveViewModel ProjectSaveVM { get; }
+
+    public DashboardViewModel(MainWindowViewModel navigationController, IAppSettingsService appSettings, IProjectStorageService projectStorage, IFileReaderService fileReaderService, IMeshService meshService, ITopologyService topologyService, IColorClusteringService colorClusteringService)
     {
         _navigationController = navigationController;
-        _selectedSlicer = SlicerOptions[0];
+        _appSettings = appSettings;
+        _projectStorage = projectStorage;
+        _fileReaderService = fileReaderService;
+        _meshService = meshService;
+        _topologyService = topologyService;
+        _colorClusteringService = colorClusteringService;
         
-        LoadPalettes();
+        PaletteVM = new PaletteManagerViewModel(appSettings, colorClusteringService);
+        ExportVM = new ExportViewModel(appSettings);
+        ProjectSaveVM = new ProjectSaveViewModel(navigationController, appSettings, projectStorage);
+
+        PaletteVM.PaletteChanged += (s, e) => { if (IsFileLoaded) UpdateLiveMesh(); };
+        ExportVM.ExportFormatChanged += (s, e) => { if (IsFileLoaded) UpdateLiveMesh(); };
+        ExportVM.StatusTextChanged += (s, msg) => StatusText = msg;
+        ProjectSaveVM.StatusTextChanged += (s, msg) => StatusText = msg;
+
+        ExportVM.GetColoredMeshesFunc = () => ColoredMeshes;
+        ExportVM.GetOriginalFileNameFunc = () => OriginalFileName;
+        ExportVM.GetSelectedFilePathFunc = () => _selectedFilePath;
+
+        ProjectSaveVM.GetOriginalFileNameFunc = () => OriginalFileName;
+        ProjectSaveVM.GetSelectedFilePathFunc = () => _selectedFilePath;
+        ProjectSaveVM.GetBlockScaleFunc = () => Bs;
+        ProjectSaveVM.GetSelectedGeometryModeIndexFunc = () => SelectedGeometryModeIndex;
+        ProjectSaveVM.GetExportFormatFunc = () => ExportVM.ExportFormat;
+        ProjectSaveVM.GetIsSingleColorModeFunc = () => PaletteVM.IsSingleColorMode;
+        
+        try { _floorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { _floorColor = Avalonia.Media.Colors.DarkGray; }
+        try { _modelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { _modelColor = Avalonia.Media.Colors.White; }
     }
     
     private string? _selectedFilePath;
     
-    [ObservableProperty] private string _statusText = MCto3D.Services.Language_Service.GetString("StatusWaitingFile");
+    [ObservableProperty] private string _statusText = MCto3D.Services.LanguageService.GetString("StatusWaitingFile");
 
     [ObservableProperty] private bool _fillHoles = false;
     [ObservableProperty] private bool _useCustomFillColor = false;
@@ -114,9 +151,16 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
+    private System.Threading.CancellationTokenSource? _meshUpdateCts;
+
     private async void UpdateLiveMesh()
     {
         if (string.IsNullOrEmpty(_selectedFilePath)) return;
+
+        _meshUpdateCts?.Cancel();
+        _meshUpdateCts = new System.Threading.CancellationTokenSource();
+        var token = _meshUpdateCts.Token;
+
         try
         {
             IsLoadingMesh = true;
@@ -128,36 +172,40 @@ public partial class DashboardViewModel : ViewModelBase
                 if (_selectedFilePath.EndsWith(".litematic", System.StringComparison.OrdinalIgnoreCase) || 
                     _selectedFilePath.EndsWith(".schematic", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    strData = FileReader_Service.readLitematic(_selectedFilePath);
+                    strData = _fileReaderService.readLitematic(_selectedFilePath);
                 }
                 else
                 {
-                    strData = FileReader_Service.readNBT(_selectedFilePath);
+                    strData = _fileReaderService.readNBT(_selectedFilePath);
                 }
+                
+                token.ThrowIfCancellationRequested();
                 
                 if (FillHoles)
                 {
-                    MCto3D.Services.Topology_Service.ProcessEnclosedSpaces(strData.voxelGrid);
+                    _topologyService.ProcessEnclosedSpaces(strData.voxelGrid);
                 }
                 
-                if (SelectedAlgorithm != ColorAlgorithm.SingleColor && ExportFormat == "3MF")
+                token.ThrowIfCancellationRequested();
+                
+                if (PaletteVM.SelectedAlgorithm != ColorAlgorithm.SingleColor && ExportVM.ExportFormat == "3MF")
                 {
                     List<System.Drawing.Color>? userColors = null;
                     int? k = null;
                     bool useKMedoids = false;
 
-                    if (SelectedAlgorithm == ColorAlgorithm.KMeansAverage) k = KMeansCount;
-                    else if (SelectedAlgorithm == ColorAlgorithm.KMeansReal) { k = KMeansCount; useKMedoids = true; }
-                    else if (SelectedAlgorithm == ColorAlgorithm.PredefinedPalette)
+                    if (PaletteVM.SelectedAlgorithm == ColorAlgorithm.KMeansAverage) k = PaletteVM.KMeansCount;
+                    else if (PaletteVM.SelectedAlgorithm == ColorAlgorithm.KMeansReal) { k = PaletteVM.KMeansCount; useKMedoids = true; }
+                    else if (PaletteVM.SelectedAlgorithm == ColorAlgorithm.PredefinedPalette)
                     {
-                        userColors = MCto3D.Services.ColorClustering_Service.GetPredefinedPalette(PredefinedPaletteSize);
+                        userColors = _colorClusteringService.GetPredefinedPalette(PaletteVM.PredefinedPaletteSize);
                     }
-                    else if (SelectedAlgorithm == ColorAlgorithm.CustomPalette)
+                    else if (PaletteVM.SelectedAlgorithm == ColorAlgorithm.CustomPalette)
                     {
                         userColors = new List<System.Drawing.Color>();
-                        if (UserDefinedColors != null)
+                        if (PaletteVM.UserDefinedColors != null)
                         {
-                            foreach(var ac in UserDefinedColors) 
+                            foreach(var ac in PaletteVM.UserDefinedColors) 
                                 userColors.Add(System.Drawing.Color.FromArgb(255, ac.Color.R, ac.Color.G, ac.Color.B));
                         }
                         if (userColors.Count == 0) userColors.Add(System.Drawing.Color.White);
@@ -165,16 +213,16 @@ public partial class DashboardViewModel : ViewModelBase
                     
                     bool isFullGeom = SelectedGeometryModeIndex == 1;
                     
-                    var multiData = FileReader_Service.CreateMultiColorData(strData, k, userColors, useKMedoids, SelectedAlgorithm == ColorAlgorithm.RawColors, FillHoles, UseCustomFillColor, System.Drawing.Color.FromArgb(CustomFillColor.A, CustomFillColor.R, CustomFillColor.G, CustomFillColor.B));
+                    var multiData = _fileReaderService.CreateMultiColorData(strData, k, userColors, useKMedoids, PaletteVM.SelectedAlgorithm == ColorAlgorithm.RawColors, FillHoles, UseCustomFillColor, System.Drawing.Color.FromArgb(CustomFillColor.A, CustomFillColor.R, CustomFillColor.G, CustomFillColor.B));
                     Avalonia.Threading.Dispatcher.UIThread.Post(() => RawColorCount = multiData.voxelGrid.Count);
                     
-                    return Mesh_Service.GenerateMultiColorMeshes(multiData, strData, Bs, isFullGeom);
+                    return _meshService.GenerateMultiColorMeshes(multiData, strData, Bs, isFullGeom);
                 }
                 else
                 {
                     var tris = SelectedGeometryModeIndex == 1 
-                             ? Mesh_Service.GenerateFullGeometryMesh(strData, Bs)
-                             : Mesh_Service.GenerateMesh(strData, Bs);
+                             ? _meshService.GenerateFullGeometryMesh(strData, Bs)
+                             : _meshService.GenerateMesh(strData, Bs);
                              
                     var dict = new Dictionary<System.Drawing.Color, List<Triangle>>();
                     dict[System.Drawing.Color.Gray] = tris;
@@ -194,6 +242,10 @@ public partial class DashboardViewModel : ViewModelBase
             ColoredMeshes = result;
             MeshTriangles = allTris;
         }
+        catch (OperationCanceledException)
+        {
+            Debug.WriteLine("DashboardViewModel: Mesh generation canceled.");
+        }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error updating mesh: {ex.Message}");
@@ -204,213 +256,13 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Is3MfSelected))]
-    private string _exportFormat = "STL";
-
-    partial void OnExportFormatChanged(string value)
-    {
-        if (IsFileLoaded) UpdateLiveMesh();
-    }
-
-
-    [ObservableProperty] private ColorAlgorithm _selectedAlgorithm = ColorAlgorithm.SingleColor;
-    
-    public bool IsSingleColorMode => SelectedAlgorithm == ColorAlgorithm.SingleColor;
-    public bool IsMultiColorMode => SelectedAlgorithm != ColorAlgorithm.SingleColor;
-
-    partial void OnSelectedAlgorithmChanged(ColorAlgorithm value) 
-    { 
-        OnPropertyChanged(nameof(IsSingleColorMode));
-        OnPropertyChanged(nameof(IsMultiColorMode));
-        if (IsFileLoaded) UpdateLiveMesh(); 
-    }
+    [ObservableProperty] private int _rawColorCount = 0;
 
     [ObservableProperty] private Dictionary<System.Drawing.Color, List<Triangle>> _coloredMeshes = new();
-    
-    [ObservableProperty] private int _kMeansCount = 4;
-    [ObservableProperty] private int _predefinedPaletteSize = 16;
-    
-    partial void OnPredefinedPaletteSizeChanged(int value) { if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.PredefinedPalette) UpdateLiveMesh(); }
-    [ObservableProperty] private ObservableCollection<CustomColorItem> _userDefinedColors = new();
-    
-    [ObservableProperty] private ObservableCollection<CustomPaletteModel> _availablePalettes = new();
-    
-    [ObservableProperty] private CustomPaletteModel _selectedPalette;
 
-    [ObservableProperty] private string _newPaletteName = string.Empty;
-    
-    [ObservableProperty] private string _selectedPaletteNameInput = string.Empty;
-    partial void OnSelectedPaletteNameInputChanged(string value)
-    {
-        HasUnsavedPaletteChanges = true;
-    }
-
-    [ObservableProperty] private bool _hasUnsavedPaletteChanges = false;
-
-    partial void OnSelectedPaletteChanged(CustomPaletteModel value)
-    {
-        if (value == null) return;
-        
-        NewPaletteName = string.Empty;
-        SelectedPaletteNameInput = value.Name;
-        HasUnsavedPaletteChanges = false;
-
-        // Load the colors into UserDefinedColors
-        UserDefinedColors.Clear();
-        if (value.Name == "Personalizada..." || value.ColorsHex == null || value.ColorsHex.Count == 0)
-        {
-            // Default blank palette
-            var item = new CustomColorItem { Color = Avalonia.Media.Color.Parse("#FFFFFF") };
-            item.OnColorChangedCallback = () => { HasUnsavedPaletteChanges = true; if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.CustomPalette) UpdateLiveMesh(); };
-            UserDefinedColors.Add(item);
-        }
-        else
-        {
-            foreach (var hex in value.ColorsHex)
-            {
-                try
-                {
-                    var item = new CustomColorItem { Color = Avalonia.Media.Color.Parse(hex) };
-                    item.OnColorChangedCallback = () => { HasUnsavedPaletteChanges = true; if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.CustomPalette) UpdateLiveMesh(); };
-                    UserDefinedColors.Add(item);
-                }
-                catch { }
-            }
-        }
-        if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.CustomPalette) UpdateLiveMesh();
-        
-        OnPropertyChanged(nameof(IsSavedPaletteSelected));
-        OnPropertyChanged(nameof(IsCustomPaletteSelected));
-    }
-
-    public bool IsSavedPaletteSelected => SelectedPalette != null && SelectedPalette.Name != "Personalizada...";
-    public bool IsCustomPaletteSelected => SelectedPalette != null && SelectedPalette.Name == "Personalizada...";
-
-    [RelayCommand]
-    private void SaveCustomPalette(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            int count = AppSettings_Service.SavedPalettes.Count + 1;
-            name = $"Personalizada-{count}";
-        }
-        
-        var newPalette = new CustomPaletteModel { Name = name };
-        foreach (var c in UserDefinedColors)
-        {
-            newPalette.ColorsHex.Add(c.Color.ToString());
-        }
-        
-        AppSettings_Service.SavedPalettes.Add(newPalette);
-        AppSettings_Service.SavePalettes();
-        
-        LoadPalettes();
-        SelectedPalette = AvailablePalettes.FirstOrDefault(p => p.Name == name);
-    }
-
-    [RelayCommand]
-    private void UpdateSavedPalette()
-    {
-        if (SelectedPalette == null || SelectedPalette.Name == "Personalizada...") return;
-        
-        var existing = AppSettings_Service.SavedPalettes.FirstOrDefault(p => p.Name == SelectedPalette.Name);
-        if (existing != null)
-        {
-            existing.Name = string.IsNullOrWhiteSpace(SelectedPaletteNameInput) ? existing.Name : SelectedPaletteNameInput;
-            SelectedPalette.Name = existing.Name;
-
-            existing.ColorsHex.Clear();
-            foreach (var c in UserDefinedColors)
-            {
-                existing.ColorsHex.Add(c.Color.ToString());
-            }
-            AppSettings_Service.SavePalettes();
-            HasUnsavedPaletteChanges = false;
-        }
-        LoadPalettes();
-        SelectedPalette = AvailablePalettes.FirstOrDefault(p => p.Name == existing?.Name);
-    }
-
-    [RelayCommand]
-    private void DeleteSavedPalette()
-    {
-        if (SelectedPalette == null || SelectedPalette.Name == "Personalizada...") return;
-        
-        var existing = AppSettings_Service.SavedPalettes.FirstOrDefault(p => p.Name == SelectedPalette.Name);
-        if (existing != null)
-        {
-            AppSettings_Service.SavedPalettes.Remove(existing);
-            AppSettings_Service.SavePalettes();
-        }
-        LoadPalettes();
-    }
-
-    public void LoadPalettes()
-    {
-        AvailablePalettes.Clear();
-        foreach (var p in AppSettings_Service.SavedPalettes)
-        {
-            AvailablePalettes.Add(p);
-        }
-        AvailablePalettes.Add(new CustomPaletteModel { Name = MCto3D.Services.Language_Service.GetString("ConverterPaletteCustom") });
-        if (SelectedPalette == null || !AvailablePalettes.Contains(SelectedPalette))
-        {
-            SelectedPalette = AvailablePalettes[^1]; // default to Custom
-        }
-    }
-
-    [RelayCommand]
-    private void AddUserColor()
-    {
-        var item = new CustomColorItem { Color = Avalonia.Media.Color.Parse("#FFFFFF") };
-        item.OnColorChangedCallback = () => { HasUnsavedPaletteChanges = true; if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.CustomPalette) UpdateLiveMesh(); };
-        UserDefinedColors.Add(item);
-        HasUnsavedPaletteChanges = true;
-        if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.CustomPalette) UpdateLiveMesh();
-    }
-
-    [RelayCommand]
-    private void RemoveUserColor(CustomColorItem item)
-    {
-        if (UserDefinedColors.Count <= 1) return;
-        if (UserDefinedColors.Contains(item))
-        {
-            UserDefinedColors.Remove(item);
-            HasUnsavedPaletteChanges = true;
-            if (IsFileLoaded && SelectedAlgorithm == ColorAlgorithm.CustomPalette) UpdateLiveMesh();
-        }
-    }
-
-    partial void OnKMeansCountChanged(int value) { if (IsFileLoaded && (SelectedAlgorithm == ColorAlgorithm.KMeansAverage || SelectedAlgorithm == ColorAlgorithm.KMeansReal)) UpdateLiveMesh(); }
-
-    [ObservableProperty] private bool _showFloor = MCto3D.Services.AppSettings_Service.ShowFloor;
-    [ObservableProperty] private Avalonia.Media.Color _floorColor = Avalonia.Media.Color.Parse(MCto3D.Services.AppSettings_Service.FloorColorHex);
-    [ObservableProperty] private Avalonia.Media.Color _modelColor = Avalonia.Media.Color.Parse(MCto3D.Services.AppSettings_Service.ModelColorHex);
-
-    // Thumbnails
-    [ObservableProperty] private int _selectedThumbnailIndex = 0;
-    [ObservableProperty] private ObservableCollection<WriteableBitmap>? _thumbnails;
-    public Func<Task<List<WriteableBitmap>>>? CaptureThumbnailsFunc { get; set; }
-
-    public bool Is3MfSelected => ExportFormat == "3MF";
-
-    public List<SlicerOption> SlicerOptions { get; } = new()
-    {
-        new SlicerOption { Name = "OrcaSlicer", ColorHex = "#027D52", UriScheme = "orcaslicer://" },
-        new SlicerOption { Name = "BambuStudio", ColorHex = "#00AE42", UriScheme = "bambustudio://" },
-        new SlicerOption { Name = "PrusaSlicer", ColorHex = "#EA6B24", UriScheme = "prusaslicer://" },
-        new SlicerOption { Name = "Cura", ColorHex = "#0055FF", UriScheme = "cura://" }
-    };
-
-    [ObservableProperty] private int _rawColorCount = 0;
-    
-    [ObservableProperty] private SlicerOption _selectedSlicer;
-
-    [ObservableProperty] private bool _isSavePopupOpen = false;
-    [ObservableProperty] private string _newProjectName = string.Empty;
-
-
+    [ObservableProperty] private bool _showFloor;
+    [ObservableProperty] private Avalonia.Media.Color _floorColor;
+    [ObservableProperty] private Avalonia.Media.Color _modelColor;
 
     [RelayCommand]
     private void GoBack()
@@ -418,83 +270,7 @@ public partial class DashboardViewModel : ViewModelBase
         _navigationController.NavigateToHomeCommand.Execute(null);
     }
 
-    [RelayCommand]
-    private async Task OpenSavePopup()
-    {
-        NewProjectName = OriginalFileName;
-        SelectedThumbnailIndex = 0; // Por defecto la 1
-        
-        if (CaptureThumbnailsFunc != null)
-        {
-            var images = await CaptureThumbnailsFunc();
-            Thumbnails = new ObservableCollection<WriteableBitmap>(images);
-        }
 
-        IsSavePopupOpen = true;
-    }
-
-    [RelayCommand]
-    private void CloseSavePopup()
-    {
-        IsSavePopupOpen = false;
-        NewProjectName = string.Empty;
-    }
-
-    [RelayCommand]
-    private void SelectThumbnail(string indexStr)
-    {
-        if (int.TryParse(indexStr, out int index))
-        {
-            SelectedThumbnailIndex = index;
-        }
-    }
-
-    [RelayCommand]
-    private void ConfirmSaveToApp()
-    {
-        if (string.IsNullOrWhiteSpace(NewProjectName) || string.IsNullOrWhiteSpace(_selectedFilePath)) return;
-
-        string thumbnailPath = string.Empty;
-
-        // Guardar miniatura si existe
-        if (Thumbnails != null && Thumbnails.Count > SelectedThumbnailIndex)
-        {
-            try
-            {
-                var bmp = Thumbnails[SelectedThumbnailIndex];
-                var appDataFolder = Path.Combine(MCto3D.Services.AppSettings_Service.LocalFilesPath, "Thumbnails");
-                if (!Directory.Exists(appDataFolder)) Directory.CreateDirectory(appDataFolder);
-                
-                string fileName = $"{Guid.NewGuid()}.png";
-                thumbnailPath = Path.Combine(appDataFolder, fileName);
-                
-                bmp.Save(thumbnailPath);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error guardando miniatura: {ex.Message}");
-            }
-        }
-
-        var newProject = new SavedProject
-        {
-            Name = NewProjectName,
-            OriginalFilePath = _selectedFilePath,
-            ThumbnailPath = thumbnailPath,
-            BlockScale = Bs,
-            GeometryMode = SelectedGeometryModeIndex == 1 ? "Geometrías completas" : "Bloques sólidos",
-            ExportFormat = ExportFormat,
-            IsSingleColorMode = IsSingleColorMode
-        };
-
-        ProjectStorageService.AddProject(newProject);
-        
-        IsSavePopupOpen = false;
-        StatusText = "¡Guardado en Mis Archivos exitosamente!";
-        
-        // Update MyFilesVM so the new project is listed immediately
-        _navigationController.MyFilesVM?.LoadData();
-    }
 
     [RelayCommand]
     private async Task LoadFile(Control visualTarget)
@@ -529,14 +305,14 @@ public partial class DashboardViewModel : ViewModelBase
                 {
                     IsFileLoaded = true;
                     OriginalFileName = Path.GetFileNameWithoutExtension(_selectedFilePath);
-                    StatusText = $"{MCto3D.Services.Language_Service.GetString("StatusFileLoaded")} {Path.GetFileName(_selectedFilePath)}";
+                    StatusText = $"{MCto3D.Services.LanguageService.GetString("StatusFileLoaded")} {Path.GetFileName(_selectedFilePath)}";
                     UpdateLiveMesh();
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusText = $"{MCto3D.Services.Language_Service.GetString("StatusErrorOpenFile")} {ex.Message}";
+            StatusText = $"{MCto3D.Services.LanguageService.GetString("StatusErrorOpenFile")} {ex.Message}";
             IsFileLoaded = false;
         }
     }
@@ -548,71 +324,10 @@ public partial class DashboardViewModel : ViewModelBase
         OriginalFileName = "";
         IsFileLoaded = false;
         MeshTriangles = new List<Triangle>();
-        StatusText = MCto3D.Services.Language_Service.GetString("StatusWaitingFile");
+        StatusText = MCto3D.Services.LanguageService.GetString("StatusWaitingFile");
     }
 
-    [RelayCommand]
-    private void ChangeSlicer(SlicerOption newSlicer)
-    {
-        if (newSlicer != null)
-        {
-            SelectedSlicer = newSlicer;
-        }
-    }
 
-    [RelayCommand]
-    private async Task ExportFile(Control visualTarget)
-    {
-        if (visualTarget == null || string.IsNullOrEmpty(_selectedFilePath)) return;
-
-        var topLevel = TopLevel.GetTopLevel(visualTarget);
-        if (topLevel == null) return;
-
-        try
-        {
-            StatusText = MCto3D.Services.Language_Service.GetString("StatusProcessingGeom");
-
-            string extensionPorDefecto = ExportFormat.ToLower();
-            string nombreFiltro = ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
-            string patronExtension = $"*.{extensionPorDefecto}";
-            
-            string suggestedName = string.IsNullOrWhiteSpace(OriginalFileName) ? "modelo_minecraft" : OriginalFileName;
-
-            var saveOptions = new FilePickerSaveOptions
-            {
-                Title = $"Exportar modelo como {ExportFormat}",
-                DefaultExtension = extensionPorDefecto,
-                SuggestedFileName = suggestedName,
-                FileTypeChoices = new[]
-                {
-                    new FilePickerFileType(nombreFiltro)
-                    {
-                        Patterns = new[] { patronExtension }
-                    }
-                }
-            };
-
-            var fileLocation = await topLevel.StorageProvider.SaveFilePickerAsync(saveOptions);
-
-            if (fileLocation != null)
-            {
-                string rutaDestino = fileLocation.Path.LocalPath;
-                IModelWriter writer = ExportFormat == "STL" ? new StlWriter_Service() : new ThreeMfWriter_Service();
-                writer.Write(rutaDestino, ColoredMeshes);
-
-                StatusText = MCto3D.Services.Language_Service.GetString("StatusExportSuccess");
-            }
-            else
-            {
-                StatusText = MCto3D.Services.Language_Service.GetString("StatusExportCancel");
-            }
-        }
-        catch (Exception ex)
-        {
-            StatusText = MCto3D.Services.Language_Service.GetString("StatusExportError");
-            System.Diagnostics.Debug.WriteLine(ex.Message);
-        }
-    }
 
     public void LoadDirectFile(string filePath)
     {
@@ -621,91 +336,10 @@ public partial class DashboardViewModel : ViewModelBase
             _selectedFilePath = filePath;
             IsFileLoaded = true;
             OriginalFileName = Path.GetFileNameWithoutExtension(filePath);
-            StatusText = $"{MCto3D.Services.Language_Service.GetString("StatusFileLoaded")} {Path.GetFileName(filePath)}";
+            StatusText = $"{MCto3D.Services.LanguageService.GetString("StatusFileLoaded")} {Path.GetFileName(filePath)}";
             UpdateLiveMesh();
         }
     }
 
-    private string GetSlicerExecutableFromRegistry(string uriScheme)
-    {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
 
-#pragma warning disable CA1416
-        try
-        {
-            string scheme = uriScheme.Replace("://", "");
-            using var key = Registry.ClassesRoot.OpenSubKey($@"{scheme}\shell\open\command");
-            if (key != null)
-            {
-                string val = key.GetValue("")?.ToString();
-                if (!string.IsNullOrEmpty(val))
-                {
-                    int exeIndex = val.IndexOf(".exe", StringComparison.OrdinalIgnoreCase);
-                    if (exeIndex > 0)
-                    {
-                        return val.Substring(0, exeIndex + 4).Trim(' ', '"');
-                    }
-                }
-            }
-        }
-        catch { }
-#pragma warning restore CA1416
-        return null;
-    }
-
-    [RelayCommand]
-    private void OpenInSlicer()
-    {
-        if (string.IsNullOrEmpty(_selectedFilePath)) return;
-
-        try
-        {
-            StatusText = MCto3D.Services.Language_Service.GetString("StatusProcessingGeom");
-
-            string extension = ExportFormat.ToLower();
-            string suggestedName = string.IsNullOrWhiteSpace(OriginalFileName) ? "modelo" : OriginalFileName;
-            string tempFile = Path.Combine(Path.GetTempPath(), $"{suggestedName}_{Guid.NewGuid():N}.{extension}");
-
-            IModelWriter writer = ExportFormat == "STL" ? new StlWriter_Service() : new ThreeMfWriter_Service();
-            writer.Write(tempFile, ColoredMeshes);
-
-            string exePath = GetSlicerExecutableFromRegistry(SelectedSlicer.UriScheme);
-
-            if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = exePath,
-                    Arguments = $"\"{tempFile}\"",
-                    UseShellExecute = true
-                });
-            }
-            else
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = tempFile,
-                    UseShellExecute = true
-                });
-            }
-            StatusText = MCto3D.Services.Language_Service.GetString("StatusSentToSlicer");
-        }
-        catch (Exception ex)
-        {
-            StatusText = $"{MCto3D.Services.Language_Service.GetString("StatusErrorOpenFile")} {ex.Message}";
-            System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
-        }
-    }
-
-    public partial class CustomColorItem : ObservableObject
-    {
-        [ObservableProperty] private Avalonia.Media.Color _color;
-        
-        public Action? OnColorChangedCallback { get; set; }
-        
-        partial void OnColorChanged(Avalonia.Media.Color value)
-        {
-            OnColorChangedCallback?.Invoke();
-        }
-    }
 }

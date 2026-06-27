@@ -11,16 +11,16 @@
       "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:views\\vanillastructuresview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\assets\\lang\\es-es.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
-      "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:assets\\lang\\es-es.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\assets\\lang\\en-us.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
-      "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:assets\\lang\\en-us.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\views\\settingsview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
       "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:views\\settingsview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\en-US.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Lang\\en-US.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\es-ES.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Lang\\es-ES.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "ViewModels\\VanillaStructuresViewModel.cs",
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\VanillaStructuresViewModel.cs",
               "RelativeToolTip": "ViewModels\\VanillaStructuresViewModel.cs",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAmwC8AAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-27T03:01:52.859Z",
               "EditorCaption": ""
@@ -54,8 +54,7 @@
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\VanillaStructuresView.axaml",
               "RelativeToolTip": "Views\\VanillaStructuresView.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-06-27T03:00:47.528Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-27T03:00:47.528Z"
             },
             {
               "$type": "Document",
@@ -66,32 +65,29 @@
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\en-US.axaml",
               "RelativeToolTip": "Assets\\Lang\\en-US.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-06-27T02:54:33.762Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-27T02:54:33.762Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "es-ES.axaml",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\es-ES.axaml",
               "RelativeDocumentMoniker": "Assets\\Lang\\es-ES.axaml",
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\es-ES.axaml",
               "RelativeToolTip": "Assets\\Lang\\es-ES.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-06-27T02:54:32.531Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-27T02:54:32.531Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "SettingsView.axaml",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\SettingsView.axaml",
               "RelativeDocumentMoniker": "Views\\SettingsView.axaml",
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\SettingsView.axaml",
               "RelativeToolTip": "Views\\SettingsView.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-06-27T00:11:18.479Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-27T00:11:18.479Z"
             }
           ]
         }

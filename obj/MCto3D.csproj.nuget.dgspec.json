@@ -76,6 +76,10 @@
               "target": "Package",
               "version": "[8.4.2, )"
             },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "StbImageSharp": {
               "target": "Package",
               "version": "[2.30.15, )"

@@ -10,9 +10,9 @@ using MCto3D.Models;
 
 namespace MCto3D.Services
 {
-    public class ThreeMfReader_Service
+    public class ThreeMfReaderService : IModelReader
     {
-        public static Dictionary<Color, List<Triangle>> Read3Mf(string filePath)
+        public Dictionary<Color, List<Triangle>> Read(string filePath)
         {
             var result = new Dictionary<Color, List<Triangle>>();
 
@@ -136,3 +136,4 @@ namespace MCto3D.Services
         }
     }
 }
+

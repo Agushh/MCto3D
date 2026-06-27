@@ -6,12 +6,28 @@ using System.Text.Json;
 
 namespace MCto3D.Services;
 
-public static class ProjectStorageService
+public interface IProjectStorageService
 {
-    private static readonly string AppDataFolder = MCto3D.Services.AppSettings_Service.LocalFilesPath;
-    private static readonly string DbFilePath = Path.Combine(AppDataFolder, "projects.json");
+    List<SavedProject> LoadProjects();
+    void SaveProjects(List<SavedProject> projects);
+    void AddProject(SavedProject project);
+    void UpdateProject(SavedProject project);
+    void DeleteProject(Guid id);
+}
 
-    public static List<SavedProject> LoadProjects()
+public class ProjectStorageService : IProjectStorageService
+{
+    private readonly IAppSettingsService _appSettings;
+
+    public ProjectStorageService(IAppSettingsService appSettings)
+    {
+        _appSettings = appSettings;
+    }
+
+    private string AppDataFolder => _appSettings.LocalFilesPath;
+    private string DbFilePath => Path.Combine(AppDataFolder, "projects.json");
+
+    public List<SavedProject> LoadProjects()
     {
         if (!Directory.Exists(AppDataFolder))
         {
@@ -34,7 +50,7 @@ public static class ProjectStorageService
         }
     }
 
-    public static void SaveProjects(List<SavedProject> projects)
+    public void SaveProjects(List<SavedProject> projects)
     {
         if (!Directory.Exists(AppDataFolder))
         {
@@ -52,14 +68,14 @@ public static class ProjectStorageService
         }
     }
 
-    public static void AddProject(SavedProject project)
+    public void AddProject(SavedProject project)
     {
         var projects = LoadProjects();
-        projects.Insert(0, project); // Prepend to list
+        projects.Insert(0, project);
         SaveProjects(projects);
     }
 
-    public static void UpdateProject(SavedProject project)
+    public void UpdateProject(SavedProject project)
     {
         var projects = LoadProjects();
         var index = projects.FindIndex(p => p.Id == project.Id);
@@ -70,10 +86,11 @@ public static class ProjectStorageService
         }
     }
 
-    public static void DeleteProject(Guid id)
+    public void DeleteProject(Guid id)
     {
         var projects = LoadProjects();
         projects.RemoveAll(p => p.Id == id);
         SaveProjects(projects);
     }
 }
+

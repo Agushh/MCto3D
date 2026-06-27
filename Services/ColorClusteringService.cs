@@ -5,14 +5,21 @@ using System.Linq;
 
 namespace MCto3D.Services
 {
-    public static class ColorClustering_Service
+    public class ColorClusteringService : IColorClusteringService
     {
-        public static Dictionary<int, Color> ClusterByKMeans(BlockState[] palette, int k, bool useRealColors = false)
+        private readonly IColorMappingService _colorMappingService;
+
+        public ColorClusteringService(IColorMappingService colorMappingService)
+        {
+            _colorMappingService = colorMappingService;
+        }
+
+        public Dictionary<int, Color> ClusterByKMeans(BlockState[] palette, int k, bool useRealColors = false)
         {
             var blockColors = new Dictionary<int, Color>();
             for (int i = 0; i < palette.Length; i++)
             {
-                blockColors[i] = ColorMapping_Service.GetColorForBlock(palette[i].Name, palette[i].Properties);
+                blockColors[i] = _colorMappingService.GetColorForBlock(palette[i].Name, palette[i].Properties);
             }
 
             var uniqueColors = blockColors.Values.Distinct().ToList();
@@ -99,7 +106,7 @@ namespace MCto3D.Services
             return resultMap;
         }
 
-        public static Dictionary<int, Color> ClusterByPalette(BlockState[] palette, List<Color> userColors)
+        public Dictionary<int, Color> ClusterByPalette(BlockState[] palette, List<Color> userColors)
         {
             var resultMap = new Dictionary<int, Color>();
             
@@ -108,7 +115,7 @@ namespace MCto3D.Services
                 
             for (int i = 0; i < palette.Length; i++)
             {
-                Color original = ColorMapping_Service.GetColorForBlock(palette[i].Name, palette[i].Properties);
+                Color original = _colorMappingService.GetColorForBlock(palette[i].Name, palette[i].Properties);
                 
                 double minDistance = double.MaxValue;
                 Color bestColor = userColors[0];
@@ -129,7 +136,7 @@ namespace MCto3D.Services
             return resultMap;
         }
 
-        public static List<Color> GetPredefinedPalette(int count)
+        public List<Color> GetPredefinedPalette(int paletteIndex)
         {
             var predefinedColors = new List<Color>
             {
@@ -167,7 +174,11 @@ namespace MCto3D.Services
                 Color.FromArgb(152, 255, 152), // Menta
                 Color.FromArgb(220, 20, 60)    // Carmesi
             };
-            return predefinedColors.Take(count).ToList();
+            if (paletteIndex > 0 && paletteIndex <= predefinedColors.Count)
+            {
+                return predefinedColors.Take(paletteIndex).ToList();
+            }
+            return predefinedColors;
         }
 
         private static double GetDistance(Color a, double[] b)
@@ -179,3 +190,4 @@ namespace MCto3D.Services
         }
     }
 }
+

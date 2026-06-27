@@ -19,9 +19,18 @@ public partial class WelcomeViewModel : ViewModelBase
 
     private string location = "";
 
-    public WelcomeViewModel(MainWindowViewModel mainViewModel)
+    private readonly IAppSettingsService _appSettings;
+    private readonly IAssetExtractorService _assetExtractorService;
+    private readonly IColorGeneratorService _colorGeneratorService;
+    private readonly IColorMappingService _colorMappingService;
+
+    public WelcomeViewModel(MainWindowViewModel mainViewModel, IAppSettingsService appSettings, IAssetExtractorService assetExtractorService, IColorGeneratorService colorGeneratorService, IColorMappingService colorMappingService)
     {
         _mainViewModel = mainViewModel;
+        _appSettings = appSettings;
+        _assetExtractorService = assetExtractorService;
+        _colorGeneratorService = colorGeneratorService;
+        _colorMappingService = colorMappingService;
     }
 
     [RelayCommand]
@@ -36,17 +45,16 @@ public partial class WelcomeViewModel : ViewModelBase
                 LoadingMessage = mensaje;
             });
 
-            location = await Task.Run(() => AssetExtractor_Service.ExtractLegalAssets(progressReporter));
+            location = await Task.Run(() => _assetExtractorService.ExtractLegalAssets(_appSettings.LocalFilesPath, progressReporter));
             await Task.Delay(1500); // Dar un poco de tiempo para leer el mensaje final de extracción
 
 
             //procesar colores y guardarlos en JSON.
-            ColorMapping_Service.BlockColors = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
-
+            _colorMappingService.BlockColors = await _colorGeneratorService.GenerateAndLoadColors(_appSettings.LocalFilesPath, progressReporter);
             await Task.Delay(1500);
 
             // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
-            _mainViewModel.SettingsVM.UpdateMinecraftVersion();
+            await _mainViewModel.SettingsVM.UpdateMinecraftVersionAsync();
             
             // Ocultamos la bienvenida y pasamos directo al Dashboard (el Loading de modelos ya no existe)
             _mainViewModel.IsWelcomeScreenActive = false;
@@ -93,15 +101,15 @@ public partial class WelcomeViewModel : ViewModelBase
                         });
 
                         // Extracción de archivos
-                        location = await Task.Run(() => AssetExtractor_Service.ExtractLegalAssets(progressReporter, selectedFolderPath));
+                        location = await Task.Run(() => _assetExtractorService.ExtractLegalAssets(_appSettings.LocalFilesPath, progressReporter, selectedFolderPath));
                         await Task.Delay(1500);
 
                         //procesar colores y guardarlos en JSON.
-                        ColorMapping_Service.BlockColors = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
+                        _colorMappingService.BlockColors = await _colorGeneratorService.GenerateAndLoadColors(_appSettings.LocalFilesPath, progressReporter);
                         await Task.Delay(1500);
 
                         // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
-                        _mainViewModel.SettingsVM.UpdateMinecraftVersion();
+                        await _mainViewModel.SettingsVM.UpdateMinecraftVersionAsync();
                         
                         // Ocultamos bienvenida y pasamos directo
                         _mainViewModel.IsWelcomeScreenActive = false;
@@ -122,3 +130,4 @@ public partial class WelcomeViewModel : ViewModelBase
         }
     }
 }
+

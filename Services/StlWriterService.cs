@@ -5,7 +5,7 @@ using MCto3D.Models;
 
 namespace MCto3D.Services
 {
-    public class StlWriter_Service : IModelWriter
+    public class StlWriterService : IModelWriter
     {
         public void Write(string filePath, Dictionary<Color, List<Triangle>> coloredMeshes)
         {
@@ -22,3 +22,4 @@ namespace MCto3D.Services
         }
     }
 }
+

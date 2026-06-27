@@ -7,18 +7,18 @@ using StbImageSharp;
 
 namespace MCto3D.Services
 {
-    internal class ColorGenerator_Service
+    public class ColorGeneratorService : IColorGeneratorService
     {
-        public static async Task<Dictionary<string, byte[]>> GenerateAndLoadColors(string localAppFolder, IProgress<string> progress = null)
+        public async Task<Dictionary<string, byte[]>> GenerateAndLoadColors(string localAppFolder, IProgress<string> progress = null)
         {
-            progress?.Report(MCto3D.Services.Language_Service.GetString("ProgressInitColors"));
+            progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressInitColors"));
 
             string texturesPath = Path.Combine(localAppFolder, "MinecraftExtractedAssets", "assets", "minecraft", "textures", "block");
             string jsonOutputPath = Path.Combine(localAppFolder, "colores_base.json");
 
             if (!Directory.Exists(texturesPath))
             {
-                progress?.Report(MCto3D.Services.Language_Service.GetString("ProgressErrorTexture"));
+                progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressErrorTexture"));
                 // Devolvemos un diccionario vacío o podés lanzar una excepción según prefieras
                 return new();
             }
@@ -32,7 +32,7 @@ namespace MCto3D.Services
 
             if (totalFiles == 0)
             {
-                progress?.Report(MCto3D.Services.Language_Service.GetString("ProgressErrorNoPng"));
+                progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressErrorNoPng"));
                 return blockColors;
             }
 
@@ -127,7 +127,7 @@ namespace MCto3D.Services
                 }
             });
             // 3. Guardamos el resultado en JSON de forma asíncrona
-            progress?.Report(MCto3D.Services.Language_Service.GetString("ProgressSavingColors"));
+            progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressSavingColors"));
 
             var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(blockColors, jsonOptions);
@@ -138,7 +138,7 @@ namespace MCto3D.Services
             return blockColors;
         }
 
-        public static Dictionary<string, byte[]> LoadColorsSync(string localAppFolder)
+        public Dictionary<string, byte[]> LoadColorsSync(string localAppFolder)
         {
             string jsonPath = Path.Combine(localAppFolder, "colores_base.json");
 
@@ -169,3 +169,4 @@ namespace MCto3D.Services
         }
     }
 }
+

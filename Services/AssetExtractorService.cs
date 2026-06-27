@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace MCto3D.Services
 {
-    internal class AssetExtractor_Service
+    public class AssetExtractorService : IAssetExtractorService
     {
 
-        public static async Task<string> ExtractLegalAssets(IProgress<string> progress = null, string minecraftLocation = "default")
+        public async Task<string> ExtractLegalAssets(string localFilesPath, IProgress<string> progress = null, string minecraftLocation = "default")
         {
             progress?.Report("Iniciando búsqueda de assets...");
 
@@ -47,7 +47,7 @@ namespace MCto3D.Services
             }
             #endregion
 
-            string localAppFolder = Path.Combine(AppSettings_Service.LocalFilesPath, "MinecraftExtractedAssets");
+            string localAppFolder = Path.Combine(localFilesPath, "MinecraftExtractedAssets");
 
             if (Directory.Exists(localAppFolder))
             {
@@ -167,3 +167,4 @@ namespace MCto3D.Services
         }
     }
 }
+

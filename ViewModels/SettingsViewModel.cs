@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System;
 using System.Collections.ObjectModel;
+using MCto3D.Services;
 
 namespace MCto3D.ViewModels;
 
@@ -63,7 +64,7 @@ public partial class SettingsViewModel : ViewModelBase
     private string _loadedMinecraftVersion = "NaN";
 
     [ObservableProperty]
-    private string _localFilesPath = MCto3D.Services.AppSettings_Service.LocalFilesPath;
+    private string _localFilesPath;
 
     [ObservableProperty]
     private bool _isMovingFiles;
@@ -75,16 +76,16 @@ public partial class SettingsViewModel : ViewModelBase
 
     public int SelectedLanguageIndex
     {
-        get => MCto3D.Services.AppSettings_Service.Language == "es-ES" ? 1 : 0;
+        get => _appSettings.Language == "es-ES" ? 1 : 0;
         set
         {
             if (value < 0 || value > 1)
                 return;
 
             string newLang = value == 1 ? "es-ES" : "en-US";
-            if (MCto3D.Services.AppSettings_Service.Language != newLang)
+            if (_appSettings.Language != newLang)
             {
-                MCto3D.Services.AppSettings_Service.Language = newLang;
+                _appSettings.Language = newLang;
                 MCto3D.App.ChangeLanguage(newLang);
                 OnPropertyChanged(nameof(SelectedLanguageIndex));
             }
@@ -96,20 +97,24 @@ public partial class SettingsViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsNotDefaultPath));
     }
 
-    public SettingsViewModel(MainWindowViewModel mainViewModel)
+    private readonly IAppSettingsService _appSettings;
+    
+    public SettingsViewModel(MainWindowViewModel mainViewModel, IAppSettingsService appSettings)
     {
         _mainViewModel = mainViewModel;
-        UpdateMinecraftVersion();
+        _appSettings = appSettings;
+        _localFilesPath = _appSettings.LocalFilesPath;
+        _ = UpdateMinecraftVersionAsync();
     }
 
-    public void UpdateMinecraftVersion()
+    public async Task UpdateMinecraftVersionAsync()
     {
         try
         {
             string versionFile = Path.Combine(LocalFilesPath, "MinecraftExtractedAssets", "version.txt");
             if (File.Exists(versionFile))
             {
-                LoadedMinecraftVersion = File.ReadAllText(versionFile).Trim();
+                LoadedMinecraftVersion = (await File.ReadAllTextAsync(versionFile)).Trim();
             }
             else
             {
@@ -197,7 +202,7 @@ public partial class SettingsViewModel : ViewModelBase
                             }
                         });
 
-                        MCto3D.Services.AppSettings_Service.LocalFilesPath = newFolderPath;
+                        _appSettings.LocalFilesPath = newFolderPath;
                         LocalFilesPath = newFolderPath;
                     }
                     catch (Exception ex)
@@ -268,7 +273,7 @@ public partial class SettingsViewModel : ViewModelBase
                 }
             });
 
-            MCto3D.Services.AppSettings_Service.LocalFilesPath = defaultPath;
+            _appSettings.LocalFilesPath = defaultPath;
             LocalFilesPath = defaultPath;
         }
         catch (Exception ex)
