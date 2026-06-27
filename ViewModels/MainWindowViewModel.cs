@@ -66,6 +66,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isSettingsActive = false;
 
+    [ObservableProperty]
+    private double _windowWidth = 1300;
+
     public MainWindowViewModel()
     {
         HomeVM = new HomeViewModel(this);
@@ -83,7 +86,15 @@ public partial class MainWindowViewModel : ViewModelBase
 
         // Comprobar estado inicial
         CheckInitialAssets();
-        Mesh_Service.colores = ColorGenerator_Service.LoadColorsSync(AppSettings_Service.LocalFilesPath);
+        ColorMapping_Service.BlockColors = ColorGenerator_Service.LoadColorsSync(AppSettings_Service.LocalFilesPath);
+
+        DashboardVM.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(DashboardViewModel.Is3MfSelected))
+            {
+                UpdateWindowWidth();
+            }
+        };
     }
 
     private void CheckInitialAssets()
@@ -99,6 +110,31 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private void UpdateControlsVisibility()
+    {
+        IsHomeActive = CurrentPage is HomeViewModel;
+        IsDashboardActive = CurrentPage is DashboardViewModel;
+        IsMyFilesActive = CurrentPage is MyFilesViewModel;
+        IsVanillaStructuresActive = CurrentPage is VanillaStructuresViewModel;
+        IsWalkthroughActive = CurrentPage is WalkthroughViewModel;
+        IsFaqActive = CurrentPage is FaqViewModel;
+        IsSettingsActive = CurrentPage is SettingsViewModel;
+
+        UpdateWindowWidth();
+    }
+
+    private void UpdateWindowWidth()
+    {
+        if (IsDashboardActive && DashboardVM.Is3MfSelected)
+        {
+            WindowWidth = 1650;
+        }
+        else
+        {
+            WindowWidth = 1300;
+        }
+    }
+
     private void UpdateActiveStates()
     {
         IsHomeActive = CurrentPage == HomeVM;
@@ -109,6 +145,8 @@ public partial class MainWindowViewModel : ViewModelBase
         IsFaqActive = CurrentPage == FaqVM;
         IsDevToolsActive = CurrentPage == DevToolsVM;
         IsSettingsActive = CurrentPage == SettingsVM;
+        
+        UpdateWindowWidth();
     }
 
     public void NavigateTo(ViewModelBase nextPage)

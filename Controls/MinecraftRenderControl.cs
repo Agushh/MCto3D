@@ -19,6 +19,9 @@ public class MinecraftRenderControl : OpenGlControlBase
     public static readonly StyledProperty<List<Triangle>> TrianglesProperty =
         AvaloniaProperty.Register<MinecraftRenderControl, List<Triangle>>(nameof(Triangles));
 
+    public static readonly StyledProperty<Dictionary<System.Drawing.Color, List<Triangle>>> ColoredMeshesProperty =
+        AvaloniaProperty.Register<MinecraftRenderControl, Dictionary<System.Drawing.Color, List<Triangle>>>(nameof(ColoredMeshes));
+
     public static readonly StyledProperty<bool> AutoRotateProperty =
         AvaloniaProperty.Register<MinecraftRenderControl, bool>(nameof(AutoRotate));
 
@@ -41,6 +44,12 @@ public class MinecraftRenderControl : OpenGlControlBase
     {
         get => GetValue(TrianglesProperty);
         set => SetValue(TrianglesProperty, value);
+    }
+
+    public Dictionary<System.Drawing.Color, List<Triangle>> ColoredMeshes
+    {
+        get => GetValue(ColoredMeshesProperty);
+        set => SetValue(ColoredMeshesProperty, value);
     }
 
     public bool AutoRotate
@@ -166,7 +175,7 @@ void main()
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == TrianglesProperty)
+        if (change.Property == TrianglesProperty || change.Property == ColoredMeshesProperty)
         {
             _needsGeometryUpdate = true;
             RequestNextFrameRendering();
@@ -335,52 +344,75 @@ void main()
             return; // OpenGL aún no inicializado
         }
 
-        var triList = Triangles;
-        if (triList == null || triList.Count == 0)
+        var singleMesh = Triangles;
+        var multiMesh = ColoredMeshes;
+        
+        int totalTriangles = 0;
+        if (multiMesh != null && multiMesh.Count > 0)
         {
-            Debug.WriteLine("UpdateGeometry: triList is null or empty.");
+            foreach (var list in multiMesh.Values) totalTriangles += list.Count;
+        }
+        else if (singleMesh != null)
+        {
+            totalTriangles = singleMesh.Count;
+        }
+
+        if (totalTriangles == 0)
+        {
+            Debug.WriteLine("UpdateGeometry: lists are empty.");
             _vertexCount = 0;
             RequestNextFrameRendering();
             return;
         }
 
-        Debug.WriteLine($"UpdateGeometry: Processing {triList.Count} triangles...");
+        Debug.WriteLine($"UpdateGeometry: Processing {totalTriangles} triangles...");
 
-        // Estructura de Vértice: Pos (3), Normal (3), Color (3) -> 9 floats per vertex
-        // 3 vértices por triángulo
-        float[] vertexData = new float[triList.Count * 3 * 9];
+        float[] vertexData = new float[totalTriangles * 3 * 9];
         int index = 0;
 
         float minX = float.MaxValue, minY = float.MaxValue, minZ = float.MaxValue;
         float maxX = float.MinValue, maxY = float.MinValue, maxZ = float.MinValue;
 
-        foreach (var tri in triList)
+        Action<List<Triangle>, System.Drawing.Color> processList = (list, color) => 
         {
-            minX = Math.Min(minX, Math.Min(tri.V1.X, Math.Min(tri.V2.X, tri.V3.X)));
-            minY = Math.Min(minY, Math.Min(tri.V1.Y, Math.Min(tri.V2.Y, tri.V3.Y)));
-            minZ = Math.Min(minZ, Math.Min(tri.V1.Z, Math.Min(tri.V2.Z, tri.V3.Z)));
+            float r = color.R / 255f;
+            float g = color.G / 255f;
+            float b = color.B / 255f;
             
-            maxX = Math.Max(maxX, Math.Max(tri.V1.X, Math.Max(tri.V2.X, tri.V3.X)));
-            maxY = Math.Max(maxY, Math.Max(tri.V1.Y, Math.Max(tri.V2.Y, tri.V3.Y)));
-            maxZ = Math.Max(maxZ, Math.Max(tri.V1.Z, Math.Max(tri.V2.Z, tri.V3.Z)));
+            foreach (var tri in list)
+            {
+                minX = Math.Min(minX, Math.Min(tri.V1.X, Math.Min(tri.V2.X, tri.V3.X)));
+                minY = Math.Min(minY, Math.Min(tri.V1.Y, Math.Min(tri.V2.Y, tri.V3.Y)));
+                minZ = Math.Min(minZ, Math.Min(tri.V1.Z, Math.Min(tri.V2.Z, tri.V3.Z)));
+                
+                maxX = Math.Max(maxX, Math.Max(tri.V1.X, Math.Max(tri.V2.X, tri.V3.X)));
+                maxY = Math.Max(maxY, Math.Max(tri.V1.Y, Math.Max(tri.V2.Y, tri.V3.Y)));
+                maxZ = Math.Max(maxZ, Math.Max(tri.V1.Z, Math.Max(tri.V2.Z, tri.V3.Z)));
 
-            // Default color: Light purple/gray block
-            float r = 0.8f, g = 0.8f, b = 0.9f;
+                vertexData[index++] = tri.V1.X; vertexData[index++] = tri.V1.Y; vertexData[index++] = tri.V1.Z;
+                vertexData[index++] = tri.Normal.X; vertexData[index++] = tri.Normal.Y; vertexData[index++] = tri.Normal.Z;
+                vertexData[index++] = r; vertexData[index++] = g; vertexData[index++] = b;
 
-            // Vertex 1
-            vertexData[index++] = tri.V1.X; vertexData[index++] = tri.V1.Y; vertexData[index++] = tri.V1.Z;
-            vertexData[index++] = tri.Normal.X; vertexData[index++] = tri.Normal.Y; vertexData[index++] = tri.Normal.Z;
-            vertexData[index++] = r; vertexData[index++] = g; vertexData[index++] = b;
+                vertexData[index++] = tri.V2.X; vertexData[index++] = tri.V2.Y; vertexData[index++] = tri.V2.Z;
+                vertexData[index++] = tri.Normal.X; vertexData[index++] = tri.Normal.Y; vertexData[index++] = tri.Normal.Z;
+                vertexData[index++] = r; vertexData[index++] = g; vertexData[index++] = b;
 
-            // Vertex 2
-            vertexData[index++] = tri.V2.X; vertexData[index++] = tri.V2.Y; vertexData[index++] = tri.V2.Z;
-            vertexData[index++] = tri.Normal.X; vertexData[index++] = tri.Normal.Y; vertexData[index++] = tri.Normal.Z;
-            vertexData[index++] = r; vertexData[index++] = g; vertexData[index++] = b;
+                vertexData[index++] = tri.V3.X; vertexData[index++] = tri.V3.Y; vertexData[index++] = tri.V3.Z;
+                vertexData[index++] = tri.Normal.X; vertexData[index++] = tri.Normal.Y; vertexData[index++] = tri.Normal.Z;
+                vertexData[index++] = r; vertexData[index++] = g; vertexData[index++] = b;
+            }
+        };
 
-            // Vertex 3
-            vertexData[index++] = tri.V3.X; vertexData[index++] = tri.V3.Y; vertexData[index++] = tri.V3.Z;
-            vertexData[index++] = tri.Normal.X; vertexData[index++] = tri.Normal.Y; vertexData[index++] = tri.Normal.Z;
-            vertexData[index++] = r; vertexData[index++] = g; vertexData[index++] = b;
+        if (multiMesh != null && multiMesh.Count > 0)
+        {
+            foreach (var kvp in multiMesh)
+            {
+                processList(kvp.Value, kvp.Key);
+            }
+        }
+        else
+        {
+            processList(singleMesh, System.Drawing.Color.FromArgb(255, 204, 204, 230)); // 0.8, 0.8, 0.9
         }
 
         _meshCenter = new Vector3((minX + maxX) / 2f, (minY + maxY) / 2f, (minZ + maxZ) / 2f);
@@ -400,7 +432,7 @@ void main()
         }
 
         // Preparar VBO Data
-        _vertexCount = triList.Count * 3;
+        _vertexCount = totalTriangles * 3;
 
         // BIND VAO FIRST
         _gl.BindBuffer(GlConsts.GL_ARRAY_BUFFER, _vbo);

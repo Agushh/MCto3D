@@ -59,19 +59,23 @@ public partial class HomeViewModel : ViewModelBase
         LoadRandomDemoModel();
     }
 
+    [ObservableProperty]
+    private Dictionary<System.Drawing.Color, List<Triangle>> _coloredMeshes = new();
+
     private void LoadRandomDemoModel()
     {
         string demoDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DemoFiles");
         
         if (Directory.Exists(demoDir))
         {
-            var files = Directory.GetFiles(demoDir, "*.nbt");
+            var files = Directory.GetFiles(demoDir, "*.3mf");
             if (files.Length > 0)
             {
                 string randomFile = files[_random.Next(files.Length)];
                 try
                 {
-                    MeshTriangles = Mesh_Service.GenerateMesh(FileReader_Service.readNBT(randomFile), 1.0f);
+                    ColoredMeshes = ThreeMfReader_Service.Read3Mf(randomFile);
+                    MeshTriangles = new List<Triangle>(); // Clear raw triangles if using colored
                     return;
                 }
                 catch { } // Fallback to cube on error

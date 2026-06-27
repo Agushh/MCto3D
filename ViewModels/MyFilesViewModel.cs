@@ -212,8 +212,17 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            List<Triangle> malla = Mesh_Service.GenerateMesh(FileReader_Service.readNBT(SelectedProject.OriginalFilePath), SelectedProject.BlockScale);
-
+            structureData strData;
+            if (SelectedProject.OriginalFilePath.EndsWith(".litematic", StringComparison.OrdinalIgnoreCase) || 
+                SelectedProject.OriginalFilePath.EndsWith(".schematic", StringComparison.OrdinalIgnoreCase))
+            {
+                strData = FileReader_Service.readLitematic(SelectedProject.OriginalFilePath);
+            }
+            else
+            {
+                strData = FileReader_Service.readNBT(SelectedProject.OriginalFilePath);
+            }
+            List<Triangle> malla = Mesh_Service.GenerateMesh(strData, SelectedProject.BlockScale);
             string extensionPorDefecto = SelectedProject.ExportFormat.ToLower();
             string nombreFiltro = SelectedProject.ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
             string patronExtension = $"*.{extensionPorDefecto}";
@@ -286,7 +295,17 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            List<Triangle> malla = Mesh_Service.GenerateMesh(FileReader_Service.readNBT(SelectedProject.OriginalFilePath), SelectedProject.BlockScale);
+            structureData strData;
+            if (SelectedProject.OriginalFilePath.EndsWith(".litematic", StringComparison.OrdinalIgnoreCase) || 
+                SelectedProject.OriginalFilePath.EndsWith(".schematic", StringComparison.OrdinalIgnoreCase))
+            {
+                strData = FileReader_Service.readLitematic(SelectedProject.OriginalFilePath);
+            }
+            else
+            {
+                strData = FileReader_Service.readNBT(SelectedProject.OriginalFilePath);
+            }
+            List<Triangle> malla = Mesh_Service.GenerateMesh(strData, SelectedProject.BlockScale);
 
             string extension = SelectedProject.ExportFormat.ToLower();
             string suggestedName = string.IsNullOrWhiteSpace(SelectedProject.Name) ? "modelo" : SelectedProject.Name;

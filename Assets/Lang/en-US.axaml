@@ -5,6 +5,15 @@
     <!-- App General -->
     <sys:String x:Key="AppTitle">MCto3D</sys:String>
     
+    <!-- Global -->
+    <sys:String x:Key="GlobalYes">Yes</sys:String>
+    <sys:String x:Key="GlobalNo">No</sys:String>
+    <sys:String x:Key="GlobalSave">Save</sys:String>
+    <sys:String x:Key="GlobalSaveChanges">Save Changes</sys:String>
+    <sys:String x:Key="GlobalUpdate">Update</sys:String>
+    <sys:String x:Key="GlobalDelete">Delete</sys:String>
+    <sys:String x:Key="GlobalClose">Close</sys:String>
+    
     <!-- Sidebar -->
     <sys:String x:Key="SidebarMenu">MENU</sys:String>
     <sys:String x:Key="SidebarHome">Home</sys:String>
@@ -48,10 +57,29 @@
     <sys:String x:Key="ConverterMulti">Multi color (NBT)</sys:String>
     <sys:String x:Key="Converter3DModel">3D Model:</sys:String>
     <sys:String x:Key="ConverterForceColor">Force color</sys:String>
-    <sys:String x:Key="ConverterScene">Scene:</sys:String>
-    <sys:String x:Key="ConverterAddFloor">Add floor</sys:String>
     <sys:String x:Key="ConverterExportLocal">Export Local</sys:String>
     <sys:String x:Key="ConverterSaveApp">⭐ Save in App</sys:String>
+    <sys:String x:Key="ConverterFillHoles">Fill internal holes</sys:String>
+    <sys:String x:Key="ConverterFillColor">Fill color</sys:String>
+    <sys:String x:Key="ConverterUseCustom">Use custom</sys:String>
+    <sys:String x:Key="Converter3MfOptions">3MF Options</sys:String>
+    <sys:String x:Key="ConverterAlgorithm">Algorithm</sys:String>
+    <sys:String x:Key="ConverterPalette">Palette</sys:String>
+    <sys:String x:Key="ConverterPaletteCustom">Custom...</sys:String>
+    <sys:String x:Key="ConverterCustomPalette">Custom Palette</sys:String>
+    <sys:String x:Key="ConverterPredefinedPalette">Predefined Palette</sys:String>
+    <sys:String x:Key="ConverterKMeansAvg">K-Means (Average Color)</sys:String>
+    <sys:String x:Key="ConverterKMedoids">K-Medoids (Actual Color)</sys:String>
+    <sys:String x:Key="ConverterRawColors">Raw Colors (Unprocessed)</sys:String>
+    <sys:String x:Key="ConverterOpenIn">Open in</sys:String>
+    <sys:String x:Key="ConverterOptionalName">Name (Optional)</sys:String>
+    <sys:String x:Key="ConverterAddColor">+ Add Color</sys:String>
+    <sys:String x:Key="ConverterInfo">Information</sys:String>
+    <sys:String x:Key="ConverterColorCount">Color count:</sys:String>
+    <sys:String x:Key="ConverterAmountK">Amount (K)</sys:String>
+    <sys:String x:Key="ConverterPaletteSize">Palette Size</sys:String>
+    <sys:String x:Key="ConverterScene">Scene:</sys:String>
+    <sys:String x:Key="ConverterAddFloor">Add floor</sys:String>
     <sys:String x:Key="ConverterFutureAds">Future Ads</sys:String>
     <sys:String x:Key="ConverterInteractiveViewer">Interactive Viewer</sys:String>
     <sys:String x:Key="ConverterLiveRender">Live Render</sys:String>
@@ -79,8 +107,17 @@
     <sys:String x:Key="SettingsReloadActions">Reload Actions</sys:String>
     <sys:String x:Key="SettingsReloadBaseFiles">Reload base game files</sys:String>
     <sys:String x:Key="SettingsReloadBaseFilesDesc">Opens the picker to extract Minecraft assets again.</sys:String>
+    <sys:String x:Key="SettingsReloadDesc">Load block data and languages</sys:String>
     <sys:String x:Key="SettingsReloadBtn">Reload</sys:String>
-    <sys:String x:Key="SettingsRenderer">Renderer</sys:String>
+    <sys:String x:Key="SettingsConverter3MfOptions">3MF Options</sys:String>
+    <sys:String x:Key="SettingsConverter3MfAssembly">Group as assembly</sys:String>
+    <sys:String x:Key="SettingsConverter3MfSeparate">Keep separate parts</sys:String>
+    <sys:String x:Key="SettingsConverterPaletteManagement">Palette Management</sys:String>
+    <sys:String x:Key="SettingsConverterManagePalettes">Manage Palettes</sys:String>
+    <sys:String x:Key="SettingsConverterDeleteAllPalettes">Delete all palettes</sys:String>
+    <sys:String x:Key="SettingsRendererVisuals">Visual Settings</sys:String>
+    <sys:String x:Key="SettingsRendererFloor">Floor</sys:String>
+    <sys:String x:Key="SettingsRendererMeshColor">Mesh Color</sys:String>
     <sys:String x:Key="SettingsRendererComingSoon">Rendering settings coming soon...</sys:String>
     <sys:String x:Key="SettingsAbout">About</sys:String>
     <sys:String x:Key="SettingsMovingFiles">Moving Files...</sys:String>
@@ -116,5 +153,17 @@
     <sys:String x:Key="VanillaEmpty">No structures in this folder.</sys:String>
     <sys:String x:Key="VanillaOpen">⚙ Open</sys:String>
     <sys:String x:Key="VanillaOpenTooltip">Loads this structure in the 3D Converter</sys:String>
-
+    <!-- Status and Progress Messages -->
+    <sys:String x:Key="StatusWaitingFile">Waiting for NBT or 3MF file...</sys:String>
+    <sys:String x:Key="StatusFileLoaded">File loaded:</sys:String>
+    <sys:String x:Key="StatusErrorOpenFile">Error opening file:</sys:String>
+    <sys:String x:Key="StatusProcessingGeom">Processing geometry for export...</sys:String>
+    <sys:String x:Key="StatusExportSuccess">Exported successfully!</sys:String>
+    <sys:String x:Key="StatusExportCancel">Export cancelled.</sys:String>
+    <sys:String x:Key="StatusExportError">Error loading file.</sys:String>
+    <sys:String x:Key="ProgressInitColors">Initializing color processing for .3mf ...</sys:String>
+    <sys:String x:Key="ProgressErrorTexture">Error: Texture folder not found.</sys:String>
+    <sys:String x:Key="ProgressErrorNoPng">Error: No .png textures to process.</sys:String>
+    <sys:String x:Key="ProgressSavingColors">Saving colors file...</sys:String>
+    <sys:String x:Key="StatusSentToSlicer">Sent to Slicer!</sys:String>
 </ResourceDictionary>

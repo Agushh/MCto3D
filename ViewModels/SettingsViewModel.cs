@@ -4,11 +4,50 @@ using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
 using System.IO;
 using System;
+using System.Collections.ObjectModel;
 
 namespace MCto3D.ViewModels;
 
+public partial class PaletteModel : ObservableObject
+{
+    [ObservableProperty]
+    private string _name = string.Empty;
+}
+
 public partial class SettingsViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private bool _use3MfAssemblyMode;
+
+    [ObservableProperty]
+    private bool _showFloor;
+
+    [ObservableProperty]
+    private Avalonia.Media.Color _floorColor;
+
+    [ObservableProperty]
+    private Avalonia.Media.Color _modelColor;
+
+    [ObservableProperty]
+    private bool _isPaletteManagerOpen;
+
+    public ObservableCollection<PaletteModel> SavedPalettes { get; } = new();
+
+    [RelayCommand]
+    private void OpenPaletteManager() => IsPaletteManagerOpen = true;
+
+    [RelayCommand]
+    private void ClosePaletteManager() => IsPaletteManagerOpen = false;
+
+    [RelayCommand]
+    private void SavePaletteManager() => IsPaletteManagerOpen = false;
+
+    [RelayCommand]
+    private void DeleteAllPalettes() { }
+
+    [RelayCommand]
+    private void DeletePalette(PaletteModel palette) { }
+
     private string GetLocalizedString(string key)
     {
         if (Avalonia.Application.Current != null && Avalonia.Application.Current.TryGetResource(key, Avalonia.Application.Current.ActualThemeVariant, out var res) && res is string s)

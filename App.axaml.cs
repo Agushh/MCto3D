@@ -19,9 +19,20 @@ namespace MCto3D
             {
                 try
                 {
+                    var newSource = new System.Uri($"avares://MCto3D/Assets/Lang/{cultureCode}.axaml");
+                    
+                    if (Current.Resources.MergedDictionaries.Count > 0)
+                    {
+                        var currentInclude = Current.Resources.MergedDictionaries[0] as ResourceInclude;
+                        if (currentInclude != null && currentInclude.Source != null && currentInclude.Source.AbsoluteUri == newSource.AbsoluteUri)
+                        {
+                            return; // Language is already loaded
+                        }
+                    }
+
                     var dictionary = new ResourceInclude(new System.Uri("avares://MCto3D/App.axaml"))
                     {
-                        Source = new System.Uri($"avares://MCto3D/Assets/Lang/{cultureCode}.axaml")
+                        Source = newSource
                     };
 
                     if (Current.Resources.MergedDictionaries.Count > 0)

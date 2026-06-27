@@ -4,7 +4,7 @@
 		xmlns:views="using:MCto3D.Views"
 		x:Class="MCto3D.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Title="MCto3D" Width="1300" Height="750" MinWidth="1250" MinHeight="715"
+		Title="MCto3D" Width="{Binding WindowWidth}" Height="750" MinWidth="{Binding WindowWidth}" MinHeight="715"
 		Background="{DynamicResource EnderBackgroundBase}" Foreground="{DynamicResource EnderTextPrimary}">
 
 	<Window.DataTemplates>

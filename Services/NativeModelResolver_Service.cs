@@ -60,13 +60,25 @@ namespace MCto3D.Services
                 else if (root["multipart"] != null)
                 {
                     var result = ResolveMultipart(root["multipart"].AsArray(), properties);
-                    _cache[cacheKey] = result;
-                    return result;
+                    if (result.Count > 0)
+                    {
+                        _cache[cacheKey] = result;
+                        return result;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[NativeResolver] Error {cleanName}: {ex.Message}");
+            }
+
+            // Si llegamos aquí o si el bloque (como mushroom_stem) falló en su multipart y devolvió 0 elementos, 
+            // intentamos como último recurso resolver su modelo directo asumiendo nombre estandar.
+            var directFallback = ResolveModelAndElements("block/" + cleanName, 0, 0);
+            if (directFallback.Count > 0)
+            {
+                _cache[cacheKey] = directFallback;
+                return directFallback;
             }
 
             _cache[cacheKey] = new List<(Vector3, Vector3)>();
@@ -296,6 +308,130 @@ namespace MCto3D.Services
 
             Vector3 rotated = Vector3.Transform(centered, rot);
             return rotated + center;
+        }
+        public static List<string> GetTexturesForBlock(string blockName, Dictionary<string, string> properties)
+        {
+            string cleanName = blockName.Split('[')[0].Replace("minecraft:", "");
+            string bsFile = Path.Combine(BlockstatesPath, cleanName + ".json");
+            List<string> modelNames = new();
+
+            if (!File.Exists(bsFile))
+            {
+                modelNames.Add("block/" + cleanName);
+            }
+            else
+            {
+                try
+                {
+                    string jsonContent = File.ReadAllText(bsFile);
+                    JsonNode root = JsonNode.Parse(jsonContent);
+
+                    if (root["variants"] != null)
+                    {
+                        var variants = root["variants"].AsObject();
+                        bool foundMatch = false;
+                        foreach (var variant in variants)
+                        {
+                            string variantKey = variant.Key;
+                            bool match = true;
+                            if (variantKey != "" && variantKey != "normal")
+                            {
+                                foreach (var cond in variantKey.Split(','))
+                                {
+                                    var parts = cond.Split('=');
+                                    if (parts.Length == 2 && (properties == null || !properties.ContainsKey(parts[0]) || properties[parts[0]] != parts[1]))
+                                    {
+                                        match = false; break;
+                                    }
+                                }
+                            }
+                            if (match)
+                            {
+                                foundMatch = true;
+                                JsonObject modelObj = null;
+                                if (variant.Value is JsonArray arr && arr.Count > 0) modelObj = arr[0].AsObject();
+                                else if (variant.Value is JsonObject obj) modelObj = obj;
+                                if (modelObj != null) modelNames.Add(modelObj["model"]?.GetValue<string>().Replace("minecraft:", ""));
+                                break;
+                            }
+                        }
+                        if (!foundMatch && variants.Count > 0)
+                        {
+                            var first = variants.ElementAt(0).Value;
+                            JsonObject modelObj = first is JsonArray arr && arr.Count > 0 ? arr[0].AsObject() : first as JsonObject;
+                            if (modelObj != null) modelNames.Add(modelObj["model"]?.GetValue<string>().Replace("minecraft:", ""));
+                        }
+                    }
+                    else if (root["multipart"] != null)
+                    {
+                        foreach (var part in root["multipart"].AsArray())
+                        {
+                            if (part is JsonObject partObj)
+                            {
+                                bool conditionMet = true;
+                                if (partObj.ContainsKey("when") && partObj["when"] is JsonObject whenObj)
+                                    conditionMet = EvaluateWhenCondition(whenObj, properties);
+                                
+                                if (conditionMet && partObj.ContainsKey("apply"))
+                                {
+                                    var applyNode = partObj["apply"];
+                                    JsonObject modelObj = applyNode is JsonArray arr && arr.Count > 0 ? arr[0].AsObject() : applyNode as JsonObject;
+                                    if (modelObj != null) modelNames.Add(modelObj["model"]?.GetValue<string>().Replace("minecraft:", ""));
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }
+
+            if (modelNames.Count == 0)
+                modelNames.Add("block/" + cleanName);
+
+            List<string> textures = new();
+            foreach(var modelName in modelNames)
+                textures.AddRange(GetTexturesFromModel(modelName, 0));
+            
+            return textures.Distinct().ToList();
+        }
+
+        private static List<string> GetTexturesFromModel(string modelName, int depth)
+        {
+            if (depth > 10 || string.IsNullOrEmpty(modelName)) return new List<string>();
+            string cleanName = modelName.Replace("minecraft:", "");
+            string modelFile = Path.Combine(ModelsPath, cleanName + ".json");
+            
+            if (!File.Exists(modelFile)) return new List<string>();
+
+            List<string> textures = new();
+            try
+            {
+                string jsonContent = File.ReadAllText(modelFile);
+                JsonNode root = JsonNode.Parse(jsonContent);
+
+                if (root["textures"] != null && root["textures"] is JsonObject texObj)
+                {
+                    foreach (var kvp in texObj)
+                    {
+                        string texPath = kvp.Value?.GetValue<string>();
+                        if (!string.IsNullOrEmpty(texPath) && !texPath.StartsWith("#"))
+                        {
+                            string texName = Path.GetFileName(texPath.Replace("minecraft:", ""));
+                            textures.Add(texName);
+                        }
+                    }
+                }
+
+                if (root["parent"] != null)
+                {
+                    string parent = root["parent"].GetValue<string>();
+                    if (!parent.StartsWith("builtin/"))
+                        textures.AddRange(GetTexturesFromModel(parent, depth + 1));
+                }
+            }
+            catch (Exception) { }
+            
+            return textures;
         }
     }
 }

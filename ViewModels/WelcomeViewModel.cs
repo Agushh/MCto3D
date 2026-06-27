@@ -41,7 +41,7 @@ public partial class WelcomeViewModel : ViewModelBase
 
 
             //procesar colores y guardarlos en JSON.
-            Mesh_Service.colores = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
+            ColorMapping_Service.BlockColors = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
 
             await Task.Delay(1500);
 
@@ -97,7 +97,7 @@ public partial class WelcomeViewModel : ViewModelBase
                         await Task.Delay(1500);
 
                         //procesar colores y guardarlos en JSON.
-                        Mesh_Service.colores = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
+                        ColorMapping_Service.BlockColors = await ColorGenerator_Service.GenerateAndLoadColors(AppSettings_Service.LocalFilesPath, progressReporter);
                         await Task.Delay(1500);
 
                         // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos

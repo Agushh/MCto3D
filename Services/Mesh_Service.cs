@@ -10,7 +10,7 @@ namespace MCto3D.Services
 {
     public class Mesh_Service()
     {
-        public static Dictionary<string, byte[]> colores = new();
+
 
         private static bool IsAirOrInvisible(string blockName)
         {
@@ -32,17 +32,27 @@ namespace MCto3D.Services
                     {
                         int blockState = strData.voxelGrid[x, y, z];
 
-                        if (blockState < 0 || IsAirOrInvisible(strData.palette[blockState].Name)) continue;
+                        if (blockState < -2 || blockState == -1 || (blockState >= 0 && IsAirOrInvisible(strData.palette[blockState].Name))) continue;
 
-                        // HACK: Limpiar blockName (viene con minecraft: y estados). 
-                        string cleanName = strData.palette[blockState].Name.Split('[')[0].Replace("minecraft:", "");
+                        bool isSolid;
+                        List<(Vector3 from, Vector3 to)> geometryCuboids;
 
-                        // Resolutor Nativo: Lee el JSON directamente y aplica rotaciones oficiales
-                        List<(Vector3 from, Vector3 to)> geometryCuboids = NativeModelResolver_Service.ResolveGeometry(strData.palette[blockState].Name, strData.palette[blockState].Properties);
+                        if (blockState == -2)
+                        {
+                            geometryCuboids = new List<(Vector3 from, Vector3 to)> { (Vector3.Zero, new Vector3(16, 16, 16)) };
+                            isSolid = true;
+                        }
+                        else
+                        {
+                            // HACK: Limpiar blockName (viene con minecraft: y estados). 
+                            string cleanName = strData.palette[blockState].Name.Split('[')[0].Replace("minecraft:", "");
+
+                            // Resolutor Nativo: Lee el JSON directamente y aplica rotaciones oficiales
+                            geometryCuboids = NativeModelResolver_Service.ResolveGeometry(strData.palette[blockState].Name, strData.palette[blockState].Properties);
+                            isSolid = (geometryCuboids.Count == 1 && geometryCuboids[0].from == Vector3.Zero && geometryCuboids[0].to == new Vector3(16, 16, 16));
+                        }
                         
                         if (geometryCuboids.Count == 0) continue;
-
-                        bool isSolid = (geometryCuboids.Count == 1 && geometryCuboids[0].from == Vector3.Zero && geometryCuboids[0].to == new Vector3(16, 16, 16));
 
                         foreach (var cuboid in geometryCuboids)
                         {
@@ -62,7 +72,11 @@ namespace MCto3D.Services
                                     if (nx >= 0 && nx < strData.Size.X && ny >= 0 && ny < strData.Size.Y && nz >= 0 && nz < strData.Size.Z)
                                     {
                                         int nState = strData.voxelGrid[nx, ny, nz];
-                                        if (nState >= 0 && !IsAirOrInvisible(strData.palette[nState].Name))
+                                        if (nState == -2)
+                                        {
+                                            drawFace = false;
+                                        }
+                                        else if (nState >= 0 && !IsAirOrInvisible(strData.palette[nState].Name))
                                         {
                                             var nCuboids = NativeModelResolver_Service.ResolveGeometry(strData.palette[nState].Name, strData.palette[nState].Properties);
                                             bool nIsSolid = (nCuboids.Count == 1 && nCuboids[0].from == Vector3.Zero && nCuboids[0].to == new Vector3(16, 16, 16));
@@ -188,7 +202,7 @@ namespace MCto3D.Services
                     {
                         int blockState = strData.voxelGrid[x, y, z];
 
-                        if (blockState < 0 || IsAirOrInvisible(strData.palette[blockState].Name)) continue;
+                        if (blockState < -2 || blockState == -1 || (blockState >= 0 && IsAirOrInvisible(strData.palette[blockState].Name))) continue;
 
                         for (int f = 0; f < 6; f++)
                         {
@@ -197,8 +211,21 @@ namespace MCto3D.Services
                             int nz = z + VoxelData.NeighborOffsets[f][2];
 
                             // Face culling
-                            if (nx < 0 || nx >= strData.Size.X || ny < 0 || ny >= strData.Size.Y || nz < 0 || nz >= strData.Size.Z || 
-                                strData.voxelGrid[nx, ny, nz] < 0 || IsAirOrInvisible(strData.palette[strData.voxelGrid[nx, ny, nz]].Name))
+                            bool drawFace = false;
+                            if (nx < 0 || nx >= strData.Size.X || ny < 0 || ny >= strData.Size.Y || nz < 0 || nz >= strData.Size.Z)
+                            {
+                                drawFace = true;
+                            }
+                            else
+                            {
+                                int nState = strData.voxelGrid[nx, ny, nz];
+                                if (nState == -1 || (nState >= 0 && IsAirOrInvisible(strData.palette[nState].Name)))
+                                {
+                                    drawFace = true;
+                                }
+                            }
+
+                            if (drawFace)
                             {
                                 int i0 = VoxelData.FaceTriangles[f][0];
                                 int i1 = VoxelData.FaceTriangles[f][1];
@@ -233,8 +260,36 @@ namespace MCto3D.Services
                         }
                     }
                 }
-            }
+            } 
             return triangles;
+        }
+        public static Dictionary<System.Drawing.Color, List<Triangle>> GenerateMultiColorMeshes(multiColorStructureData mData, structureData originalData, float scale, bool fullGeom)
+        {
+            var meshes = new Dictionary<System.Drawing.Color, List<Triangle>>();
+
+            foreach (var kvp in mData.voxelGrid)
+            {
+                var color = kvp.Key;
+                var colorGrid = kvp.Value;
+                
+                // Creamos un structureData temporal que SÓLO contiene los bloques de este color.
+                // El resto de la grilla (otros colores) estarán como -1 (aire).
+                var colorStrData = new structureData(originalData.Size, colorGrid, originalData.palette);
+                
+                // Reutilizamos la lógica original, logrando:
+                // 1. Cero repetición de código.
+                // 2. Mallas independientes cerradas (watertight) por color (vital para Slicers).
+                if (fullGeom)
+                {
+                    meshes[color] = GenerateFullGeometryMesh(colorStrData, scale);
+                }
+                else
+                {
+                    meshes[color] = GenerateMesh(colorStrData, scale);
+                }
+            }
+
+            return meshes;
         }
     }
 }

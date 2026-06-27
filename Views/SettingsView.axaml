@@ -2,8 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:MCto3D.ViewModels"
              x:Class="MCto3D.Views.SettingsView"
-             x:DataType="vm:SettingsViewModel">
-    
+             x:DataType="vm:SettingsViewModel"
+             x:Name="RootControl">
     <Grid Margin="32" RowDefinitions="Auto,*">
         <StackPanel Grid.Row="0" Margin="0,0,0,32">
             <TextBlock Text="{DynamicResource SettingsTitle}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" LetterSpacing="0.5"/>
@@ -136,11 +136,58 @@
                 </ScrollViewer>
             </TabItem>
 
+            <!-- TAB: CONVERTER -->
+            <TabItem Header="Converter">
+                <ScrollViewer Margin="32,0,0,0">
+                    <StackPanel Spacing="24">
+                        <Border Classes="Card" Padding="24">
+                            <Grid ColumnDefinitions="160,*">
+                                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                                    <TextBlock Text="{DynamicResource SettingsConverter3MfOptions}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="8">
+                                    <RadioButton Content="{DynamicResource SettingsConverter3MfAssembly}" IsChecked="{Binding Use3MfAssemblyMode}" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                    <RadioButton Content="{DynamicResource SettingsConverter3MfSeparate}" IsChecked="{Binding !Use3MfAssemblyMode}" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border Classes="Card" Padding="24">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="{DynamicResource SettingsConverterPaletteManagement}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                
+                                <Grid ColumnDefinitions="*,*">
+                                    <Button Grid.Column="0" Content="{DynamicResource SettingsConverterManagePalettes}" Command="{Binding OpenPaletteManagerCommand}" Classes="Primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,0,8,0"/>
+                                    <Button Grid.Column="1" Content="{DynamicResource SettingsConverterDeleteAllPalettes}" Command="{Binding DeleteAllPalettesCommand}" Background="#EF4444" Foreground="White" FontWeight="Bold" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="8,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
             <!-- TAB: RENDERER -->
             <TabItem Header="{DynamicResource SettingsRenderer}">
                 <ScrollViewer Margin="32,0,0,0">
                     <Border Classes="Card" Padding="24">
-                        <TextBlock Text="{DynamicResource SettingsRendererComingSoon}" Foreground="{DynamicResource EnderTextSecondary}"/>
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="{DynamicResource SettingsRendererVisuals}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                            
+                            <Grid ColumnDefinitions="160,*">
+                                <TextBlock Grid.Column="0" Text="{DynamicResource SettingsRendererFloor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                                    <CheckBox IsChecked="{Binding ShowFloor}" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                    <ColorPicker Color="{Binding FloorColor}" IsVisible="{Binding ShowFloor}" Height="32"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="160,*">
+                                <TextBlock Grid.Column="0" Text="{DynamicResource SettingsRendererMeshColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                                    <ColorPicker Color="{Binding ModelColor}" Height="32"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
                     </Border>
                 </ScrollViewer>
             </TabItem>
@@ -157,12 +204,39 @@
         </TabControl>
 
         <!-- PANTALLA DE CARGA (MOVIMIENTO DE ARCHIVOS) -->
-        <Border Grid.Row="0" Grid.RowSpan="2" Background="#D9000000" IsVisible="{Binding IsMovingFiles}" ZIndex="100" Margin="-32">
+        <Border Grid.Row="0" Grid.RowSpan="2" Background="#D9000000" IsVisible="{Binding IsMovingFiles}" ZIndex="100">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="24">
                 <TextBlock Text="{DynamicResource SettingsMovingFiles}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" HorizontalAlignment="Center"/>
                 <TextBlock Text="{Binding MovingProgressMessage}" FontSize="16" Foreground="{DynamicResource EnderTextSecondary}" HorizontalAlignment="Center"/>
                 <ProgressBar IsIndeterminate="True" Foreground="{DynamicResource EnderPrimary}" Background="{DynamicResource EnderSurfaceHover}" Height="4" Width="300" CornerRadius="2"/>
             </StackPanel>
+        </Border>
+
+        <!-- PANTALLA GESTION DE PALETAS -->
+        <Border Grid.Row="0" Grid.RowSpan="2" Background="#D9000000" IsVisible="{Binding IsPaletteManagerOpen}" ZIndex="100">
+            <Border Background="{DynamicResource EnderSurface}" CornerRadius="12" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="400" MaxWidth="600" MaxHeight="500">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0" Text="{DynamicResource SettingsConverterManagePalettes}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" Margin="0,0,0,16"/>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding SavedPalettes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                        <TextBox Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <Button Grid.Column="1" Command="{Binding #RootControl.((vm:SettingsViewModel)DataContext).DeletePaletteCommand}" CommandParameter="{Binding}" Classes="Danger" Padding="8">
+                                            <TextBlock Text="🗑️" FontSize="14"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,16,0,0">
+                        <Button Content="{DynamicResource GlobalClose}" Command="{Binding ClosePaletteManagerCommand}" Classes="Ghost"/>
+                        <Button Content="{DynamicResource GlobalSaveChanges}" Command="{Binding SavePaletteManagerCommand}" Classes="Primary"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Border>
 
     </Grid>
