@@ -28,7 +28,7 @@ public partial class VanillaStructuresViewModel : ViewModelBase
     private bool _canGoUp = false;
 
     [ObservableProperty]
-    private string _currentFolderName = "Estructuras Vanilla";
+    private string _currentFolderName = "Structures";
 
     public VanillaStructuresViewModel(MainWindowViewModel navigationController)
     {
@@ -43,7 +43,7 @@ public partial class VanillaStructuresViewModel : ViewModelBase
         
         string targetDir = string.IsNullOrEmpty(_currentVanillaPath) ? baseDir : _currentVanillaPath;
         CanGoUp = targetDir != baseDir;
-        CurrentFolderName = CanGoUp ? new DirectoryInfo(targetDir).Name : "Estructuras Vanilla";
+        CurrentFolderName = CanGoUp ? new DirectoryInfo(targetDir).Name : "Structures";
 
         if (Directory.Exists(targetDir))
         {

@@ -5,15 +5,6 @@
     <!-- App General -->
     <sys:String x:Key="AppTitle">MCto3D</sys:String>
     
-    <!-- Global -->
-    <sys:String x:Key="GlobalYes">Yes</sys:String>
-    <sys:String x:Key="GlobalNo">No</sys:String>
-    <sys:String x:Key="GlobalSave">Save</sys:String>
-    <sys:String x:Key="GlobalSaveChanges">Save Changes</sys:String>
-    <sys:String x:Key="GlobalUpdate">Update</sys:String>
-    <sys:String x:Key="GlobalDelete">Delete</sys:String>
-    <sys:String x:Key="GlobalClose">Close</sys:String>
-    
     <!-- Sidebar -->
     <sys:String x:Key="SidebarMenu">MENU</sys:String>
     <sys:String x:Key="SidebarHome">Home</sys:String>
@@ -115,7 +106,8 @@
     <sys:String x:Key="SettingsConverterPaletteManagement">Palette Management</sys:String>
     <sys:String x:Key="SettingsConverterManagePalettes">Manage Palettes</sys:String>
     <sys:String x:Key="SettingsConverterDeleteAllPalettes">Delete all palettes</sys:String>
-    <sys:String x:Key="SettingsRendererVisuals">Visual Settings</sys:String>
+	<sys:String x:Key="SettingsRendererVisuals">Visual Settings</sys:String>
+    <sys:String x:Key="SettingsRenderer">Render Settings</sys:String>
     <sys:String x:Key="SettingsRendererFloor">Floor</sys:String>
     <sys:String x:Key="SettingsRendererMeshColor">Mesh Color</sys:String>
     <sys:String x:Key="SettingsRendererComingSoon">Rendering settings coming soon...</sys:String>

@@ -23,10 +23,10 @@ public partial class SettingsViewModel : ViewModelBase
     private bool _showFloor;
 
     [ObservableProperty]
-    private Avalonia.Media.Color _floorColor;
+    private Avalonia.Media.Color _floorColor = Avalonia.Media.Colors.Green;
 
     [ObservableProperty]
-    private Avalonia.Media.Color _modelColor;
+    private Avalonia.Media.Color _modelColor = Avalonia.Media.Colors.White;
 
     [ObservableProperty]
     private bool _isPaletteManagerOpen;
@@ -78,6 +78,9 @@ public partial class SettingsViewModel : ViewModelBase
         get => MCto3D.Services.AppSettings_Service.Language == "es-ES" ? 1 : 0;
         set
         {
+            if (value < 0 || value > 1)
+                return;
+
             string newLang = value == 1 ? "es-ES" : "en-US";
             if (MCto3D.Services.AppSettings_Service.Language != newLang)
             {

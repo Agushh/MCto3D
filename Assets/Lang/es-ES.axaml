@@ -116,7 +116,8 @@
     <sys:String x:Key="SettingsConverterPaletteManagement">Gestión de Paletas</sys:String>
     <sys:String x:Key="SettingsConverterManagePalettes">Gestionar Paletas</sys:String>
     <sys:String x:Key="SettingsConverterDeleteAllPalettes">Borrar todas las paletas</sys:String>
-    <sys:String x:Key="SettingsRendererVisuals">Ajustes Visuales</sys:String>
+	<sys:String x:Key="SettingsRendererVisuals">Ajustes Visuales</sys:String>
+    <sys:String x:Key="SettingsRenderer">Opciones de render</sys:String>
     <sys:String x:Key="SettingsRendererFloor">Suelo</sys:String>
     <sys:String x:Key="SettingsRendererMeshColor">Color de Malla</sys:String>
     <sys:String x:Key="SettingsRendererComingSoon">Los ajustes de renderizado llegarán pronto...</sys:String>
