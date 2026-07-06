@@ -12,6 +12,9 @@ namespace MCto3D.Services
         private readonly string _configFilePath;
         private AppSettings _currentSettings;
 
+        public event Action SettingsChanged;
+
+
         public AppSettingsService()
         {
             _configDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MCto3D");
@@ -97,6 +100,8 @@ namespace MCto3D.Services
 
                 string json = JsonSerializer.Serialize(_currentSettings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_configFilePath, json);
+                
+                SettingsChanged?.Invoke();
             }
             catch (Exception ex)
             {

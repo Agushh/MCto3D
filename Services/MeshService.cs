@@ -67,7 +67,6 @@ namespace MCto3D.Services
                         foreach (var cuboid in geometryCuboids)
                         {
                             Vector3[] localVertices = GetCuboidVertices(cuboid.from, cuboid.to);
-                            // Ya no usamos BlockTransformService porque NativeModelResolver rota nativamente desde el JSON.
 
                             for (int f = 0; f < 6; f++)
                             {

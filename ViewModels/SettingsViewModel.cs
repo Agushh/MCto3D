@@ -104,7 +104,27 @@ public partial class SettingsViewModel : ViewModelBase
         _mainViewModel = mainViewModel;
         _appSettings = appSettings;
         _localFilesPath = _appSettings.LocalFilesPath;
+        
+        _showFloor = _appSettings.ShowFloor;
+        try { _floorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { _floorColor = Avalonia.Media.Color.Parse("#1A1A1A"); }
+        try { _modelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { _modelColor = Avalonia.Media.Colors.White; }
+        
         _ = UpdateMinecraftVersionAsync();
+    }
+
+    partial void OnShowFloorChanged(bool value)
+    {
+        _appSettings.ShowFloor = value;
+    }
+
+    partial void OnFloorColorChanged(Avalonia.Media.Color value)
+    {
+        _appSettings.FloorColorHex = value.ToString();
+    }
+
+    partial void OnModelColorChanged(Avalonia.Media.Color value)
+    {
+        _appSettings.ModelColorHex = value.ToString();
     }
 
     public async Task UpdateMinecraftVersionAsync()

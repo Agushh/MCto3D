@@ -5,7 +5,7 @@ namespace MCto3D.Services
 {
     public class TopologyService
     {
-        public void ProcessEnclosedSpaces(int[,,] grid)
+        public void ProcessEnclosedSpaces(int[,,] grid, int airId)
         {
             int sizeX = grid.GetLength(0);
             int sizeY = grid.GetLength(1);
@@ -27,7 +27,7 @@ namespace MCto3D.Services
                 {
                     for (int z = 0; z < sizeZ; z++)
                     {
-                        if (grid[x, y, z] == -1 && !visited[x, y, z])
+                        if (grid[x, y, z] == airId && !visited[x, y, z])
                         {
                             int boundaryCount = 0;
                             Queue<Vector3Int> q = new Queue<Vector3Int>();
@@ -54,7 +54,7 @@ namespace MCto3D.Services
                                     
                                     if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY && nz >= 0 && nz < sizeZ)
                                     {
-                                        if (grid[nx, ny, nz] == -1 && !visited[nx, ny, nz])
+                                        if (grid[nx, ny, nz] == airId && !visited[nx, ny, nz])
                                         {
                                             visited[nx, ny, nz] = true;
                                             q.Enqueue(new Vector3Int(nx, ny, nz));
@@ -93,7 +93,7 @@ namespace MCto3D.Services
                         
                         if (nx >= 0 && nx < sizeX && ny >= 0 && ny < sizeY && nz >= 0 && nz < sizeZ)
                         {
-                            if (grid[nx, ny, nz] == -1 && !isOutside[nx, ny, nz])
+                            if (grid[nx, ny, nz] == airId && !isOutside[nx, ny, nz])
                             {
                                 isOutside[nx, ny, nz] = true;
                                 q.Enqueue(new Vector3Int(nx, ny, nz));
@@ -102,16 +102,54 @@ namespace MCto3D.Services
                     }
                 }
             }
-            
-            // 3. Reemplazar los vacíos que NO son exteriores (quedaron atrapados o son cortes menores) por -2 (Relleno)
+
+            // 3. Reemplazar TODO lo interior (aire atrapado o bloques sólidos ocultos) por -2
             for (int x = 0; x < sizeX; x++)
             {
                 for (int y = 0; y < sizeY; y++)
                 {
                     for (int z = 0; z < sizeZ; z++)
                     {
-                        if (grid[x, y, z] == -1 && !isOutside[x, y, z])
+                        // Si este vóxel es el "Aire Exterior", lo dejamos en paz y pasamos al siguiente
+                        if (isOutside[x, y, z])
+                            continue; 
+
+                        // Si es un bloque (cualquier valor distinto de -1)
+                        if (grid[x, y, z] != airId)
                         {
+                            bool isVisible = false;
+
+                            // Revisamos los 6 bloques vecinos que lo rodean
+                            for (int i = 0; i < 6; i++)
+                            {
+                                int nx = x + dx[i];
+                                int ny = y + dy[i];
+                                int nz = z + dz[i];
+
+                                // Condición A: Está en el límite absoluto del grid (borde del mapa)
+                                if (nx < 0 || nx >= sizeX || ny < 0 || ny >= sizeY || nz < 0 || nz >= sizeZ)
+                                {
+                                    isVisible = true;
+                                    break; // Ya sabemos que es visible, dejamos de chequear vecinos
+                                }
+                                // Condición B: Toca un bloque de "Aire Exterior"
+                                else if (isOutside[nx, ny, nz])
+                                {
+                                    isVisible = true;
+                                    break;
+                                }
+                            }
+
+                            // Si no cumple ninguna condición, está atrapado adentro de la carcasa
+                            if (!isVisible)
+                            {
+                                grid[x, y, z] = -2;
+                            }
+                        }
+                        else
+                        {
+                            // Si llegó acá, es aire (-1), pero como sabemos que no es isOutside,
+                            // significa que es un hueco de aire atrapado adentro.
                             grid[x, y, z] = -2;
                         }
                     }

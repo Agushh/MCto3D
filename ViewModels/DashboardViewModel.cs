@@ -100,8 +100,21 @@ public partial class DashboardViewModel : ViewModelBase
         ProjectSaveVM.GetExportFormatFunc = () => ExportVM.ExportFormat;
         ProjectSaveVM.GetIsSingleColorModeFunc = () => PaletteVM.IsSingleColorMode;
         
+        _showFloor = _appSettings.ShowFloor;
         try { _floorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { _floorColor = Colors.DarkGray; }
         try { _modelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { _modelColor = Colors.White; }
+        
+        _appSettings.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged()
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            ShowFloor = _appSettings.ShowFloor;
+            try { FloorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { }
+            try { ModelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { }
+        });
     }
 
     partial void OnSelectedGeometryModeIndexChanged(int value)
@@ -212,7 +225,8 @@ public partial class DashboardViewModel : ViewModelBase
     {
         if (FillHoles)
         {
-            _topologyService.ProcessEnclosedSpaces(strData.voxelGrid);
+            int airId = Array.FindIndex(strData.palette, state => state.Name == "air");
+            _topologyService.ProcessEnclosedSpaces(strData.voxelGrid, airId);
         }
     }
     private Dictionary<System.Drawing.Color, List<Triangle>> GenerateFinalMeshes(StructureData strData)

@@ -6,7 +6,7 @@ namespace MCto3D.Models
 {
     public struct BlockState
     {
-        public string Name; // ej: "minecraft:acacia_stairs"
+        public string Name; // ej: "acacia_stairs"   ->   not "minecraft:acacia_stairs", because it is normalized before loading to memory for optimization.
         public Dictionary<string, string> Properties; // ej: ["facing"] = "east", ["half"] = "bottom"
 
         // Un método útil para cuando necesites buscar este bloque en tu caché de Blockstates
