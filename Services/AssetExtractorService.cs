@@ -66,7 +66,7 @@ namespace MCto3D.Services
                 {
                     if (entry.FullName.StartsWith("assets/minecraft/models/block/") ||
                         entry.FullName.StartsWith("assets/minecraft/blockstates/") ||
-                        entry.FullName.StartsWith("data/minecraft/structure/") ||
+                        entry.FullName.("data/minecraft/structure/") ||
                         entry.FullName.StartsWith("assets/minecraft/textures/block/"))
                     {
                         if (string.IsNullOrEmpty(entry.Name)) continue;
