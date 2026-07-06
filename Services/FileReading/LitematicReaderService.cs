@@ -1,4 +1,4 @@
-﻿using fNbt;
+using fNbt;
 using MCto3D.Models;
 using System;
 using System.Collections.Generic;
@@ -105,7 +105,8 @@ namespace MCto3D.Services.FileReading
                 for (int i = 0; i < blockStatePalette.Count; i++)
                 {
                     var stateTag = blockStatePalette[i] as NbtCompound;
-                    string name = stateTag.Get<NbtString>("Name").Value;
+                    string rawName = stateTag.Get<NbtString>("Name").Value;
+                    string name = rawName.Split('[')[0].Replace("minecraft:", "");
                     Dictionary<string, string> properties = new Dictionary<string, string>();
 
                     if (stateTag.TryGet("Properties", out NbtCompound propsTag))
@@ -214,6 +215,9 @@ namespace MCto3D.Services.FileReading
 
             // Filtrar aire de la paleta si es necesario, o mantenerlo. 
             // Para mantener coherencia con el readNBT, retornamos la estructura
+
+            
+
             return new StructureData(new(totalSizeX, totalSizeY, totalSizeZ), voxelGrid, globalPalette.ToArray());
         }
     }

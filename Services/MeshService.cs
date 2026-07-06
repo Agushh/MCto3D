@@ -30,6 +30,9 @@ namespace MCto3D.Services
         public List<Triangle> GenerateFullGeometryMesh(StructureData strData, float scale)
         {
             List<Triangle> triangles = new();
+            
+            //Temporal implementation of clean names for palette. This needs to be in StructureLoaderService And save clean names from the beggining.
+
 
             for (int x = 0; x < strData.Size.X; x++)
             {
@@ -52,7 +55,7 @@ namespace MCto3D.Services
                         else
                         {
                             // HACK: Limpiar blockName (viene con minecraft: y estados). 
-                            string cleanName = strData.palette[blockState].Name.Split('[')[0].Replace("minecraft:", "");
+                            string cleanName = strData.palette[blockState].Name;
 
                             // Resolutor Nativo: Lee el JSON directamente y aplica rotaciones oficiales
                             geometryCuboids = _nativeModelResolverService.ResolveGeometry(strData.palette[blockState].Name, strData.palette[blockState].Properties);

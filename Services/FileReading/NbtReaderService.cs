@@ -73,9 +73,12 @@ namespace MCto3D.Services.FileReading
                 }
                 customPalette[i] = new BlockState
                 {
-                    Name = blockName,
+                    Name = blockName.Split('[')[0].Replace("minecraft:", ""),
                     Properties = properties
                 };
+
+
+
             }
             return new StructureData(new(sizeX, sizeY, sizeZ), voxelGrid, customPalette);
         }
