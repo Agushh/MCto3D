@@ -5,9 +5,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using StbImageSharp;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.ColorProcesing
 {
-    public class ColorGeneratorService : IColorGeneratorService
+    public class ColorGeneratorService
     {
         public async Task<Dictionary<string, byte[]>> GenerateAndLoadColors(string localAppFolder, IProgress<string> progress = null)
         {

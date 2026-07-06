@@ -8,6 +8,12 @@ using System.Collections.Generic;
 using System.Text.Json;
 using MCto3D.ViewModels;
 using MCto3D.Services;
+using MCto3D.Services.ColorProcesing;
+using MCto3D.Services.ColorProcesing.Algorithms;
+using MCto3D.Services.FileReading;
+using MCto3D.Services.ColorProcesing.Factory;
+using MCto3D.Services.AssetsProcessing;
+using MCto3D.Services.ExportedFilesReading;
 
 namespace MCto3D
 {
@@ -20,24 +26,37 @@ namespace MCto3D
             AvaloniaXamlLoader.Load(this);
 
             var collection = new ServiceCollection();
-            collection.AddSingleton<IAppSettingsService, AppSettingsService>();
+            collection.AddSingleton<AppSettingsService>();
             collection.AddSingleton<IProjectStorageService, ProjectStorageService>();
-            collection.AddSingleton<IFileReaderService, FileReaderService>();
-            collection.AddSingleton<IMeshService, MeshService>();
-            collection.AddSingleton<IAssetExtractorService, AssetExtractorService>();
-            collection.AddSingleton<IColorGeneratorService, ColorGeneratorService>();
-            collection.AddSingleton<ITopologyService, TopologyService>();
-            collection.AddSingleton<IColorClusteringService, ColorClusteringService>();
-            collection.AddSingleton<IColorMappingService, ColorMappingService>();
+            collection.AddSingleton<StructureLoaderService>();
+            collection.AddSingleton<MeshService>();
+            collection.AddSingleton<AssetExtractorService>();
+            collection.AddSingleton<ColorGeneratorService>();
+            collection.AddSingleton<TopologyService>();
+            collection.AddSingleton<KMeansColorsService>();
+            collection.AddSingleton<KMedoidsColorsService>();
+            collection.AddSingleton<UserPaletteColorsService>();
+            collection.AddSingleton<SingleColorService>();
+            collection.AddSingleton<RawColorService>();
+            collection.AddSingleton<IColorAlgorithmFactory, ColorAlgorithmFactory>();
+
+            collection.AddSingleton<ColorMappingService>();
             collection.AddSingleton<IModelReader, ThreeMfReaderService>();
-            collection.AddSingleton<INativeModelResolverService, NativeModelResolverService>();
+            collection.AddSingleton<NativeModelResolverService>();
+
+
+            collection.AddTransient<IStructureReader, NbtReaderService>();
+            collection.AddTransient<IStructureReader, LitematicReaderService>();
+            collection.AddSingleton<StructureLoaderService>();
+            collection.AddSingleton<ColorSeparatorService>();
+
             // ViewModels
             collection.AddTransient<MainWindowViewModel>();
             
             var provider = collection.BuildServiceProvider();
             Services = provider;
 
-            ChangeLanguage(Services.GetRequiredService<IAppSettingsService>().Language);
+            ChangeLanguage(Services.GetRequiredService<AppSettingsService>().Language);
         }
 
         public static void ChangeLanguage(string cultureCode)

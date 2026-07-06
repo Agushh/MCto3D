@@ -2,23 +2,35 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System;
+using MCto3D.Models;
+using MCto3D.Services.AssetsProcessing;
 
-namespace MCto3D.Services;
+namespace MCto3D.Services.ColorProcesing;
 
-public class ColorMappingService : IColorMappingService
+public class ColorMappingService
 {
     public Dictionary<string, byte[]> BlockColors { get; set; } = new();
     private Dictionary<string, Color> _computedColorsCache = new();
     
-    private readonly INativeModelResolverService _nativeModelResolverService;
+    private readonly NativeModelResolverService _nativeModelResolverService;
 
-    public ColorMappingService(INativeModelResolverService nativeModelResolverService)
+    public ColorMappingService(NativeModelResolverService nativeModelResolverService)
     {
         _nativeModelResolverService = nativeModelResolverService;
     }
 
     public void Initialize(string localFilesPath)
     {
+    }
+
+    public Dictionary<int, Color> GetColorsForModel(BlockState[] palette)
+    {
+        var blockColors = new Dictionary<int, Color>();
+        for (int i = 0; i < palette.Length; i++)
+        {
+            blockColors[i] = GetColorForBlock(palette[i].Name, palette[i].Properties);
+        }
+        return blockColors;
     }
 
     public Color GetColorForBlock(string blockName, Dictionary<string, string> properties = null)

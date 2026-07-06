@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:vm="using:MCto3D.ViewModels"
+			 xmlns:models="using:MCto3D.Models"
 			 xmlns:controls="using:MCto3D.Controls"
 			 xmlns:conv="using:MCto3D.Converters"
 			 x:Class="MCto3D.Views.DashboardView"
@@ -92,7 +93,7 @@
 											
 											<StackPanel IsVisible="{Binding FillHoles}" Margin="0,8,0,0">
 												<!-- Custom fill color logic: only relevant if not in single color mode -->
-												<StackPanel IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static vm:ColorAlgorithm.SingleColor}}">
+												<StackPanel Spacing="12" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static models:ColorAlgorithm.SingleColor}}">
 													<Grid ColumnDefinitions="160,*">
 														<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 														<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
@@ -171,7 +172,6 @@
 										<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding PaletteVM.SelectedAlgorithm}">
 											<ComboBoxItem Content="{DynamicResource ConverterMono}" />
 											<ComboBoxItem Content="{DynamicResource ConverterCustomPalette}" />
-											<ComboBoxItem Content="{DynamicResource ConverterPredefinedPalette}" />
 											<ComboBoxItem Content="{DynamicResource ConverterKMeansAvg}" />
 											<ComboBoxItem Content="{DynamicResource ConverterKMedoids}" />
 											<ComboBoxItem Content="{DynamicResource ConverterRawColors}" />
@@ -180,9 +180,9 @@
 
 									<Border Height="1" Background="{DynamicResource EnderBorder}" Margin="0,8"/>
 
-									<StackPanel IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static vm:ColorAlgorithm.SingleColor}}" Spacing="16">
+									<StackPanel IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static models:ColorAlgorithm.SingleColor}}" Spacing="16">
 									
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.RawColors}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.RawColors}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterInfo}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 												<TextBlock Text="{DynamicResource ConverterColorCount}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Bold"/>
@@ -190,7 +190,7 @@
 											</StackPanel>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.KMeansAverage}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.KMeans}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAmountK}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
 												<Slider Minimum="2" Maximum="16" Value="{Binding PaletteVM.KMeansCount}" Width="120" VerticalAlignment="Center"/>
@@ -198,7 +198,7 @@
 											</StackPanel>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.KMeansReal}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.KMedoids}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAmountK}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
 												<Slider Minimum="2" Maximum="16" Value="{Binding PaletteVM.KMeansCount}" Width="120" VerticalAlignment="Center"/>
@@ -206,17 +206,7 @@
 											</StackPanel>
 										</Grid>
 
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.PredefinedPalette}}">
-											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterPaletteSize}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
-											<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding PaletteVM.PredefinedPaletteSize}">
-												<x:Int32>4</x:Int32>
-												<x:Int32>8</x:Int32>
-												<x:Int32>16</x:Int32>
-												<x:Int32>32</x:Int32>
-											</ComboBox>
-										</Grid>
-
-										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static vm:ColorAlgorithm.CustomPalette}}">
+										<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.Palette}}">
 											<TextBlock Grid.Column="0" Text="{DynamicResource ConverterPalette}" VerticalAlignment="Top" Margin="0,8,0,0" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
 											<StackPanel Grid.Column="1" Spacing="16">
 												<ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PaletteVM.AvailablePalettes}" SelectedItem="{Binding PaletteVM.SelectedPalette}">

@@ -1,15 +1,10 @@
+using MCto3D.Models;
 using System.Collections.Generic;
 
 namespace MCto3D.Services
 {
-    public class TopologyService : ITopologyService
+    public class TopologyService
     {
-        public struct Vector3Int
-        {
-            public int X; public int Y; public int Z;
-            public Vector3Int(int x, int y, int z) { X = x; Y = y; Z = z; }
-        }
-
         public void ProcessEnclosedSpaces(int[,,] grid)
         {
             int sizeX = grid.GetLength(0);

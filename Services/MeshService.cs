@@ -1,22 +1,23 @@
 using fNbt;
 using MCto3D.Models;
+using MCto3D.Services.AssetsProcessing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
 
 namespace MCto3D.Services
 {
-    public class MeshService : IMeshService
+    public class MeshService
     {
-        private readonly INativeModelResolverService _nativeModelResolverService;
+        private readonly NativeModelResolverService _nativeModelResolverService;
 
-        public MeshService(INativeModelResolverService nativeModelResolverService)
+        public MeshService(NativeModelResolverService nativeModelResolverService)
         {
             _nativeModelResolverService = nativeModelResolverService;
         }
-
 
         private static bool IsAirOrInvisible(string blockName)
         {
@@ -26,7 +27,7 @@ namespace MCto3D.Services
                    clean == "water" || clean == "lava";
         }
 
-        public List<Triangle> GenerateFullGeometryMesh(structureData strData, float scale)
+        public List<Triangle> GenerateFullGeometryMesh(StructureData strData, float scale)
         {
             List<Triangle> triangles = new();
 
@@ -196,7 +197,7 @@ namespace MCto3D.Services
             return new Vector3(x, y, z);
         }
 
-        public List<Triangle> GenerateMesh(structureData strData, float scale)
+        public List<Triangle> GenerateMesh(StructureData strData, float scale)
         {
             List<Triangle> triangles = new();
 
@@ -269,22 +270,14 @@ namespace MCto3D.Services
             } 
             return triangles;
         }
-        public Dictionary<System.Drawing.Color, List<Triangle>> GenerateMultiColorMeshes(multiColorStructureData multiData, structureData originalData, float scale, bool useFullGeom = false)
+        public Dictionary<Color, List<Triangle>> GenerateMultiColorMeshes(Dictionary<Color, StructureData> multiData, float scale, bool useFullGeom = false)
         {
-            var meshes = new Dictionary<System.Drawing.Color, List<Triangle>>();
-
-            foreach (var kvp in multiData.voxelGrid)
+            var meshes = new Dictionary<Color, List<Triangle>>();
+            foreach (var kvp in multiData)
             {
                 var color = kvp.Key;
-                var colorGrid = kvp.Value;
-                
-                // Creamos un structureData temporal que SÓLO contiene los bloques de este color.
-                // El resto de la grilla (otros colores) estarán como -1 (aire).
-                var colorStrData = new structureData(originalData.Size, colorGrid, originalData.palette);
-                
-                // Reutilizamos la lógica original, logrando:
-                // 1. Cero repetición de código.
-                // 2. Mallas independientes cerradas (watertight) por color (vital para Slicers).
+                var colorStrData = kvp.Value;
+
                 if (useFullGeom)
                 {
                     meshes[color] = GenerateFullGeometryMesh(colorStrData, scale);
@@ -294,7 +287,6 @@ namespace MCto3D.Services
                     meshes[color] = GenerateMesh(colorStrData, scale);
                 }
             }
-
             return meshes;
         }
     }

@@ -12,7 +12,7 @@ namespace MCto3D.ViewModels;
 
 public partial class ProjectSaveViewModel : ViewModelBase
 {
-    private readonly IAppSettingsService _appSettings;
+    private readonly AppSettingsService _appSettings;
     private readonly IProjectStorageService _projectStorage;
     private readonly MainWindowViewModel _navigationController;
 
@@ -26,7 +26,7 @@ public partial class ProjectSaveViewModel : ViewModelBase
     
     public event EventHandler<string>? StatusTextChanged;
 
-    public ProjectSaveViewModel(MainWindowViewModel navigationController, IAppSettingsService appSettings, IProjectStorageService projectStorage)
+    public ProjectSaveViewModel(MainWindowViewModel navigationController, AppSettingsService appSettings, IProjectStorageService projectStorage)
     {
         _navigationController = navigationController;
         _appSettings = appSettings;

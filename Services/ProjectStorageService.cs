@@ -17,9 +17,9 @@ public interface IProjectStorageService
 
 public class ProjectStorageService : IProjectStorageService
 {
-    private readonly IAppSettingsService _appSettings;
+    private readonly AppSettingsService _appSettings;
 
-    public ProjectStorageService(IAppSettingsService appSettings)
+    public ProjectStorageService(AppSettingsService appSettings)
     {
         _appSettings = appSettings;
     }

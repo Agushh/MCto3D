@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using MCto3D.Models;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.ExportedFilesWriting
 {
     public class StlWriterService : IModelWriter
     {

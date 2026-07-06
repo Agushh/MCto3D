@@ -11,12 +11,13 @@ using MCto3D.Models;
 using MCto3D.Services;
 using Microsoft.Win32;
 using System.Threading.Tasks;
+using MCto3D.Services.ExportedFilesWriting;
 
 namespace MCto3D.ViewModels;
 
 public partial class ExportViewModel : ViewModelBase
 {
-    private readonly IAppSettingsService _appSettings;
+    private readonly AppSettingsService _appSettings;
     
     public event EventHandler? ExportFormatChanged;
     public event EventHandler<string>? StatusTextChanged;
@@ -25,7 +26,7 @@ public partial class ExportViewModel : ViewModelBase
     public Func<string>? GetOriginalFileNameFunc { get; set; }
     public Func<string?>? GetSelectedFilePathFunc { get; set; }
     
-    public ExportViewModel(IAppSettingsService appSettings)
+    public ExportViewModel(AppSettingsService appSettings)
     {
         _appSettings = appSettings;
         _selectedSlicer = SlicerOptions[0];

@@ -6,11 +6,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.AssetsProcessing
 {
-    public class AssetExtractorService : IAssetExtractorService
+    public class AssetExtractorService
     {
-
         public async Task<string> ExtractLegalAssets(string localFilesPath, IProgress<string> progress = null, string minecraftLocation = "default")
         {
             progress?.Report("Iniciando búsqueda de assets...");
@@ -66,7 +65,7 @@ namespace MCto3D.Services
                 {
                     if (entry.FullName.StartsWith("assets/minecraft/models/block/") ||
                         entry.FullName.StartsWith("assets/minecraft/blockstates/") ||
-                        entry.FullName.("data/minecraft/structure/") ||
+                        entry.FullName.StartsWith("data/minecraft/structure/") ||
                         entry.FullName.StartsWith("assets/minecraft/textures/block/"))
                     {
                         if (string.IsNullOrEmpty(entry.Name)) continue;
@@ -127,8 +126,6 @@ namespace MCto3D.Services
             progress?.Report("¡Extracción completada con éxito!");
             return localAppFolder;
         }
-
-
 
         public static string GetLatestMinecraftVersion(string versionsLocation)
         {

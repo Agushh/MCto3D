@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Text;
 using MCto3D.Models;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.ExportedFilesWriting
 {
     public class ThreeMfWriterService : IModelWriter
     {

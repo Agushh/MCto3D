@@ -5,13 +5,13 @@ using System.Linq;
 using System.Numerics;
 using System.Text.Json.Nodes;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.AssetsProcessing
 {
-    public class NativeModelResolverService : INativeModelResolverService
+    public class NativeModelResolverService
     {
-        private readonly IAppSettingsService _appSettings;
+        private readonly AppSettingsService _appSettings;
 
-        public NativeModelResolverService(IAppSettingsService appSettings)
+        public NativeModelResolverService(AppSettingsService appSettings)
         {
             _appSettings = appSettings;
         }

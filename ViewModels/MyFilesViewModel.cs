@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Models;
 using MCto3D.Services;
+using MCto3D.Services.ExportedFilesWriting;
+using MCto3D.Services.FileReading;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -63,14 +65,14 @@ public partial class MyFilesViewModel : ViewModelBase
     private SlicerOption _selectedSlicer;
 
     private readonly IProjectStorageService _projectStorage;
-    private readonly IFileReaderService _fileReaderService;
-    private readonly IMeshService _meshService;
+    private readonly StructureLoaderService _structureLoaderService;
+    private readonly MeshService _meshService;
 
-    public MyFilesViewModel(MainWindowViewModel navigationController, IProjectStorageService projectStorage, IFileReaderService fileReaderService, IMeshService meshService)
+    public MyFilesViewModel(MainWindowViewModel navigationController, IProjectStorageService projectStorage, StructureLoaderService structureLoaderService, MeshService meshService)
     {
         _navigationController = navigationController;
         _projectStorage = projectStorage;
-        _fileReaderService = fileReaderService;
+        _structureLoaderService = structureLoaderService;
         _meshService = meshService;
         _selectedSlicer = SlicerOptions[0];
         LoadData();
@@ -219,16 +221,8 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            structureData strData;
-            if (SelectedProject.OriginalFilePath.EndsWith(".litematic", StringComparison.OrdinalIgnoreCase) || 
-                SelectedProject.OriginalFilePath.EndsWith(".schematic", StringComparison.OrdinalIgnoreCase))
-            {
-                strData = _fileReaderService.readLitematic(SelectedProject.OriginalFilePath);
-            }
-            else
-            {
-                strData = _fileReaderService.readNBT(SelectedProject.OriginalFilePath);
-            }
+            StructureData strData = _structureLoaderService.Load(SelectedProject.OriginalFilePath);
+
             List<Triangle> malla = _meshService.GenerateMesh(strData, SelectedProject.BlockScale);
             string extensionPorDefecto = SelectedProject.ExportFormat.ToLower();
             string nombreFiltro = SelectedProject.ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
@@ -302,16 +296,9 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            structureData strData;
-            if (SelectedProject.OriginalFilePath.EndsWith(".litematic", StringComparison.OrdinalIgnoreCase) || 
-                SelectedProject.OriginalFilePath.EndsWith(".schematic", StringComparison.OrdinalIgnoreCase))
-            {
-                strData = _fileReaderService.readLitematic(SelectedProject.OriginalFilePath);
-            }
-            else
-            {
-                strData = _fileReaderService.readNBT(SelectedProject.OriginalFilePath);
-            }
+            StructureData strData = _structureLoaderService.Load(SelectedProject.OriginalFilePath);
+
+
             List<Triangle> malla = _meshService.GenerateMesh(strData, SelectedProject.BlockScale);
 
             string extension = SelectedProject.ExportFormat.ToLower();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.ExportedFilesWriting
 {
     internal class StlGenerator
     {

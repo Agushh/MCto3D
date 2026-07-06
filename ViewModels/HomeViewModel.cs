@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using MCto3D.Services.ExportedFilesReading;
 
 namespace MCto3D.ViewModels;
 

@@ -2,42 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using MCto3D.Models;
 
 namespace MCto3D.Services
 {
-    public class CustomPaletteModel
-    {
-        public string Name { get; set; } = string.Empty;
-        public List<string> ColorsHex { get; set; } = new();
-    }
-
-    public class AppSettings
-    {
-        public string LocalFilesPath { get; set; } = string.Empty;
-        public string Language { get; set; } = "en-US";
-        public bool Use3MfAssemblyMode { get; set; } = true;
-        public bool ShowFloor { get; set; } = false;
-        public string FloorColorHex { get; set; } = "#1A1A1A";
-        public string ModelColorHex { get; set; } = "#FFFFFF";
-        public List<CustomPaletteModel> SavedPalettes { get; set; } = new();
-    }
-
-    public interface IAppSettingsService
-    {
-        string LocalFilesPath { get; set; }
-        string Language { get; set; }
-        bool Use3MfAssemblyMode { get; set; }
-        bool ShowFloor { get; set; }
-        string FloorColorHex { get; set; }
-        string ModelColorHex { get; set; }
-        List<CustomPaletteModel> SavedPalettes { get; set; }
-        
-        void SavePalettes();
-        void Load();
-        void Save();
-    }
-
-    public class AppSettingsService : IAppSettingsService
+    public class AppSettingsService
     {
         private readonly string _configDirectory;
         private readonly string _configFilePath;
@@ -86,7 +55,7 @@ namespace MCto3D.Services
             set { _currentSettings.ModelColorHex = value; Save(); }
         }
 
-        public List<CustomPaletteModel> SavedPalettes
+        public List<CustomPalette> SavedPalettes
         {
             get => _currentSettings.SavedPalettes;
             set { _currentSettings.SavedPalettes = value; Save(); }

@@ -31,9 +31,9 @@ public partial class VanillaStructuresViewModel : ViewModelBase
     [ObservableProperty]
     private string _currentFolderName = "Structures";
 
-    private readonly IAppSettingsService _appSettings;
+    private readonly AppSettingsService _appSettings;
 
-    public VanillaStructuresViewModel(MainWindowViewModel navigationController, IAppSettingsService appSettings)
+    public VanillaStructuresViewModel(MainWindowViewModel navigationController, AppSettingsService appSettings)
     {
         _navigationController = navigationController;
         _appSettings = appSettings;

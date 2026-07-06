@@ -17,8 +17,5 @@ namespace MCto3D.Models
             Normal = Vector3.Normalize(Vector3.Cross(v2 - v1, v3 - v1));
         }
     }
-        internal class Mesh
-    {
 
-    }
 }

@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Services;
+using MCto3D.Services.AssetsProcessing;
+using MCto3D.Services.ColorProcesing;
 
 namespace MCto3D.ViewModels;
 
@@ -19,12 +22,12 @@ public partial class WelcomeViewModel : ViewModelBase
 
     private string location = "";
 
-    private readonly IAppSettingsService _appSettings;
-    private readonly IAssetExtractorService _assetExtractorService;
-    private readonly IColorGeneratorService _colorGeneratorService;
-    private readonly IColorMappingService _colorMappingService;
+    private readonly AppSettingsService _appSettings;
+    private readonly AssetExtractorService _assetExtractorService;
+    private readonly ColorGeneratorService _colorGeneratorService;
+    private readonly ColorMappingService _colorMappingService;
 
-    public WelcomeViewModel(MainWindowViewModel mainViewModel, IAppSettingsService appSettings, IAssetExtractorService assetExtractorService, IColorGeneratorService colorGeneratorService, IColorMappingService colorMappingService)
+    public WelcomeViewModel(MainWindowViewModel mainViewModel, AppSettingsService appSettings, AssetExtractorService assetExtractorService, ColorGeneratorService colorGeneratorService, ColorMappingService colorMappingService)
     {
         _mainViewModel = mainViewModel;
         _appSettings = appSettings;

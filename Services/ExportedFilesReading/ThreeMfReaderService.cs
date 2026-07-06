@@ -8,7 +8,7 @@ using System.Linq;
 using System.Numerics;
 using MCto3D.Models;
 
-namespace MCto3D.Services
+namespace MCto3D.Services.ExportedFilesReading
 {
     public class ThreeMfReaderService : IModelReader
     {

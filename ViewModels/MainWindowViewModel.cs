@@ -4,6 +4,7 @@ using MCto3D.Services;
 using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using MCto3D.Services.ColorProcesing;
 
 namespace MCto3D.ViewModels;
 
@@ -85,12 +86,12 @@ public partial class MainWindowViewModel : ViewModelBase
         
         _currentPage = HomeVM;
 
-        var appSettings = provider.GetRequiredService<IAppSettingsService>();
+        var appSettings = provider.GetRequiredService<AppSettingsService>();
 
         // Comprobar estado inicial
         CheckInitialAssets(appSettings);
-        var colorGenerator = provider.GetRequiredService<IColorGeneratorService>();
-        var colorMapping = provider.GetRequiredService<IColorMappingService>();
+        var colorGenerator = provider.GetRequiredService<ColorGeneratorService>();
+        var colorMapping = provider.GetRequiredService<ColorMappingService>();
         colorMapping.BlockColors = colorGenerator.LoadColorsSync(appSettings.LocalFilesPath);
 
         DashboardVM.ExportVM.PropertyChanged += (s, e) =>
@@ -102,7 +103,7 @@ public partial class MainWindowViewModel : ViewModelBase
         };
     }
 
-    private void CheckInitialAssets(IAppSettingsService appSettings)
+    private void CheckInitialAssets(AppSettingsService appSettings)
     {
         // TODO: Implementa aquí tu lógica para verificar si los assets ya existen.
         bool assetsCargados = System.IO.Directory.Exists(Path.Combine(appSettings.LocalFilesPath, "MinecraftExtractedAssets", "assets"));

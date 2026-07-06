@@ -97,9 +97,9 @@ public partial class SettingsViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsNotDefaultPath));
     }
 
-    private readonly IAppSettingsService _appSettings;
+    private readonly AppSettingsService _appSettings;
     
-    public SettingsViewModel(MainWindowViewModel mainViewModel, IAppSettingsService appSettings)
+    public SettingsViewModel(MainWindowViewModel mainViewModel, AppSettingsService appSettings)
     {
         _mainViewModel = mainViewModel;
         _appSettings = appSettings;
