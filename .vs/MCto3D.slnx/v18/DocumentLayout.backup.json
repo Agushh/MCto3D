@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\views\\dashboardview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:views\\dashboardview.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -66,7 +70,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 251,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,7 +78,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "DashboardView.axaml",
+              "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\DashboardView.axaml",
+              "RelativeDocumentMoniker": "Views\\DashboardView.axaml",
+              "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\DashboardView.axaml",
+              "RelativeToolTip": "Views\\DashboardView.axaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-07-07T02:16:09.869Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AppSettings.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Models\\AppSettings.cs",
               "RelativeDocumentMoniker": "Models\\AppSettings.cs",
@@ -87,7 +103,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "HomeView.axaml",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\HomeView.axaml",
               "RelativeDocumentMoniker": "Views\\HomeView.axaml",
@@ -99,7 +115,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "App.axaml",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\App.axaml",
               "RelativeDocumentMoniker": "App.axaml",
@@ -111,7 +127,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "BlockState.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Models\\BlockState.cs",
               "RelativeDocumentMoniker": "Models\\BlockState.cs",
@@ -124,7 +140,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "MeshService.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Services\\MeshService.cs",
               "RelativeDocumentMoniker": "Services\\MeshService.cs",
@@ -137,7 +153,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "DashboardViewModel.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\DashboardViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\DashboardViewModel.cs",
@@ -150,7 +166,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "TopologyService.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Services\\TopologyService.cs",
               "RelativeDocumentMoniker": "Services\\TopologyService.cs",
@@ -163,7 +179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ProjectStorageService.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Services\\ProjectStorageService.cs",
               "RelativeDocumentMoniker": "Services\\ProjectStorageService.cs",
@@ -176,7 +192,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "AssetExtractorService.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Services\\AssetsProcessing\\AssetExtractorService.cs",
               "RelativeDocumentMoniker": "Services\\AssetsProcessing\\AssetExtractorService.cs",
@@ -189,20 +205,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "SettingsViewModel.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\SettingsViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\SettingsViewModel.cs",
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\SettingsViewModel.cs",
               "RelativeToolTip": "ViewModels\\SettingsViewModel.cs",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAmwGMAAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAmwI0AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-06T20:04:31.144Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "HomeViewModel.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\HomeViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\HomeViewModel.cs",
@@ -215,7 +231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "WelcomeViewModel.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\WelcomeViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\WelcomeViewModel.cs",
@@ -228,7 +244,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "VanillaStructuresViewModel.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\VanillaStructuresViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\VanillaStructuresViewModel.cs",
@@ -241,7 +257,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "ColorSeparatorService.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Services\\ColorProcessing\\ColorSeparatorService.cs",
               "RelativeDocumentMoniker": "Services\\ColorProcessing\\ColorSeparatorService.cs",

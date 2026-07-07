@@ -58,10 +58,15 @@ The application doesn't just read vanilla NBTs; it supports popular modding form
 Instead of hardcoding a massive dictionary of block IDs to static RGB values or distributing copyrighted textures within the repository, **MCto3D dynamically extracts base game assets** directly from the user's local Minecraft installation (`.jar` or resource packs). 
 - **Why?** First and foremost, this strict separation ensures **zero copyright infringement**, as no proprietary Mojang assets are shipped with the software. Secondly, it guarantees *perfect color accuracy* and instant forward-compatibility with future Minecraft versions (as new blocks are read automatically without requiring code updates), while also allowing support for custom resource packs. The engine mathematically maps each block ID to its exact dominant color at runtime.
 
-### 2. Mesh Generation & Topology Culling
-To prevent generating overwhelmingly large 3D files (a common issue with voxel data where millions of faces are generated), the app implements structural optimization:
-- **Adjacency Culling**: Analyzes 3D matrices to cull hidden interior faces between connected blocks, reducing triangle counts by up to 80%.
-- **Flood-Fill Enclosure Detection**: Optionally uses a 3D flood-fill algorithm starting from the outer bounding box to detect and cull enclosed empty pockets (hollow spaces), leaving only the outer visible shell for perfect 3D printing.
+### 2. Geometry Modes & Topology Culling
+To prevent generating overwhelmingly large 3D files (a common issue with voxel data where millions of faces are generated), the app implements structural optimization modes:
+- **Solid Blocks (Optimized Geometry)**: This is the default mode. It analyzes 3D matrices to perform **Adjacency Culling**, removing hidden interior faces between connected blocks. This reduces triangle counts by up to 80%, making the model perfect for 3D printing.
+  - *Flood-Fill Enclosure Detection*: As part of this mode, it optionally uses a 3D flood-fill algorithm starting from the outer bounding box to detect and cull enclosed empty pockets (hollow spaces), leaving only the outer visible shell.
+- **Full Geometry**: This mode preserves absolutely all faces of every block, including internal ones. It is highly resource-intensive but necessary if the user intends to slice, section, or manipulate the internal structure of the model in a 3D editing software (like Blender) later on.
+
+*Visual Example:*
+> *TODO: Insert a comparison image showing Solid Blocks (optimized interior) vs Full Geometry (showing internal faces).*
+> `![Geometry Modes Comparison](docs/images/geometry_modes.png)`
 
 ### 3. Advanced Color Clustering Algorithms
 Handling full-color Minecraft structures often results in hundreds of slightly different texture colors. For multi-color 3D printing (like Bambu Lab AMS or Prusa MMU), this must be reduced. The app provides multiple mathematical approaches:
@@ -91,3 +96,22 @@ If you are looking to contribute to the UI or standard services:
 3. Background tasks (like mesh generation) **must** correctly implement `CancellationToken` to keep the UI thread responsive during heavy mathematical operations.
 
 > **Note**: UI elements must be built using Avalonia's styling system and should bind to the dynamic localization dictionaries for multi-language support (English/Spanish).
+
+---
+
+## About the Development
+
+Hey there! 👋 I'm an indie developer who is just starting out in the world of real software development. 
+
+To bring this ambitious project to life, I heavily assisted myself with AI coding agents. Because of this rapid implementation process, there might be sections of the code that are incorrect, poorly optimized, or simply not following the best industry practices yet. My goal is to continuously learn and perfect this application over time, but for now, you might encounter some bugs or weird architectural decisions.
+
+I am completely open to feedback, suggestions, and pull requests! Every comment and piece of advice is highly appreciated and will help me grow as a developer. Thank you for checking out MCto3D!
+
+---
+
+### 🌐 Stay Updated
+
+If you'd like to follow the journey, download the latest stable versions, or read my devlogs, check out my landing page:
+🔗 **[Visit My Website / Devlogs](https://your-website-url-here.com)**
+
+Here I will be posting news, updates on MCto3D, and future projects I'll be working on. Stay tuned!
