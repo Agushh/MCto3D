@@ -1,63 +1,93 @@
-# MCto3D (Alpha 1.0)
-## Documentación Oficial
+# MCto3D
 
-MCto3D es una herramienta de conversión diseñada para tomar estructuras de Minecraft (NBT) y transformarlas en modelos 3D optimizados para impresión 3D o renderizado (3MF/STL), preservando geometría de bloques y colores.
-
-### 📌 Características Principales
-- **Carga de estructuras NBT**: Soporte para formatos estándar de Minecraft.
-- **Exportación 3MF y STL**: Generación de modelos 3D de alta precisión.
-- **Visualizador 3D en tiempo real**: Renderizado interactivo del modelo.
-- **Múltiples Algoritmos de Color**: Selección inteligente de colores para el modelo.
-- **Modo Ensamblaje**: Exportación separada por piezas según el color para facilitar la impresión 3D.
-- **Multilenguaje**: Soporte para Español e Inglés.
+<div align="center">
+  <!-- TODO: Add hero image/logo here -->
+  <img src="docs/images/logo.png" alt="MCto3D Logo" width="200"/>
+  
+  **MCto3D** is a powerful desktop application designed to convert Minecraft structure files (`.nbt`, `.litematic`, `.schematic`) into highly optimized 3D models (`.3mf`, `.stl`) suitable for 3D printing, rendering, and CAD workflows. It accurately preserves block geometry, dynamically extracts texture colors, and features advanced color-clustering algorithms for multi-color 3D printing.
+</div>
 
 ---
 
-### 🎨 Algoritmos de Color
-La aplicación ofrece distintos enfoques para procesar los colores de los bloques, permitiendo al usuario decidir el balance entre exactitud visual y cantidad de colores:
+## Technical Overview
 
-1. **Color Monocromático**: Asigna un solo color a todo el modelo.
-2. **Paleta Personalizada**: Permite al usuario elegir colores específicos. Los colores del NBT se mapean al color más cercano de la paleta elegida utilizando distancias matemáticas RGB.
-3. **Paleta Predefinida**: Selecciona automáticamente los colores más representativos usando algoritmos de clustering, limitando a 4, 8, 16 o 32 colores.
-4. **K-Means (Color Promedio)**: Agrupa los colores en K grupos (K-Means) y promedia los colores de cada grupo usando la Media Cuadrática (RMS) para evitar que los colores se vuelvan grises o apagados.
-5. **K-Medoids (Color Real)**: Similar a K-Means, pero el centroide de cada grupo es un color *real* existente en la textura del bloque, evitando mezclas artificiales.
-6. **Colores Crudos (Sin procesar)**: Toma los colores nativos puros extraídos de las texturas originales del juego, sin reducir su cantidad.
+This repository is built with maintainability, modularity, and high performance in mind. It employs modern C# practices to handle heavy mesh generation and color clustering efficiently, ensuring a smooth, non-blocking User Experience (UX) even when processing large-scale structures.
 
----
-
-### ⚙️ Modos de Geometría
-- **Geometrías Optimizadas**: Solo genera los triángulos visibles, eliminando las caras internas ocultas entre bloques. Esto reduce drásticamente el peso del archivo 3D.
-- **Geometrías Completas**: Conserva absolutamente todas las caras de cada bloque (incluso las internas). Útil si el modelo será seccionado o manipulado internamente en un programa de edición 3D.
+### Technology Stack
+- **Framework**: .NET 10 (C#)
+- **UI Framework**: Avalonia UI (Cross-platform GUI)
+- **Architecture Pattern**: MVVM (Model-View-ViewModel) via `CommunityToolkit.Mvvm`
+- **3D Rendering**: Custom OpenGL / Silk.NET integration for real-time interactive mesh previewing
+- **Dependency Injection**: Used extensively across services (e.g., mesh generation, asset loading, settings) to ensure modularity.
 
 ---
 
-### 📂 Estructura de Archivos
-- **Formatos de Entrada**: `.nbt` (Minecraft Structure Format).
-- **Formatos de Salida**: 
-  - `.3mf`: Ideal para impresión a color, soporta metadatos y ensamblajes.
-  - `.stl`: Formato estándar geométrico (no soporta color).
-- **Lectura en Dashboard**: El Dashboard ahora es capaz de cargar directamente archivos `.3mf` previamente exportados para una previsualización veloz.
+## Architecture & Patterns
+
+The application strictly separates logic from UI through the **MVVM** pattern, combined with **Dependency Injection (DI)**.
+
+- **Views (`.axaml`)**: Handle only UI binding, themes, and layout definitions (e.g., `DashboardView`, `SettingsView`).
+- **ViewModels**: Manage application state, expose `ICommands` (via `[RelayCommand]`), and bridge the UI with background services.
+- **Services**: Pure logic components registered via DI (e.g., `IStructureLoaderService`, `IMeshService`, `IColorSeparatorService`). 
+
+*Example of Service Injection:*
+```csharp
+public partial class DashboardViewModel : ViewModelBase
+{
+    private readonly IMeshService _meshService;
+    private readonly IStructureLoaderService _structureLoader;
+
+    public DashboardViewModel(IMeshService meshService, IStructureLoaderService structureLoader)
+    {
+        _meshService = meshService;
+        _structureLoader = structureLoader;
+    }
+}
+```
+
+This decoupling ensures algorithms can be swapped, upgraded, or unit-tested in complete isolation.
 
 ---
 
-### 🛠️ Configuración (Settings)
-- **Modo Ensamblaje (3MF)**: Permite decidir si el archivo 3MF se exportará como múltiples objetos agrupados (para poder pintarlos/imprimirlos por separado) o como una sola malla sólida.
-- **Renderizado (Viewport)**:
-  - Alternar visualización del suelo (Grid/Plano).
-  - Modificar colores visuales de fondo y suelo temporalmente para previsualización.
-- **Idiomas**: Cambio en tiempo real de idioma en la interfaz.
+## Core Mechanisms & Algorithms
+
+### 1. Multi-Format Asset Parsing
+The application doesn't just read vanilla NBTs; it supports popular modding formats like **Litematica (`.litematic`)** and older **Schematics (`.schematic`)**. 
+
+**Design Decision: Dynamic Asset Reading vs. Hardcoding**
+Instead of hardcoding a massive dictionary of block IDs to static RGB values or distributing copyrighted textures within the repository, **MCto3D dynamically extracts base game assets** directly from the user's local Minecraft installation (`.jar` or resource packs). 
+- **Why?** First and foremost, this strict separation ensures **zero copyright infringement**, as no proprietary Mojang assets are shipped with the software. Secondly, it guarantees *perfect color accuracy* and instant forward-compatibility with future Minecraft versions (as new blocks are read automatically without requiring code updates), while also allowing support for custom resource packs. The engine mathematically maps each block ID to its exact dominant color at runtime.
+
+### 2. Mesh Generation & Topology Culling
+To prevent generating overwhelmingly large 3D files (a common issue with voxel data where millions of faces are generated), the app implements structural optimization:
+- **Adjacency Culling**: Analyzes 3D matrices to cull hidden interior faces between connected blocks, reducing triangle counts by up to 80%.
+- **Flood-Fill Enclosure Detection**: Optionally uses a 3D flood-fill algorithm starting from the outer bounding box to detect and cull enclosed empty pockets (hollow spaces), leaving only the outer visible shell for perfect 3D printing.
+
+### 3. Advanced Color Clustering Algorithms
+Handling full-color Minecraft structures often results in hundreds of slightly different texture colors. For multi-color 3D printing (like Bambu Lab AMS or Prusa MMU), this must be reduced. The app provides multiple mathematical approaches:
+
+- **Custom Palettes**: Nearest-neighbor color mapping against a user-defined RGB palette using Euclidean color distance.
+- **K-Means Clustering**: Automatically groups the voxel colors into *K* clusters. 
+  - *Mathematical Detail*: The centroid color is calculated using **Root Mean Square (RMS)** averaging rather than simple arithmetic means. This prevents mixed colors from becoming muddy or gray, preserving vibrancy.
+- **K-Medoids Clustering**: Similar to K-Means, but restricts the centroid to an *actual existing block color*, ensuring pure, unmixed textures.
+
+*Visual Example:*
+> *TODO: Insert a comparison image showing a structure in Raw Colors vs K-Means (16 colors) vs Custom Palette.*
+> `![Color Clustering Comparison](docs/images/color_algorithms.png)`
+
+### 4. 3MF & STL Exporting
+- **STL**: Generates monolithic mesh geometries for standard, single-color structural printing.
+- **3MF**: Fully supports multi-color mesh grouping. The exporter groups triangles into distinct color objects, writing compliant XML structures for the 3MF payload. This makes it instantly compatible with modern multi-color slicers as "assemblies," meaning users don't have to manually paint models in the slicer software.
 
 ---
 
-### 🚀 Flujo de Trabajo (Workflow)
-1. Abrir la pestaña **Mis Archivos**.
-2. Presionar **+ Importar NBT** para buscar un archivo de Minecraft en el equipo.
-3. Se abrirá el Dashboard del modelo seleccionado.
-4. (Opcional) Modificar el **Algoritmo de Color** según los requisitos visuales.
-5. Verificar la previsualización 3D interactiva.
-6. Configurar la **Escala del Bloque** y el **Modo de Geometría**.
-7. Seleccionar un formato y presionar **Exportar**.
-8. El archivo puede abrirse en Slicers compatibles (PrusaSlicer, Cura, Bambu Studio) directamente desde la UI.
+## Contributing
 
----
-_MCto3D Alpha 1.0 - Generado automáticamente_
+While this documentation provides a high-level technical overview of the architecture and pipeline, specific proprietary implementations regarding exact file structuring, memory layout, and local persistent states are kept internal to protect the core intellectual property of the project.
+
+If you are looking to contribute to the UI or standard services:
+1. Ensure that your code adheres to the existing **MVVM structure**.
+2. Place business logic inside `Services/`, UI bindings in `ViewModels/`, and keep `Views/` free of code-behind logic.
+3. Background tasks (like mesh generation) **must** correctly implement `CancellationToken` to keep the UI thread responsive during heavy mathematical operations.
+
+> **Note**: UI elements must be built using Avalonia's styling system and should bind to the dynamic localization dictionaries for multi-language support (English/Spanish).
