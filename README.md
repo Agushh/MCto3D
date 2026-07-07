@@ -71,14 +71,26 @@ To prevent generating overwhelmingly large 3D files (a common issue with voxel d
 ### 3. Advanced Color Clustering Algorithms
 Handling full-color Minecraft structures often results in hundreds of slightly different texture colors. For multi-color 3D printing (like Bambu Lab AMS or Prusa MMU), this must be reduced. The app provides multiple mathematical approaches:
 
-- **Custom Palettes**: Nearest-neighbor color mapping against a user-defined RGB palette using Euclidean color distance.
-- **K-Means Clustering**: Automatically groups the voxel colors into *K* clusters. 
-  - *Mathematical Detail*: The centroid color is calculated using **Root Mean Square (RMS)** averaging rather than simple arithmetic means. This prevents mixed colors from becoming muddy or gray, preserving vibrancy.
-- **K-Medoids Clustering**: Similar to K-Means, but restricts the centroid to an *actual existing block color*, ensuring pure, unmixed textures.
+- **Custom Palettes**:
+  <img width="857" height="630" alt="image" src="https://github.com/user-attachments/assets/9a30b42e-5fa9-4c22-8830-298ab4f18880" />
 
-*Visual Example:*
-> *TODO: Insert a comparison image showing a structure in Raw Colors vs K-Means (16 colors) vs Custom Palette.*
-> `![Color Clustering Comparison](docs/images/color_algorithms.png)`
+  Nearest-neighbor color mapping against a user-defined RGB palette using Euclidean color distance.
+
+- **K-Means Clustering**:
+  <img width="861" height="654" alt="image" src="https://github.com/user-attachments/assets/6f8cea19-4967-4562-96ed-aab12bf38bdd" />
+
+  Automatically groups the voxel colors into *K* clusters. 
+  - *Mathematical Detail*: The centroid color is calculated using **Root Mean Square (RMS)** averaging rather than simple arithmetic means. This prevents mixed colors from becoming muddy or gray, preserving vibrancy.
+
+- **K-Medoids Clustering**:
+  <img width="861" height="648" alt="image" src="https://github.com/user-attachments/assets/9ad2ddea-1eb1-4381-abd9-245fb209f4dc" />
+
+  Similar to K-Means, but restricts the centroid to an *actual existing block color*, ensuring pure, unmixed textures.
+
+- **Raw Colors** (Only for visuals and testing):
+  <img width="866" height="642" alt="image" src="https://github.com/user-attachments/assets/b0e11305-2be1-4e70-9825-79ed17609e81" />
+
+  Make every block its own color, grouping the same colors together.
 
 ### 4. 3MF & STL Exporting
 - **STL**: Generates monolithic mesh geometries for standard, single-color structural printing.
