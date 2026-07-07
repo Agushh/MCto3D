@@ -31,16 +31,16 @@ namespace MCto3D.Services.FileReading
 
             foreach (NbtCompound region in regions.Tags)
             {
-                var posTag = region.Get<NbtCompound>("Position");
-                var sizeTag = region.Get<NbtCompound>("Size");
+                var posTag = region.Get<NbtCompound>("Position")!;
+                var sizeTag = region.Get<NbtCompound>("Size")!;
 
-                int px = posTag.Get<NbtInt>("x").Value;
-                int py = posTag.Get<NbtInt>("y").Value;
-                int pz = posTag.Get<NbtInt>("z").Value;
+                int px = posTag.Get<NbtInt>("x")?.Value ?? 0;
+                int py = posTag.Get<NbtInt>("y")?.Value ?? 0;
+                int pz = posTag.Get<NbtInt>("z")?.Value ?? 0;
 
-                int sx = sizeTag.Get<NbtInt>("x").Value;
-                int sy = sizeTag.Get<NbtInt>("y").Value;
-                int sz = sizeTag.Get<NbtInt>("z").Value;
+                int sx = sizeTag.Get<NbtInt>("x")?.Value ?? 0;
+                int sy = sizeTag.Get<NbtInt>("y")?.Value ?? 0;
+                int sz = sizeTag.Get<NbtInt>("z")?.Value ?? 0;
 
                 int rx = sx < 0 ? px + sx : px;
                 int ry = sy < 0 ? py + sy : py;
@@ -79,16 +79,16 @@ namespace MCto3D.Services.FileReading
 
             foreach (NbtCompound region in regions.Tags)
             {
-                var posTag = region.Get<NbtCompound>("Position");
-                var sizeTag = region.Get<NbtCompound>("Size");
+                var posTag = region.Get<NbtCompound>("Position")!;
+                var sizeTag = region.Get<NbtCompound>("Size")!;
 
-                int px = posTag.Get<NbtInt>("x").Value;
-                int py = posTag.Get<NbtInt>("y").Value;
-                int pz = posTag.Get<NbtInt>("z").Value;
+                int px = posTag.Get<NbtInt>("x")?.Value ?? 0;
+                int py = posTag.Get<NbtInt>("y")?.Value ?? 0;
+                int pz = posTag.Get<NbtInt>("z")?.Value ?? 0;
 
-                int sx = sizeTag.Get<NbtInt>("x").Value;
-                int sy = sizeTag.Get<NbtInt>("y").Value;
-                int sz = sizeTag.Get<NbtInt>("z").Value;
+                int sx = sizeTag.Get<NbtInt>("x")?.Value ?? 0;
+                int sy = sizeTag.Get<NbtInt>("y")?.Value ?? 0;
+                int sz = sizeTag.Get<NbtInt>("z")?.Value ?? 0;
 
                 int rx = sx < 0 ? px + sx : px;
                 int ry = sy < 0 ? py + sy : py;
@@ -105,15 +105,15 @@ namespace MCto3D.Services.FileReading
                 for (int i = 0; i < blockStatePalette.Count; i++)
                 {
                     var stateTag = blockStatePalette[i] as NbtCompound;
-                    string rawName = stateTag.Get<NbtString>("Name").Value;
+                    string rawName = stateTag?.Get<NbtString>("Name")?.Value ?? "minecraft:air";
                     string name = rawName.Split('[')[0].Replace("minecraft:", "");
                     Dictionary<string, string> properties = new Dictionary<string, string>();
 
-                    if (stateTag.TryGet("Properties", out NbtCompound propsTag))
+                    if (stateTag != null && stateTag.TryGet("Properties", out NbtCompound? propsTag) && propsTag != null)
                     {
                         foreach (NbtTag prop in propsTag)
                         {
-                            properties.Add(prop.Name, prop.StringValue);
+                            properties.Add(prop.Name ?? "", prop.StringValue ?? "");
                         }
                     }
 
@@ -133,7 +133,7 @@ namespace MCto3D.Services.FileReading
                     continue;
                 }
 
-                long[] blockStatesArray = null;
+                long[]? blockStatesArray = null;
                 if (blockStatesTag is NbtLongArray longArrayTag)
                 {
                     blockStatesArray = longArrayTag.Value;

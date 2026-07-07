@@ -20,7 +20,7 @@
 				<Border Background="#13101E" BorderBrush="#251F3D" BorderThickness="1" CornerRadius="8" Width="250" Padding="12,8">
 					<Grid ColumnDefinitions="Auto,*">
 						<TextBlock Grid.Column="0" Text="🔍" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,8,0"/>
-						<TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="{DynamicResource VanillaSearch}" Background="Transparent" BorderThickness="0" Foreground="#F1F5F9" VerticalAlignment="Center"/>
+						<TextBox Grid.Column="1" Text="{Binding SearchText}" PlaceholderText="{DynamicResource VanillaSearch}" Background="Transparent" BorderThickness="0" Foreground="#F1F5F9" VerticalAlignment="Center"/>
 					</Grid>
 				</Border>
 				

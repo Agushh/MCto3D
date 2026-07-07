@@ -3,13 +3,14 @@ using Avalonia.Input;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
 using MCto3D.Models;
+using MCto3D.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 
 namespace MCto3D.Controls;
 
@@ -29,7 +30,7 @@ public class MinecraftRenderControl : OpenGlControlBase
         AvaloniaProperty.Register<MinecraftRenderControl, bool>(nameof(ShowFloor));
 
     public static readonly StyledProperty<Avalonia.Media.Color> FloorColorProperty =
-        AvaloniaProperty.Register<MinecraftRenderControl, Avalonia.Media.Color>(nameof(FloorColor), Avalonia.Media.Color.Parse("#1A1A1A"));
+        AvaloniaProperty.Register<MinecraftRenderControl, Avalonia.Media.Color>(nameof(FloorColor), Avalonia.Media.Color.Parse("#71B24B"));
 
     public static readonly StyledProperty<float?> FixedCameraAngleProperty =
         AvaloniaProperty.Register<MinecraftRenderControl, float?>(nameof(FixedCameraAngle));
@@ -88,88 +89,40 @@ public class MinecraftRenderControl : OpenGlControlBase
         set => SetValue(ModelColorProperty, value);
     }
 
-    // === OPENGL RESOURCES ===
-    private int _shaderProgram;
-    private int _vbo;
-    private int _vao;
-    private int _floorVbo;
-    private int _floorVao;
-    private int _vertexCount;
+    // === RENDERING RESOURCES ===
+    private GlInterface _gl;
+    private ShaderProgram _modelShader;
+    private ShaderProgram _floorShader;
+    private ShaderProgram _skyShader;
+
+    private GlBuffer _modelBuffer;
+    private GlBuffer _floorBuffer;
+    private GlBuffer _skyBuffer;
+
+    private Camera _camera;
+    private Stopwatch _stopwatch;
+
     private bool _needsGeometryUpdate;
     private bool _needsFloorUpdate;
 
-    // === CAMERA & INTERACTION ===
-    private float _cameraDistance = 50.0f;
-    private float _cameraPitch = (float)Math.PI / 8f; // Rotación X (Vertical)
-    private float _cameraYaw = (float)Math.PI / 4f;   // Rotación Y (Horizontal)
-    
     private Point _lastMousePosition;
     private bool _isDragging;
     private Avalonia.Controls.Control? _eventParent;
 
-    // Matrix Locations
-    private int _modelLoc;
-    private int _viewLoc;
-    private int _projLoc;
-    private int _useModelColorLoc;
-    private int _modelColorLoc;
-
     private Vector3 _meshCenter;
     private float _meshMinZ;
+    private float _meshHeight;
     private float _meshRadius = 1.0f;
 
-    private GlInterface _gl;
     private TaskCompletionSource<List<WriteableBitmap>>? _captureTcs;
     private int _depthBuffer;
     private PixelSize _depthBufferSize;
 
-    // Shader Source Code
-    // VERTEX SHADER: Transforma los vértices 3D a la pantalla 2D y pasa el color al Fragment Shader.
-    private const string VertexShaderSource = @"#version 300 es
-precision mediump float;
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec3 aColor;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-out vec3 FragColor;
-out vec3 Normal;
-out vec3 FragPos;
-
-void main()
-{
-    FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = mat3(transpose(inverse(model))) * aNormal;  
-    FragColor = aColor; // Pasamos el color directamente
-    gl_Position = projection * view * vec4(FragPos, 1.0);
-}";
-
-    // FRAGMENT SHADER: Decide el color final de cada pixel usando iluminación difusa básica.
-    private const string FragmentShaderSource = @"#version 300 es
-precision mediump float;
-out vec4 FragColorOut;
-
-in vec3 FragColor;
-in vec3 Normal;
-in vec3 FragPos;
-
-uniform int useModelColor;
-uniform vec3 modelColor;
-
-void main()
-{
-    // Iluminación simple (Luz direccional desde arriba a la derecha)
-    vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(vec3(0.5, 1.0, 0.5));
-    float diff = max(dot(norm, lightDir), 0.2); // 0.2 es luz ambiental base
-
-    vec3 baseColor = (useModelColor == 1) ? modelColor : FragColor;
-    vec3 result = baseColor * diff;
-    FragColorOut = vec4(result, 1.0);
-}";
+    public MinecraftRenderControl()
+    {
+        _camera = new Camera();
+        _stopwatch = Stopwatch.StartNew();
+    }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -193,8 +146,8 @@ void main()
         {
             if (FixedCameraAngle.HasValue)
             {
-                _cameraYaw = FixedCameraAngle.Value * (float)Math.PI / 180f;
-                _cameraPitch = (float)Math.PI / 6f; // Un poco desde arriba
+                _camera.Yaw = FixedCameraAngle.Value * (float)Math.PI / 180f;
+                _camera.Pitch = (float)Math.PI / 6f;
             }
             RequestNextFrameRendering();
         }
@@ -248,22 +201,11 @@ void main()
         if (_isDragging)
         {
             var currentPos = e.GetPosition(this);
-            var deltaX = currentPos.X - _lastMousePosition.X;
-            var deltaY = currentPos.Y - _lastMousePosition.Y;
+            var deltaX = (float)(currentPos.X - _lastMousePosition.X);
+            var deltaY = (float)(currentPos.Y - _lastMousePosition.Y);
 
-            _cameraYaw += (float)deltaX * 0.01f; // Invertido para rotación natural horizontal
-            _cameraPitch += (float)deltaY * 0.01f; // Invertido para Z-up natural
-
-            // Limitar pitch para evitar rotación de cabeza o traspasar suelo
-            if (ShowFloor)
-            {
-                _cameraPitch = Math.Clamp(_cameraPitch, 0.05f, 1.5f);
-            }
-            else
-            {
-                _cameraPitch = Math.Clamp(_cameraPitch, -1.5f, 1.5f);
-            }
-
+            _camera.HandlePan(deltaX, deltaY, ShowFloor);
+            
             _lastMousePosition = currentPos;
             RequestNextFrameRendering();
         }
@@ -271,13 +213,8 @@ void main()
 
     private void Parent_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        float maxZoom = _meshRadius * 10f; // Máximo alejamiento (10x el radio)
-        float minZoom = _meshRadius * 0.5f; // Máximo acercamiento
-        
-        _cameraDistance -= (float)e.Delta.Y * (_meshRadius * 0.1f); // Velocidad de zoom proporcional
-        _cameraDistance = Math.Clamp(_cameraDistance, minZoom, maxZoom); 
-        
-        e.Handled = true; // Prevenir el desplazamiento del ScrollViewer
+        _camera.HandleZoom((float)e.Delta.Y, _meshRadius);
+        e.Handled = true; 
         RequestNextFrameRendering();
     }
 
@@ -286,63 +223,48 @@ void main()
         _gl = gl;
         Debug.WriteLine("OpenGL Init Started...");
 
-        // 1. Compilar Shaders
-        int vertexShader = CompileShader(gl, GlConsts.GL_VERTEX_SHADER, VertexShaderSource);
-        int fragmentShader = CompileShader(gl, GlConsts.GL_FRAGMENT_SHADER, FragmentShaderSource);
+        _modelShader = new ShaderProgram(_gl, Shaders.ModelVertexShader, Shaders.ModelFragmentShader);
+        _floorShader = new ShaderProgram(_gl, Shaders.FloorVertexShader, Shaders.FloorFragmentShader);
+        _skyShader = new ShaderProgram(_gl, Shaders.SkyVertexShader, Shaders.SkyFragmentShader);
 
-        _shaderProgram = gl.CreateProgram();
-        gl.AttachShader(_shaderProgram, vertexShader);
-        gl.AttachShader(_shaderProgram, fragmentShader);
-        gl.LinkProgram(_shaderProgram);
+        _modelBuffer = new GlBuffer(_gl);
+        _floorBuffer = new GlBuffer(_gl);
+        _skyBuffer = new GlBuffer(_gl);
 
-        gl.DeleteShader(vertexShader);
-        gl.DeleteShader(fragmentShader);
+        float[] skyQuad = new float[]
+        {
+            -1f, -1f,
+             1f, -1f,
+             1f,  1f,
+            -1f, -1f,
+             1f,  1f,
+            -1f,  1f
+        };
+        _skyBuffer.SetData(skyQuad, 6);
 
-        // 2. Obtener locaciones de uniformes (matrices)
-        _modelLoc = gl.GetUniformLocationString(_shaderProgram, "model");
-        _viewLoc = gl.GetUniformLocationString(_shaderProgram, "view");
-        _projLoc = gl.GetUniformLocationString(_shaderProgram, "projection");
-        _useModelColorLoc = gl.GetUniformLocationString(_shaderProgram, "useModelColor");
-        _modelColorLoc = gl.GetUniformLocationString(_shaderProgram, "modelColor");
+        _gl.Enable(GlConsts.GL_DEPTH_TEST);
+        _gl.Enable(GlConsts.GL_CULL_FACE);
 
-        // 3. Crear Buffers (VBO y VAO)
-        int[] vbos = new int[2];
-        fixed (int* pVbos = vbos) gl.GenBuffers(2, pVbos);
-        _vbo = vbos[0];
-        _floorVbo = vbos[1];
-
-        int[] vaos = new int[2];
-        fixed (int* pVaos = vaos) gl.GenVertexArrays(2, pVaos);
-        _vao = vaos[0];
-        _floorVao = vaos[1];
-
-        // 4. Configurar OpenGL global (el depth buffer se ata en el render loop)
-        gl.Enable(GlConsts.GL_DEPTH_TEST);
-        gl.Disable(GlConsts.GL_CULL_FACE); // Asegurar que no se descarten caras (winding order)
-
-        // Subir geometría inicial si existe
         _needsGeometryUpdate = true;
         _needsFloorUpdate = true;
     }
 
     protected override unsafe void OnOpenGlDeinit(GlInterface gl)
     {
-        gl.DeleteProgram(_shaderProgram);
-        int[] vbos = new[] { _vbo, _floorVbo };
-        fixed (int* pVbos = vbos) gl.DeleteBuffers(2, pVbos);
+        _modelShader?.Dispose();
+        _floorShader?.Dispose();
+        _skyShader?.Dispose();
 
-        int[] vaos = new[] { _vao, _floorVao };
-        fixed (int* pVaos = vaos) gl.DeleteVertexArrays(2, pVaos);
+        _modelBuffer?.Dispose();
+        _floorBuffer?.Dispose();
+        _skyBuffer?.Dispose();
+        
         base.OnOpenGlDeinit(gl);
     }
 
     private void DoUpdateGeometry()
     {
-        if (_gl == null)
-        {
-            Debug.WriteLine("DoUpdateGeometry called but _gl is null.");
-            return; // OpenGL aún no inicializado
-        }
+        if (_gl == null) return;
 
         var singleMesh = Triangles;
         var multiMesh = ColoredMeshes;
@@ -359,13 +281,10 @@ void main()
 
         if (totalTriangles == 0)
         {
-            Debug.WriteLine("UpdateGeometry: lists are empty.");
-            _vertexCount = 0;
+            _modelBuffer.SetData(Array.Empty<float>(), 0);
             RequestNextFrameRendering();
             return;
         }
-
-        Debug.WriteLine($"UpdateGeometry: Processing {totalTriangles} triangles...");
 
         float[] vertexData = new float[totalTriangles * 3 * 9];
         int index = 0;
@@ -405,20 +324,18 @@ void main()
 
         if (multiMesh != null && multiMesh.Count > 0)
         {
-            foreach (var kvp in multiMesh)
-            {
-                processList(kvp.Value, kvp.Key);
-            }
+            foreach (var kvp in multiMesh) processList(kvp.Value, kvp.Key);
         }
         else
         {
-            processList(singleMesh, System.Drawing.Color.FromArgb(255, 204, 204, 230)); // 0.8, 0.8, 0.9
+            processList(singleMesh, System.Drawing.Color.FromArgb(255, 204, 204, 230)); 
         }
 
         _meshCenter = new Vector3((minX + maxX) / 2f, (minY + maxY) / 2f, (minZ + maxZ) / 2f);
         _meshMinZ = minZ;
+        _meshHeight = maxZ - minZ;
+        if (_meshHeight < 1.0f) _meshHeight = 1.0f;
         
-        // Calcular cámara dinámicamente según la Bounding Sphere
         float dx = maxX - minX;
         float dy = maxY - minY;
         float dz = maxZ - minZ;
@@ -426,43 +343,22 @@ void main()
 
         if (_meshRadius > 0)
         {
-            // FOV es 45 grados (PI/4). Usamos trigonometría para asegurar que la esfera completa quepa en pantalla.
-            // Distancia = Radio / Sin(FOV/2)
-            _cameraDistance = _meshRadius / (float)Math.Sin(Math.PI / 8f) * 1.2f; // 20% de margen visual
+            _camera.Distance = _meshRadius / (float)Math.Sin(Math.PI / 8f) * 1.2f; 
         }
 
-        // Preparar VBO Data
-        _vertexCount = totalTriangles * 3;
-
-        // BIND VAO FIRST
-        _gl.BindBuffer(GlConsts.GL_ARRAY_BUFFER, _vbo);
-        
-        GCHandle handle = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
-        try
-        {
-            IntPtr ptr = handle.AddrOfPinnedObject();
-            _gl.BufferData(GlConsts.GL_ARRAY_BUFFER, (IntPtr)(vertexData.Length * sizeof(float)), ptr, GlConsts.GL_STATIC_DRAW);
-        }
-        finally
-        {
-            handle.Free();
-        }
-
-        _gl.BindBuffer(GlConsts.GL_ARRAY_BUFFER, 0);
-
-        _needsFloorUpdate = true; // El piso debe ajustarse al nuevo minZ
-        Debug.WriteLine("Geometry uploaded to GPU successfully.");
+        _modelBuffer.SetData(vertexData, totalTriangles * 3);
+        _needsFloorUpdate = true; 
         RequestNextFrameRendering();
     }
 
-    private unsafe void DoUpdateFloor()
+    private void DoUpdateFloor()
     {
         if (_gl == null || !ShowFloor) return;
 
-        float s = Math.Max(500f, _meshRadius * 10f); // Tamaño dinámico del suelo para que siempre tape el horizonte
+        float s = Math.Max(500f, _meshRadius * 10f); 
         float cx = _meshCenter.X;
         float cy = _meshCenter.Y;
-        float z = _meshMinZ - 0.5f; // Un poco debajo de la base
+        float z = (_meshMinZ - _meshCenter.Z); 
 
         float minX = cx - s;
         float maxX = cx + s;
@@ -484,20 +380,7 @@ void main()
             minX, maxY, z,  0, 0, 1,  r, g, b,
         };
 
-        _gl.BindBuffer(GlConsts.GL_ARRAY_BUFFER, _floorVbo);
-        
-        GCHandle handle = GCHandle.Alloc(floorData, GCHandleType.Pinned);
-        try
-        {
-            IntPtr ptr = handle.AddrOfPinnedObject();
-            _gl.BufferData(GlConsts.GL_ARRAY_BUFFER, (IntPtr)(floorData.Length * sizeof(float)), ptr, GlConsts.GL_STATIC_DRAW);
-        }
-        finally
-        {
-            handle.Free();
-        }
-
-        _gl.BindBuffer(GlConsts.GL_ARRAY_BUFFER, 0);
+        _floorBuffer.SetData(floorData, 6);
     }
 
     public Task<List<WriteableBitmap>> GenerateThumbnails(int width, int height)
@@ -516,10 +399,13 @@ void main()
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate void glDepthFunc_t(int func);
 
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    private delegate void glBlendFunc_t(int sfactor, int dfactor);
+
     private unsafe List<WriteableBitmap> DoGenerateThumbnails(GlInterface gl, int width, int height)
     {
         List<WriteableBitmap> result = new();
-        if (_vertexCount == 0) return result;
+        if (_modelBuffer == null || _modelBuffer.VertexCount == 0) return result;
 
         IntPtr readPixelsPtr = gl.GetProcAddress("glReadPixels");
         if (readPixelsPtr == IntPtr.Zero) return result;
@@ -540,7 +426,7 @@ void main()
         gl.FramebufferTexture2D(GlConsts.GL_FRAMEBUFFER, GlConsts.GL_COLOR_ATTACHMENT0, GlConsts.GL_TEXTURE_2D, tex[0], 0);
 
         gl.BindRenderbuffer(GlConsts.GL_RENDERBUFFER, rbo[0]);
-        gl.RenderbufferStorage(GlConsts.GL_RENDERBUFFER, GlConsts.GL_DEPTH_COMPONENT16, width, height);
+        gl.RenderbufferStorage(GlConsts.GL_RENDERBUFFER, 0x81A6, width, height);
         gl.FramebufferRenderbuffer(GlConsts.GL_FRAMEBUFFER, GlConsts.GL_DEPTH_ATTACHMENT, GlConsts.GL_RENDERBUFFER, rbo[0]);
 
         gl.Viewport(0, 0, width, height);
@@ -553,57 +439,71 @@ void main()
         if (depthFuncPtr != IntPtr.Zero) Marshal.GetDelegateForFunctionPointer<glDepthFunc_t>(depthFuncPtr)(0x0203);
 
         float[] angles = new[] { 45f, 135f, 225f, 315f };
-        
         float aspect = (float)width / height;
-        Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI / 4f, aspect, 0.1f, 10000f);
+        Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI / 4f, aspect, 1.0f, 4000f);
         Matrix4x4 model = Matrix4x4.CreateTranslation(-_meshCenter);
-
-        gl.UseProgram(_shaderProgram);
-        SetUniformMatrix(gl, _projLoc, projection);
-        SetUniformMatrix(gl, _modelLoc, model);
 
         byte[] pixels = new byte[width * height * 4];
         byte[] bgraPixels = new byte[width * height * 4];
 
         foreach (float angle in angles)
         {
-            gl.ClearColor(19f/255f, 16f/255f, 30f/255f, 1.0f); // Fondo para miniaturas
+            gl.ClearColor(19f/255f, 16f/255f, 30f/255f, 1.0f); 
             gl.Clear(GlConsts.GL_COLOR_BUFFER_BIT | GlConsts.GL_DEPTH_BUFFER_BIT);
 
             float yaw = angle * (float)Math.PI / 180f;
-            float pitch = (float)Math.PI / 6f; // 30 grados
+            float pitch = (float)Math.PI / 6f; 
             Vector3 cameraPos = new Vector3(
-                _cameraDistance * (float)Math.Sin(yaw) * (float)Math.Cos(pitch),
-                _cameraDistance * (float)Math.Cos(yaw) * (float)Math.Cos(pitch),
-                _cameraDistance * (float)Math.Sin(pitch)
+                _camera.Distance * (float)Math.Sin(yaw) * (float)Math.Cos(pitch),
+                _camera.Distance * (float)Math.Cos(yaw) * (float)Math.Cos(pitch),
+                _camera.Distance * (float)Math.Sin(pitch)
             );
             Matrix4x4 view = Matrix4x4.CreateLookAt(cameraPos, Vector3.Zero, Vector3.UnitZ);
-            SetUniformMatrix(gl, _viewLoc, view);
 
             if (ShowFloor)
             {
-                gl.Uniform1i(_useModelColorLoc, 0);
-                BindVboAndDraw(gl, _floorVbo, 6);
+                _floorShader.Use();
+                _floorShader.SetUniformMatrix4(_floorShader.GetUniformLocation("projection"), projection);
+                _floorShader.SetUniformMatrix4(_floorShader.GetUniformLocation("view"), view);
+                _floorShader.SetUniform1f(_floorShader.GetUniformLocation("u_time"), 0f);
+                _floorShader.SetUniform1f(_floorShader.GetUniformLocation("fogDistance"), _meshRadius * 10f);
+                
+                gl.Enable(0x0BE2); // GL_BLEND
+                IntPtr blendFuncPtr = gl.GetProcAddress("glBlendFunc");
+                if (blendFuncPtr != IntPtr.Zero)
+                {
+                    Marshal.GetDelegateForFunctionPointer<glBlendFunc_t>(blendFuncPtr)(0x0302, 0x0303); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+                }
+
+                _floorBuffer.BindAndDrawWithAttributes(3, 3, 3, 0);
+                gl.Disable(0x0BE2); // GL_BLEND
             }
+
+            _modelShader.Use();
+            Matrix4x4 mvp = model * view * projection;
+            _modelShader.SetUniformMatrix4(_modelShader.GetUniformLocation("mvp"), mvp);
+            _modelShader.SetUniformMatrix4(_modelShader.GetUniformLocation("model"), model);
+            _modelShader.SetUniform1f(_modelShader.GetUniformLocation("minZ"), _meshMinZ - _meshCenter.Z);
+            _modelShader.SetUniform1f(_modelShader.GetUniformLocation("meshHeight"), _meshHeight);
+            _modelShader.SetUniform3f(_modelShader.GetUniformLocation("cameraPos"), cameraPos.X, cameraPos.Y, cameraPos.Z);
 
             if (OverrideModelColor)
             {
-                gl.Uniform1i(_useModelColorLoc, 1);
-                SetUniformVec3(gl, _modelColorLoc, ModelColor.R / 255f, ModelColor.G / 255f, ModelColor.B / 255f);
+                _modelShader.SetUniform1i(_modelShader.GetUniformLocation("useModelColor"), 1);
+                _modelShader.SetUniform3f(_modelShader.GetUniformLocation("modelColor"), ModelColor.R / 255f, ModelColor.G / 255f, ModelColor.B / 255f);
             }
             else
             {
-                gl.Uniform1i(_useModelColorLoc, 0);
+                _modelShader.SetUniform1i(_modelShader.GetUniformLocation("useModelColor"), 0);
             }
 
-            BindVboAndDraw(gl, _vbo, _vertexCount);
+            _modelBuffer.BindAndDrawWithAttributes(3, 3, 3, 0);
 
             fixed (byte* p = pixels)
             {
                 readPixelsFunc(0, 0, width, height, GlConsts.GL_RGBA, GlConsts.GL_UNSIGNED_BYTE, (IntPtr)p);
             }
 
-            // Flip Y y RGB a BGR
             for (int y = 0; y < height; y++)
             {
                 int srcY = height - 1 - y;
@@ -675,17 +575,13 @@ void main()
             _depthBuffer = db[0];
             
             gl.BindRenderbuffer(GlConsts.GL_RENDERBUFFER, _depthBuffer);
-            gl.RenderbufferStorage(GlConsts.GL_RENDERBUFFER, GlConsts.GL_DEPTH_COMPONENT16, size.Width, size.Height);
+            gl.RenderbufferStorage(GlConsts.GL_RENDERBUFFER, 0x81A6, size.Width, size.Height);
             _depthBufferSize = size;
         }
 
         gl.BindFramebuffer(GlConsts.GL_FRAMEBUFFER, fb);
         gl.FramebufferRenderbuffer(GlConsts.GL_FRAMEBUFFER, GlConsts.GL_DEPTH_ATTACHMENT, GlConsts.GL_RENDERBUFFER, _depthBuffer);
-
         gl.Viewport(0, 0, size.Width, size.Height);
-
-        gl.Viewport(0, 0, size.Width, size.Height);
-
         gl.Enable(GlConsts.GL_DEPTH_TEST);
 
         IntPtr depthMaskPtr = gl.GetProcAddress("glDepthMask");
@@ -694,11 +590,10 @@ void main()
         IntPtr depthFuncPtr = gl.GetProcAddress("glDepthFunc");
         if (depthFuncPtr != IntPtr.Zero) Marshal.GetDelegateForFunctionPointer<glDepthFunc_t>(depthFuncPtr)(0x0203);
 
-        // Limpiar el fondo. Color oscuro de nuestra paleta (#0B0B13 => rgb 11, 11, 19)
         gl.ClearColor(11f/255f, 11f/255f, 19f/255f, 1.0f);
         gl.Clear(GlConsts.GL_COLOR_BUFFER_BIT | GlConsts.GL_DEPTH_BUFFER_BIT);
 
-        if (_vertexCount == 0)
+        if (_modelBuffer == null || _modelBuffer.VertexCount == 0)
         {
             if (AutoRotate) RequestNextFrameRendering();
             return;
@@ -706,113 +601,76 @@ void main()
 
         if (AutoRotate)
         {
-            _cameraYaw -= 0.005f; // Rotación automática suave sobre el eje horizontal
-            RequestNextFrameRendering(); // Bucle infinito
+            _camera.Yaw -= 0.005f; 
         }
 
-        gl.UseProgram(_shaderProgram);
+        float time = (float)_stopwatch.Elapsed.TotalSeconds;
 
-        // 1. Proyección: Field of View, Aspect Ratio, Near, Far
-        float aspect = width / height;
-        Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI / 4f, aspect, 0.1f, 10000f);
-
-        // 2. Vista (Cámara Arcball adaptada a que Z es Arriba)
-        Vector3 cameraPos = new Vector3(
-            _cameraDistance * (float)Math.Sin(_cameraYaw) * (float)Math.Cos(_cameraPitch),
-            _cameraDistance * (float)Math.Cos(_cameraYaw) * (float)Math.Cos(_cameraPitch),
-            _cameraDistance * (float)Math.Sin(_cameraPitch)
-        );
-        Matrix4x4 view = Matrix4x4.CreateLookAt(cameraPos, Vector3.Zero, Vector3.UnitZ);
-
-        // 3. Modelo (Posición del objeto en el mundo). Lo trasladamos para que el centro de la malla quede en (0,0,0)
+        Matrix4x4 projection = _camera.GetProjectionMatrix(width, height);
+        Matrix4x4 view = _camera.GetViewMatrix();
         Matrix4x4 model = Matrix4x4.CreateTranslation(-_meshCenter);
+        Matrix4x4 invViewProj;
+        Matrix4x4.Invert(view * projection, out invViewProj);
 
-        // Subir matrices al Shader
-        SetUniformMatrix(gl, _projLoc, projection);
-        SetUniformMatrix(gl, _viewLoc, view);
-        SetUniformMatrix(gl, _modelLoc, model);
+        // 1. Draw Sky (Depth writing off)
+        if (depthMaskPtr != IntPtr.Zero) Marshal.GetDelegateForFunctionPointer<glDepthMask_t>(depthMaskPtr)(0);
+        
+        _skyShader.Use();
+        _skyShader.SetUniform1f(_skyShader.GetUniformLocation("u_time"), time);
+        _skyShader.SetUniformMatrix4(_skyShader.GetUniformLocation("invViewProj"), invViewProj);
+        _skyBuffer.BindAndDrawWithAttributes(2, 0, 0, 0); 
+        
+        if (depthMaskPtr != IntPtr.Zero) Marshal.GetDelegateForFunctionPointer<glDepthMask_t>(depthMaskPtr)(1);
 
-        // Dibujar
+        // 2. Draw Floor
         if (ShowFloor)
         {
-            gl.Uniform1i(_useModelColorLoc, 0);
-            BindVboAndDraw(gl, _floorVbo, 6);
+            gl.Enable(0x0BE2); // GL_BLEND
+            IntPtr blendFuncPtr = gl.GetProcAddress("glBlendFunc");
+            if (blendFuncPtr != IntPtr.Zero)
+            {
+                Marshal.GetDelegateForFunctionPointer<glBlendFunc_t>(blendFuncPtr)(0x0302, 0x0303); // GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
+            }
+            
+            _floorShader.Use();
+            _floorShader.SetUniformMatrix4(_floorShader.GetUniformLocation("projection"), projection);
+            _floorShader.SetUniformMatrix4(_floorShader.GetUniformLocation("view"), view);
+            _floorShader.SetUniform1f(_floorShader.GetUniformLocation("u_time"), time);
+            
+            _floorShader.SetUniform1f(_floorShader.GetUniformLocation("fogDistance"), _meshRadius * 10f);
+
+            _floorBuffer.BindAndDrawWithAttributes(3, 3, 3, 0);
+            
+            gl.Disable(0x0BE2); // GL_BLEND
         }
+
+        // 3. Draw Model
+        _modelShader.Use();
+        Matrix4x4 mvpModel = model * view * projection;
+        _modelShader.SetUniformMatrix4(_modelShader.GetUniformLocation("mvp"), mvpModel);
+        _modelShader.SetUniformMatrix4(_modelShader.GetUniformLocation("model"), model);
+        _modelShader.SetUniform1f(_modelShader.GetUniformLocation("minZ"), _meshMinZ - _meshCenter.Z);
+        _modelShader.SetUniform1f(_modelShader.GetUniformLocation("meshHeight"), _meshHeight);
+        
+        Vector3 camPos = new Vector3(
+            _camera.Distance * (float)Math.Sin(_camera.Yaw) * (float)Math.Cos(_camera.Pitch),
+            _camera.Distance * (float)Math.Cos(_camera.Yaw) * (float)Math.Cos(_camera.Pitch),
+            _camera.Distance * (float)Math.Sin(_camera.Pitch)
+        );
+        _modelShader.SetUniform3f(_modelShader.GetUniformLocation("cameraPos"), camPos.X, camPos.Y, camPos.Z);
 
         if (OverrideModelColor)
         {
-            gl.Uniform1i(_useModelColorLoc, 1);
-            SetUniformVec3(gl, _modelColorLoc, ModelColor.R / 255f, ModelColor.G / 255f, ModelColor.B / 255f);
+            _modelShader.SetUniform1i(_modelShader.GetUniformLocation("useModelColor"), 1);
+            _modelShader.SetUniform3f(_modelShader.GetUniformLocation("modelColor"), ModelColor.R / 255f, ModelColor.G / 255f, ModelColor.B / 255f);
         }
         else
         {
-            gl.Uniform1i(_useModelColorLoc, 0);
+            _modelShader.SetUniform1i(_modelShader.GetUniformLocation("useModelColor"), 0);
         }
 
-        BindVboAndDraw(gl, _vbo, _vertexCount);
+        _modelBuffer.BindAndDrawWithAttributes(3, 3, 3, 0);
 
-        // Forzar redibujado continuo para evitar que el motor de UI descarte el único frame
-        RequestNextFrameRendering();
-    }
-
-    private unsafe void SetUniformMatrix(GlInterface gl, int location, Matrix4x4 matrix)
-    {
-        gl.UniformMatrix4fv(location, 1, false, &matrix.M11);
-    }
-
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    private delegate void glUniform3f_t(int location, float v0, float v1, float v2);
-
-    private void SetUniformVec3(GlInterface gl, int location, float x, float y, float z)
-    {
-        if (location == -1) return;
-        IntPtr funcPtr = gl.GetProcAddress("glUniform3f");
-        if (funcPtr != IntPtr.Zero)
-        {
-            Marshal.GetDelegateForFunctionPointer<glUniform3f_t>(funcPtr)(location, x, y, z);
-        }
-    }
-
-    private unsafe int CompileShader(GlInterface gl, int type, string source)
-    {
-        int shader = gl.CreateShader(type);
-        gl.ShaderSourceString(shader, source);
-        gl.CompileShader(shader);
-
-        int status;
-        gl.GetShaderiv(shader, GlConsts.GL_COMPILE_STATUS, &status);
-        if (status == 0)
-        {
-            byte[] infoLog = new byte[2048];
-            int length;
-            fixed (byte* pInfoLog = infoLog)
-            {
-                gl.GetShaderInfoLog(shader, 2048, out length, pInfoLog);
-            }
-            string error = System.Text.Encoding.UTF8.GetString(infoLog, 0, length);
-            Debug.WriteLine($"ERROR COMPILANDO SHADER {(type == GlConsts.GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT")}: {error}");
-        }
-        else
-        {
-            Debug.WriteLine($"Shader {(type == GlConsts.GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT")} compiled successfully.");
-        }
-        return shader;
-    }
-
-    private unsafe void BindVboAndDraw(GlInterface gl, int vbo, int count)
-    {
-        gl.BindBuffer(GlConsts.GL_ARRAY_BUFFER, vbo);
-        int stride = 9 * sizeof(float);
-        
-        gl.VertexAttribPointer(0, 3, GlConsts.GL_FLOAT, 0, stride, IntPtr.Zero);
-        gl.EnableVertexAttribArray(0);
-        
-        gl.VertexAttribPointer(1, 3, GlConsts.GL_FLOAT, 0, stride, (IntPtr)(3 * sizeof(float)));
-        gl.EnableVertexAttribArray(1);
-
-        gl.VertexAttribPointer(2, 3, GlConsts.GL_FLOAT, 0, stride, (IntPtr)(6 * sizeof(float)));
-        gl.EnableVertexAttribArray(2);
-
-        gl.DrawArrays(GlConsts.GL_TRIANGLES, 0, count);
+        RequestNextFrameRendering(); 
     }
 }

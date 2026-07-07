@@ -8,6 +8,7 @@ public class SavedProject
     public string Name { get; set; } = string.Empty;
     public string OriginalFilePath { get; set; } = string.Empty;
     public string ThumbnailPath { get; set; } = string.Empty;
+    public string ExportedFilePath { get; set; } = string.Empty;
     public DateTime CreationDate { get; set; } = DateTime.Now;
     
     // Configuraion snapshot

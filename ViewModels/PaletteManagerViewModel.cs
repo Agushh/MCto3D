@@ -57,6 +57,8 @@ public partial class PaletteManagerViewModel : ViewModelBase
 
     [ObservableProperty] private bool _hasUnsavedPaletteChanges = false;
 
+    private string CustomPaletteName => MCto3D.Services.LanguageService.GetString("ConverterPaletteCustom");
+
     partial void OnSelectedPaletteChanged(CustomPalette value)
     {
         if (value == null) return;
@@ -67,7 +69,7 @@ public partial class PaletteManagerViewModel : ViewModelBase
 
         // Load the colors into UserDefinedColors
         UserDefinedColors.Clear();
-        if (value.Name == "Personalizada..." || value.ColorsHex == null || value.ColorsHex.Count == 0)
+        if (value.Name == CustomPaletteName || value.ColorsHex == null || value.ColorsHex.Count == 0)
         {
             // Default blank palette
             var item = new CustomColorItem { Color = Avalonia.Media.Color.Parse("#FFFFFF") };
@@ -93,8 +95,8 @@ public partial class PaletteManagerViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsCustomPaletteSelected));
     }
 
-    public bool IsSavedPaletteSelected => SelectedPalette != null && SelectedPalette.Name != "Personalizada...";
-    public bool IsCustomPaletteSelected => SelectedPalette != null && SelectedPalette.Name == "Personalizada...";
+    public bool IsSavedPaletteSelected => SelectedPalette != null && SelectedPalette.Name != CustomPaletteName;
+    public bool IsCustomPaletteSelected => SelectedPalette != null && SelectedPalette.Name == CustomPaletteName;
 
     [RelayCommand]
     private void SaveCustomPalette(string name)
@@ -115,13 +117,16 @@ public partial class PaletteManagerViewModel : ViewModelBase
         _appSettings.SavePalettes();
         
         LoadPalettes();
-        SelectedPalette = AvailablePalettes.FirstOrDefault(p => p.Name == name);
+        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+        {
+            SelectedPalette = AvailablePalettes.FirstOrDefault(p => p.Name == name);
+        });
     }
 
     [RelayCommand]
     private void UpdateSavedPalette()
     {
-        if (SelectedPalette == null || SelectedPalette.Name == "Personalizada...") return;
+        if (SelectedPalette == null || SelectedPalette.Name == CustomPaletteName) return;
         
         var existing = _appSettings.SavedPalettes.FirstOrDefault(p => p.Name == SelectedPalette.Name);
         if (existing != null)
@@ -138,13 +143,16 @@ public partial class PaletteManagerViewModel : ViewModelBase
             HasUnsavedPaletteChanges = false;
         }
         LoadPalettes();
-        SelectedPalette = AvailablePalettes.FirstOrDefault(p => p.Name == existing?.Name);
+        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+        {
+            SelectedPalette = AvailablePalettes.FirstOrDefault(p => p.Name == existing?.Name);
+        });
     }
 
     [RelayCommand]
     private void DeleteSavedPalette()
     {
-        if (SelectedPalette == null || SelectedPalette.Name == "Personalizada...") return;
+        if (SelectedPalette == null || SelectedPalette.Name == CustomPaletteName) return;
         
         var existing = _appSettings.SavedPalettes.FirstOrDefault(p => p.Name == SelectedPalette.Name);
         if (existing != null)
@@ -157,16 +165,27 @@ public partial class PaletteManagerViewModel : ViewModelBase
 
     public void LoadPalettes()
     {
+        var currentSelectionName = SelectedPalette?.Name;
         AvailablePalettes.Clear();
         foreach (var p in _appSettings.SavedPalettes)
         {
             AvailablePalettes.Add(p);
         }
         AvailablePalettes.Add(new CustomPalette { Name = MCto3D.Services.LanguageService.GetString("ConverterPaletteCustom") });
-        if (SelectedPalette == null || !AvailablePalettes.Contains(SelectedPalette))
+        
+        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
         {
+            if (currentSelectionName != null)
+            {
+                var match = AvailablePalettes.FirstOrDefault(p => p.Name == currentSelectionName);
+                if (match != null)
+                {
+                    SelectedPalette = match;
+                    return;
+                }
+            }
             SelectedPalette = AvailablePalettes[^1]; // default to Custom
-        }
+        });
     }
 
     [RelayCommand]

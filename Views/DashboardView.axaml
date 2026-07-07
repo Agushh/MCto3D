@@ -278,7 +278,7 @@
 					</Border>
 
 					<!-- Loaded State: Render -->
-					<Grid RowDefinitions="Auto,*" IsVisible="{Binding IsFileLoaded}">
+					<Grid RowDefinitions="Auto,*,Auto" IsVisible="{Binding IsFileLoaded}">
 						<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
 							<TextBlock Grid.Column="0" Text="{DynamicResource ConverterInteractiveViewer}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" VerticalAlignment="Center"/>
 							<Border Grid.Column="1" Background="#10B98120" Padding="8,4" CornerRadius="4">
@@ -310,6 +310,13 @@
                                 </Border>
 							</Grid>
 						</Border>
+						
+						<!-- Floor Toggle Controls -->
+						<StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,16,0,0">
+							<TextBlock Text="{DynamicResource SettingsRendererFloor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+							<CheckBox IsChecked="{Binding ShowFloor}" Foreground="{DynamicResource EnderTextPrimary}"/>
+							<ColorPicker Color="{Binding FloorColor}" IsVisible="{Binding ShowFloor}" Height="32"/>
+						</StackPanel>
 					</Grid>
 				</Panel>
 			</Border>
@@ -325,7 +332,7 @@
 						<TextBlock Text="{DynamicResource ConverterSavePopupTitle}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}"/>
 						<TextBlock Text="{DynamicResource ConverterSavePopupDesc}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="14" TextWrapping="Wrap"/>
 						
-						<TextBox Text="{Binding ProjectSaveVM.NewProjectName}" Watermark="{DynamicResource ConverterSavePopupPlaceholder}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,12" CornerRadius="8" FontSize="16"/>
+						<TextBox Text="{Binding ProjectSaveVM.NewProjectName}" PlaceholderText="{DynamicResource ConverterSavePopupPlaceholder}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,12" CornerRadius="8" FontSize="16"/>
 
 						<Grid ColumnDefinitions="*,*" Margin="0,16,0,0">
 							<Button Grid.Column="0" Content="{DynamicResource ConverterCancelBtn}" Command="{Binding ProjectSaveVM.CloseSavePopupCommand}" Classes="Ghost" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Margin="0,0,8,0"/>

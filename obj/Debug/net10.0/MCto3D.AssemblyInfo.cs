@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MCto3D")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cef4c115fb54d37b29b16713995fd5647380caf7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ce309c476005315c1add0abaf1a1e11ae4118e0")]
 [assembly: System.Reflection.AssemblyProductAttribute("MCto3D")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MCto3D")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

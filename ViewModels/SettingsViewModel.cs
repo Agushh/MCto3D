@@ -13,6 +13,8 @@ public partial class PaletteModel : ObservableObject
 {
     [ObservableProperty]
     private string _name = string.Empty;
+
+    public string OriginalName { get; set; } = string.Empty;
 }
 
 public partial class SettingsViewModel : ViewModelBase
@@ -35,19 +37,59 @@ public partial class SettingsViewModel : ViewModelBase
     public ObservableCollection<PaletteModel> SavedPalettes { get; } = new();
 
     [RelayCommand]
-    private void OpenPaletteManager() => IsPaletteManagerOpen = true;
+    private void OpenPaletteManager()
+    {
+        SavedPalettes.Clear();
+        foreach (var p in _appSettings.SavedPalettes)
+        {
+            SavedPalettes.Add(new PaletteModel { Name = p.Name, OriginalName = p.Name });
+        }
+        IsPaletteManagerOpen = true;
+    }
 
     [RelayCommand]
     private void ClosePaletteManager() => IsPaletteManagerOpen = false;
 
     [RelayCommand]
-    private void SavePaletteManager() => IsPaletteManagerOpen = false;
+    private void SavePaletteManager()
+    {
+        // Actualizar nombres en SavedPalettes
+        foreach (var pModel in SavedPalettes)
+        {
+            if (pModel.Name != pModel.OriginalName && !string.IsNullOrWhiteSpace(pModel.Name))
+            {
+                var original = _appSettings.SavedPalettes.Find(x => x.Name == pModel.OriginalName);
+                if (original != null)
+                {
+                    original.Name = pModel.Name;
+                    pModel.OriginalName = pModel.Name;
+                }
+            }
+        }
+        _appSettings.SavePalettes();
+        IsPaletteManagerOpen = false;
+    }
 
     [RelayCommand]
-    private void DeleteAllPalettes() { }
+    private void DeleteAllPalettes()
+    {
+        _appSettings.SavedPalettes.Clear();
+        _appSettings.SavePalettes();
+        SavedPalettes.Clear();
+    }
 
     [RelayCommand]
-    private void DeletePalette(PaletteModel palette) { }
+    private void DeletePalette(PaletteModel palette)
+    {
+        if (palette == null) return;
+        var original = _appSettings.SavedPalettes.Find(x => x.Name == palette.OriginalName);
+        if (original != null)
+        {
+            _appSettings.SavedPalettes.Remove(original);
+            _appSettings.SavePalettes();
+        }
+        SavedPalettes.Remove(palette);
+    }
 
     private string GetLocalizedString(string key)
     {
@@ -200,9 +242,9 @@ public partial class SettingsViewModel : ViewModelBase
                                 {
                                     string relPath = Path.GetRelativePath(oldPath, file);
                                     string destFile = Path.Combine(newFolderPath, relPath);
-                                    string destDir = Path.GetDirectoryName(destFile);
+                                    string? destDir = Path.GetDirectoryName(destFile);
 
-                                    if (!Directory.Exists(destDir))
+                                    if (destDir != null && !Directory.Exists(destDir))
                                         Directory.CreateDirectory(destDir);
 
                                     File.Copy(file, destFile, true);
@@ -271,9 +313,9 @@ public partial class SettingsViewModel : ViewModelBase
                     {
                         string relPath = Path.GetRelativePath(oldPath, file);
                         string destFile = Path.Combine(defaultPath, relPath);
-                        string destDir = Path.GetDirectoryName(destFile);
+                        string? destDir = Path.GetDirectoryName(destFile);
 
-                        if (!Directory.Exists(destDir))
+                        if (destDir != null && !Directory.Exists(destDir))
                             Directory.CreateDirectory(destDir);
 
                         File.Copy(file, destFile, true);

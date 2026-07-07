@@ -162,7 +162,7 @@ namespace MCto3D.Services.ColorProcesing
                 }
                 return new Dictionary<string, byte[]>();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new Dictionary<string, byte[]>();
             }

@@ -99,6 +99,7 @@ public partial class DashboardViewModel : ViewModelBase
         ProjectSaveVM.GetSelectedGeometryModeIndexFunc = () => SelectedGeometryModeIndex;
         ProjectSaveVM.GetExportFormatFunc = () => ExportVM.ExportFormat;
         ProjectSaveVM.GetIsSingleColorModeFunc = () => PaletteVM.IsSingleColorMode;
+        ProjectSaveVM.GetColoredMeshesFunc = () => ColoredMeshes;
         
         _showFloor = _appSettings.ShowFloor;
         try { _floorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { _floorColor = Colors.DarkGray; }
@@ -180,6 +181,9 @@ public partial class DashboardViewModel : ViewModelBase
         try
         {
             IsLoadingMesh = true;
+            // Debounce para evitar procesamiento masivo al mover sliders de color rápidamente
+            await Task.Delay(500, token);
+
             Debug.WriteLine($"DashboardViewModel: Generating mesh for {_selectedFilePath} with Bs={Bs}");
 
             var result = await Task.Run(() =>
@@ -193,8 +197,8 @@ public partial class DashboardViewModel : ViewModelBase
                 token.ThrowIfCancellationRequested();
 
                 // 3. Procesar colores y generar malla
-                return GenerateFinalMeshes(strData);
-            });
+                return GenerateFinalMeshes(strData, token);
+            }, token);
 
             int totalTris = 0;
             var allTris = new List<Triangle>();
@@ -229,7 +233,7 @@ public partial class DashboardViewModel : ViewModelBase
             _topologyService.ProcessEnclosedSpaces(strData.voxelGrid, airId);
         }
     }
-    private Dictionary<System.Drawing.Color, List<Triangle>> GenerateFinalMeshes(StructureData strData)
+    private Dictionary<System.Drawing.Color, List<Triangle>> GenerateFinalMeshes(StructureData strData, System.Threading.CancellationToken token)
     {
         bool isFullGeom = SelectedGeometryModeIndex == 1;
         // Si es 3MF y no es modo de un solo color, vamos por la ruta multicolor
@@ -238,7 +242,9 @@ public partial class DashboardViewModel : ViewModelBase
             var (k, userColors) = GetAlgorithmParameters();
             var customFill = System.Drawing.Color.FromArgb(CustomFillColor.A, CustomFillColor.R, CustomFillColor.G, CustomFillColor.B);
 
+            token.ThrowIfCancellationRequested();
             var multiData = _colorSeparatorService.SeparateByColor(strData, k, userColors, PaletteVM.SelectedAlgorithm, FillHoles, UseCustomFillColor, customFill);
+            token.ThrowIfCancellationRequested();
 
             // Actualizamos UI en el hilo principal
             Avalonia.Threading.Dispatcher.UIThread.Post(() => RawColorCount = multiData.Count);
@@ -247,6 +253,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
 
         // Ruta por defecto: un solo color / malla monolítica
+        token.ThrowIfCancellationRequested();
         var tris = isFullGeom
                  ? _meshService.GenerateFullGeometryMesh(strData, Bs)
                  : _meshService.GenerateMesh(strData, Bs);

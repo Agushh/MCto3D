@@ -67,13 +67,15 @@ public partial class MyFilesViewModel : ViewModelBase
     private readonly IProjectStorageService _projectStorage;
     private readonly StructureLoaderService _structureLoaderService;
     private readonly MeshService _meshService;
+    private readonly AppSettingsService _appSettings;
 
-    public MyFilesViewModel(MainWindowViewModel navigationController, IProjectStorageService projectStorage, StructureLoaderService structureLoaderService, MeshService meshService)
+    public MyFilesViewModel(MainWindowViewModel navigationController, IProjectStorageService projectStorage, StructureLoaderService structureLoaderService, MeshService meshService, AppSettingsService appSettings)
     {
         _navigationController = navigationController;
         _projectStorage = projectStorage;
         _structureLoaderService = structureLoaderService;
         _meshService = meshService;
+        _appSettings = appSettings;
         _selectedSlicer = SlicerOptions[0];
         LoadData();
     }
@@ -221,9 +223,12 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            StructureData strData = _structureLoaderService.Load(SelectedProject.OriginalFilePath);
+            if (string.IsNullOrEmpty(SelectedProject.ExportedFilePath) || !File.Exists(SelectedProject.ExportedFilePath))
+            {
+                System.Diagnostics.Debug.WriteLine("El archivo exportado no existe.");
+                return;
+            }
 
-            List<Triangle> malla = _meshService.GenerateMesh(strData, SelectedProject.BlockScale);
             string extensionPorDefecto = SelectedProject.ExportFormat.ToLower();
             string nombreFiltro = SelectedProject.ExportFormat == "STL" ? "Archivo Estereolitografía (*.stl)" : "3D Manufacturing Format (*.3mf)";
             string patronExtension = $"*.{extensionPorDefecto}";
@@ -249,11 +254,7 @@ public partial class MyFilesViewModel : ViewModelBase
             if (fileLocation != null)
             {
                 string rutaDestino = fileLocation.Path.LocalPath;
-
-                if (SelectedProject.ExportFormat == "STL")
-                {
-                    StlGenerator.CreateBinaryStlWithColor(rutaDestino, malla, Color.Gray);
-                }
+                File.Copy(SelectedProject.ExportedFilePath, rutaDestino, true);
             }
         }
         catch (Exception ex)
@@ -262,7 +263,7 @@ public partial class MyFilesViewModel : ViewModelBase
         }
     }
 
-    private string GetSlicerExecutableFromRegistry(string uriScheme)
+    private string? GetSlicerExecutableFromRegistry(string uriScheme)
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
 
@@ -296,19 +297,13 @@ public partial class MyFilesViewModel : ViewModelBase
 
         try
         {
-            StructureData strData = _structureLoaderService.Load(SelectedProject.OriginalFilePath);
-
-
-            List<Triangle> malla = _meshService.GenerateMesh(strData, SelectedProject.BlockScale);
-
-            string extension = SelectedProject.ExportFormat.ToLower();
-            string suggestedName = string.IsNullOrWhiteSpace(SelectedProject.Name) ? "modelo" : SelectedProject.Name;
-            string tempFile = Path.Combine(Path.GetTempPath(), $"{suggestedName}_{Guid.NewGuid():N}.{extension}");
-
-            if (SelectedProject.ExportFormat == "STL")
+            if (string.IsNullOrEmpty(SelectedProject.ExportedFilePath) || !File.Exists(SelectedProject.ExportedFilePath))
             {
-                StlGenerator.CreateBinaryStlWithColor(tempFile, malla, Color.Gray);
+                System.Diagnostics.Debug.WriteLine("El archivo exportado no existe.");
+                return;
             }
+
+            string exportedFile = SelectedProject.ExportedFilePath;
 
             string exePath = GetSlicerExecutableFromRegistry(SelectedSlicer.UriScheme);
 
@@ -317,7 +312,7 @@ public partial class MyFilesViewModel : ViewModelBase
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = exePath,
-                    Arguments = $"\"{tempFile}\"",
+                    Arguments = $"\"{exportedFile}\"",
                     UseShellExecute = true
                 });
             }
@@ -325,7 +320,7 @@ public partial class MyFilesViewModel : ViewModelBase
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = tempFile,
+                    FileName = exportedFile,
                     UseShellExecute = true
                 });
             }

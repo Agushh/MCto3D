@@ -3,6 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <NoWarn>CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;CS8632</NoWarn>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

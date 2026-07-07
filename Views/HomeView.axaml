@@ -20,7 +20,7 @@
 				<Border Classes="Card" Width="800" Height="400" HorizontalAlignment="Center" ClipToBounds="True">
 					<!-- Dummy overlay to simulate the sketch rectangle "Preview Renderer" text if no mesh is loaded, but actually we show the real renderer -->
 					<Panel>
-						<controls:MinecraftRenderControl Triangles="{Binding MeshTriangles}" ColoredMeshes="{Binding ColoredMeshes}" AutoRotate="True"/>
+						<controls:MinecraftRenderControl Triangles="{Binding MeshTriangles}" ColoredMeshes="{Binding ColoredMeshes}" AutoRotate="True" ShowFloor="True" FloorColor="#09b300"/>
 					</Panel>
 				</Border>
 			</Grid>

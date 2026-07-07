@@ -26,7 +26,7 @@
 			<StackPanel Grid.Column="0" Spacing="16" VerticalAlignment="Center">
 				<TextBlock Text="{DynamicResource MyFilesTitle}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}"/>
 				<Grid ColumnDefinitions="300,Auto,Auto" Margin="0,8,0,0">
-					<TextBox Grid.Column="0" Text="{Binding SearchText}" Watermark="{DynamicResource MyFilesSearch}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8"/>
+					<TextBox Grid.Column="0" Text="{Binding SearchText}" PlaceholderText="{DynamicResource MyFilesSearch}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8"/>
 					
 					<!-- Sort Selector -->
 					<ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedSortIndex}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8" Margin="16,0,0,0" VerticalAlignment="Center">

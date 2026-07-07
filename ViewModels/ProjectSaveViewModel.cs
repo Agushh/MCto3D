@@ -23,6 +23,7 @@ public partial class ProjectSaveViewModel : ViewModelBase
     public Func<int>? GetSelectedGeometryModeIndexFunc { get; set; }
     public Func<string>? GetExportFormatFunc { get; set; }
     public Func<bool>? GetIsSingleColorModeFunc { get; set; }
+    public Func<System.Collections.Generic.Dictionary<System.Drawing.Color, System.Collections.Generic.List<Triangle>>>? GetColoredMeshesFunc { get; set; }
     
     public event EventHandler<string>? StatusTextChanged;
 
@@ -97,14 +98,44 @@ public partial class ProjectSaveViewModel : ViewModelBase
             }
         }
 
+        string exportedPath = string.Empty;
+        var format = GetExportFormatFunc?.Invoke() ?? "STL";
+        var meshes = GetColoredMeshesFunc?.Invoke();
+
+        if (meshes != null)
+        {
+            try
+            {
+                var exportsFolder = Path.Combine(_appSettings.LocalFilesPath, "Exports");
+                if (!Directory.Exists(exportsFolder)) Directory.CreateDirectory(exportsFolder);
+
+                string safeName = string.Join("_", NewProjectName.Split(Path.GetInvalidFileNameChars()));
+                string fileName = $"{safeName}_{Guid.NewGuid():N}.{format.ToLower()}";
+                exportedPath = Path.Combine(exportsFolder, fileName);
+
+                MCto3D.Services.ExportedFilesWriting.IModelWriter writer = format == "STL" 
+                    ? new MCto3D.Services.ExportedFilesWriting.StlWriterService() 
+                    : new MCto3D.Services.ExportedFilesWriting.ThreeMfWriterService(_appSettings.Use3MfAssemblyMode);
+                
+                writer.Write(exportedPath, meshes);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error exportando modelo: {ex.Message}");
+                StatusTextChanged?.Invoke(this, $"Error guardando archivo: {ex.Message}");
+                return;
+            }
+        }
+
         var newProject = new SavedProject
         {
             Name = NewProjectName,
             OriginalFilePath = selectedFilePath,
             ThumbnailPath = thumbnailPath,
+            ExportedFilePath = exportedPath,
             BlockScale = GetBlockScaleFunc?.Invoke() ?? 1.0f,
             GeometryMode = (GetSelectedGeometryModeIndexFunc?.Invoke() ?? 0) == 1 ? "Geometrías completas" : "Bloques sólidos",
-            ExportFormat = GetExportFormatFunc?.Invoke() ?? "STL",
+            ExportFormat = format,
             IsSingleColorMode = GetIsSingleColorModeFunc?.Invoke() ?? true
         };
 
