@@ -1,8 +1,9 @@
-# MCto3D
+<div align="center"> 
 
-<div align="center">
-  <!-- TODO: Add hero image/logo here -->
-  <img src="docs/images/logo.png" alt="MCto3D Logo" width="200"/>
+  # **MCto3D**
+  
+  <img width="1294" height="746" alt="image" src="https://github.com/user-attachments/assets/a7e2fa1a-069f-4b7e-9904-dc87b4f60a87" />
+
   
   **MCto3D** is a powerful desktop application designed to convert Minecraft structure files (`.nbt`, `.litematic`, `.schematic`) into highly optimized 3D models (`.3mf`, `.stl`) suitable for 3D printing, rendering, and CAD workflows. It accurately preserves block geometry, dynamically extracts texture colors, and features advanced color-clustering algorithms for multi-color 3D printing.
 </div>
@@ -65,8 +66,9 @@ To prevent generating overwhelmingly large 3D files (a common issue with voxel d
 - **Full Geometry**: This mode preserves absolutely all faces of every block, including internal ones. It is highly resource-intensive but necessary if the user intends to slice, section, or manipulate the internal structure of the model in a 3D editing software (like Blender) later on.
 
 *Visual Example:*
-> *TODO: Insert a comparison image showing Solid Blocks (optimized interior) vs Full Geometry (showing internal faces).*
-> `![Geometry Modes Comparison](docs/images/geometry_modes.png)`
+
+<img width="731" height="514" alt="Full Geometry" src="https://github.com/user-attachments/assets/faebe952-547e-49a0-97bd-6ead5bd04624" />
+
 
 ### 3. Advanced Color Clustering Algorithms
 Handling full-color Minecraft structures often results in hundreds of slightly different texture colors. For multi-color 3D printing (like Bambu Lab AMS or Prusa MMU), this must be reduced. The app provides multiple mathematical approaches:
