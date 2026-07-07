@@ -130,9 +130,9 @@ public partial class HomeViewModel : ViewModelBase
     {
         try
         {
-            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/mc_house.png"))));
-            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/mc_castle.png"))));
-            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/mc_village.png"))));
+            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/Preview2.jpeg"))));
+            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/Preview1.png"))));
+            CarouselImages.Add(new Bitmap(AssetLoader.Open(new Uri("avares://MCto3D/Assets/Images/Carousel/Preview3.jpeg"))));
             
             UpdateCarouselImages();
         }

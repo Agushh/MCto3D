@@ -96,6 +96,12 @@ Handling full-color Minecraft structures often results in hundreds of slightly d
 - **STL**: Generates monolithic mesh geometries for standard, single-color structural printing.
 - **3MF**: Fully supports multi-color mesh grouping. The exporter groups triangles into distinct color objects, writing compliant XML structures for the 3MF payload. This makes it instantly compatible with modern multi-color slicers as "assemblies," meaning users don't have to manually paint models in the slicer software.
 
+### 5. Local Files Manager ("My Files") & Native Support
+The application features a built-in file management system that allows users to organize their projects seamlessly without leaving the software.
+- **Native Loading**: MCto3D is fully capable of reading native Minecraft structure formats natively. Users can load raw `.nbt`, `.litematic`, and `.schematic` files straight into the viewer, converting them to 3D on-the-fly.
+- **Persistent Storage**: When a user exports or saves a structure from the Dashboard, it is automatically cataloged in the local storage directory (configurable via Settings). 
+- **Quick Slicer Access**: The "My Files" tab lets users browse all their saved 3D conversions (`.3mf` or `.stl`), view rich metadata (triangle count, dimensions), and open them directly in their default 3D Slicer software (e.g., Bambu Studio) with a single click.
+
 ---
 
 ## Contributing
