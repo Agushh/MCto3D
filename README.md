@@ -2,9 +2,9 @@
 
   # **MCto3D**
   
-  <img width="1294" height="746" alt="image" src="https://github.com/user-attachments/assets/a7e2fa1a-069f-4b7e-9904-dc87b4f60a87" />
+ <img width="1302" height="752" alt="image" src="https://github.com/user-attachments/assets/23162e8c-a4a3-4712-a17f-4d09bfa3e1c5" />
 
-  
+
   **MCto3D** is a powerful desktop application designed to convert Minecraft structure files (`.nbt`, `.litematic`, `.schematic`) into highly optimized 3D models (`.3mf`, `.stl`) suitable for 3D printing, rendering, and CAD workflows. It accurately preserves block geometry, dynamically extracts texture colors, and features advanced color-clustering algorithms for multi-color 3D printing.
 </div>
 
