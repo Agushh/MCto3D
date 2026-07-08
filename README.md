@@ -1,14 +1,18 @@
 <div align="center"> 
+<picture>
+  <img width="15%" height="15%" alt="MCto3D Logo" src="https://github.com/user-attachments/assets/7c8e904a-6826-410c-a8e0-84d4cbf87b2d" />
+</picture>
 
-  # **MCto3D**
-  
- <img width="1302" height="752" alt="image" src="https://github.com/user-attachments/assets/23162e8c-a4a3-4712-a17f-4d09bfa3e1c5" />
+**MCto3D** is a powerful desktop application designed to convert Minecraft structure files (`.nbt`, `.litematic`, `.schematic`) into highly optimized 3D models (`.3mf`, `.stl`) suitable for 3D printing, rendering, and CAD workflows. 
+It accurately preserves block geometry, dynamically extracts texture colors, and features advanced color-clustering algorithms for multi-color 3D printing.
 
-
-  **MCto3D** is a powerful desktop application designed to convert Minecraft structure files (`.nbt`, `.litematic`, `.schematic`) into highly optimized 3D models (`.3mf`, `.stl`) suitable for 3D printing, rendering, and CAD workflows. It accurately preserves block geometry, dynamically extracts texture colors, and features advanced color-clustering algorithms for multi-color 3D printing.
 </div>
 
 ---
+
+<div align="center"> <STRONG> <H1> MCTo3D </H1> </STRONG> </div> 
+
+<img width="100%"  alt="image" src="https://github.com/user-attachments/assets/23162e8c-a4a3-4712-a17f-4d09bfa3e1c5" />
 
 ## Technical Overview
 
@@ -30,21 +34,6 @@ The application strictly separates logic from UI through the **MVVM** pattern, c
 - **Views (`.axaml`)**: Handle only UI binding, themes, and layout definitions (e.g., `DashboardView`, `SettingsView`).
 - **ViewModels**: Manage application state, expose `ICommands` (via `[RelayCommand]`), and bridge the UI with background services.
 - **Services**: Pure logic components registered via DI (e.g., `IStructureLoaderService`, `IMeshService`, `IColorSeparatorService`). 
-
-*Example of Service Injection:*
-```csharp
-public partial class DashboardViewModel : ViewModelBase
-{
-    private readonly IMeshService _meshService;
-    private readonly IStructureLoaderService _structureLoader;
-
-    public DashboardViewModel(IMeshService meshService, IStructureLoaderService structureLoader)
-    {
-        _meshService = meshService;
-        _structureLoader = structureLoader;
-    }
-}
-```
 
 This decoupling ensures algorithms can be swapped, upgraded, or unit-tested in complete isolation.
 
