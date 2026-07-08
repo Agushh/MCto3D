@@ -8,6 +8,7 @@
 		Background="{DynamicResource EnderBackgroundBase}" Foreground="{DynamicResource EnderTextPrimary}"
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaTitleBarHeightHint="-1"
+		Icon="avares://MCto3D/Assets/Logo/Logo.ico"
 		Title="MCTo3D"
 		>
 
@@ -65,12 +66,8 @@
 		<!-- Tab Border -->
 
 		<Border Grid.Row="0" Height="30" Background="{DynamicResource EnderBackgroundBase}" IsHitTestVisible="False" BorderBrush="{DynamicResource EnderSurfaceHover}" BorderThickness="0,0,0,2">
-		<!-- Aquí puedes poner tu logo, menú, o título -->
-				<TextBlock Text="   MCto3D"
-						   VerticalAlignment="Center"
-						   HorizontalAlignment="Left"
-						   FontWeight="Bold"
-						   Foreground="{DynamicResource EnderTextPrimary}"/>
+		<!-- Placeholder for logo or title -->
+				
 	
 	    </Border>
 
@@ -89,9 +86,7 @@
 								</Button>
 								<!-- Title -->
 								<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0" IsVisible="{Binding IsSidebarExpanded}">
-									<Border Width="24" Height="24" Background="{DynamicResource EnderPrimary}" CornerRadius="4" Margin="0,0,8,0">
-										<TextBlock Text="M" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									</Border>
+									<Image Source="avares://MCto3D/Assets/Logo/Logo Rounded.png" Width="24" Height="24" Margin="0,0,8,0" />
 									<TextBlock Text="{DynamicResource AppTitle}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Black" FontSize="18" LetterSpacing="1" VerticalAlignment="Center"/>
 								</StackPanel>
 							</Grid>

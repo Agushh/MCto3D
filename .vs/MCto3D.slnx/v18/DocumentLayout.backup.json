@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}",
+      "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:views\\mainwindow.axaml||{6D5344A2-2FCD-49DE-A09D-6A14FD1B1224}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:viewmodels\\mainwindowviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|c:\\users\\agust\\desktop\\avalonia testing\\mcto3d\\viewmodels\\palettemanagerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0A90898C-BDDC-16B4-CE92-322D0F74656B}|MCto3D.csproj|solutionrelative:viewmodels\\palettemanagerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -39,19 +47,44 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "MainWindow.axaml",
+              "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\MainWindow.axaml",
+              "RelativeDocumentMoniker": "Views\\MainWindow.axaml",
+              "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\MainWindow.axaml",
+              "RelativeToolTip": "Views\\MainWindow.axaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-07-08T04:12:02.42Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindowViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\MainWindowViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\MainWindowViewModel.cs",
+              "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\MainWindowViewModel.cs",
+              "RelativeToolTip": "ViewModels\\MainWindowViewModel.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAcwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-08T04:11:58.368Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "PaletteManagerViewModel.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\PaletteManagerViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\PaletteManagerViewModel.cs",
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\ViewModels\\PaletteManagerViewModel.cs",
               "RelativeToolTip": "ViewModels\\PaletteManagerViewModel.cs",
-              "ViewState": "AgIAAFAAAAAAAAAAAAAAwGoAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAqwGoAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-08T03:20:01.686Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "DashboardView.axaml.cs",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\DashboardView.axaml.cs",
               "RelativeDocumentMoniker": "Views\\DashboardView.axaml.cs",
@@ -64,7 +97,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "es-ES.json",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\es-ES.json",
               "RelativeDocumentMoniker": "Assets\\Lang\\es-ES.json",
@@ -77,7 +110,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "en-US.json",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Assets\\Lang\\en-US.json",
               "RelativeDocumentMoniker": "Assets\\Lang\\en-US.json",
@@ -90,7 +123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "DashboardView.axaml",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\DashboardView.axaml",
               "RelativeDocumentMoniker": "Views\\DashboardView.axaml",

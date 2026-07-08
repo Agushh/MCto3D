@@ -14,9 +14,6 @@
 	<Grid Margin="32" RowDefinitions="Auto,*">
 		<!-- HEADER -->
 		<Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,24">
-			<Button Grid.Column="0" Command="{Binding GoBackCommand}" Classes="Ghost" Padding="12,8" Margin="0,0,16,0" VerticalAlignment="Center">
-				<TextBlock Text="←" VerticalAlignment="Center" FontSize="20"/>
-			</Button>
 			<TextBlock Grid.Column="1" Text="{DynamicResource ConverterTitle}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center"/>
 		</Grid>
 
