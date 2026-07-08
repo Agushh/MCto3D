@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using MCto3D.Services.ColorProcesing;
+using MCto3D.Services.AssetsProcessing;
 
 namespace MCto3D.ViewModels;
 

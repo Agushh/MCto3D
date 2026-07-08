@@ -5,21 +5,21 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using StbImageSharp;
 
-namespace MCto3D.Services.ColorProcesing
+namespace MCto3D.Services.AssetsProcessing
 {
     public class ColorGeneratorService
     {
         public async Task<Dictionary<string, byte[]>> GenerateAndLoadColors(string localAppFolder, IProgress<string> progress = null)
         {
-            progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressInitColors"));
+            progress?.Report(LanguageService.GetString("ProgressInitColors"));
 
             string texturesPath = Path.Combine(localAppFolder, "MinecraftExtractedAssets", "assets", "minecraft", "textures", "block");
             string jsonOutputPath = Path.Combine(localAppFolder, "colores_base.json");
 
             if (!Directory.Exists(texturesPath))
             {
-                progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressErrorTexture"));
-                // Devolvemos un diccionario vacío o podés lanzar una excepción según prefieras
+                progress?.Report(LanguageService.GetString("ProgressErrorTexture"));
+                //Incorporar lanzamiento de excepcion para no permitir la opcion de multicolor en el sistema y avisarle al cliente.
                 return new();
             }
 
@@ -32,7 +32,7 @@ namespace MCto3D.Services.ColorProcesing
 
             if (totalFiles == 0)
             {
-                progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressErrorNoPng"));
+                progress?.Report(LanguageService.GetString("ProgressErrorNoPng"));
                 return blockColors;
             }
 
@@ -113,7 +113,7 @@ namespace MCto3D.Services.ColorProcesing
                                 avgB = (byte)(avgB * 228 / 255);
                             }
 
-                            blockColors[blockName] = new byte[] { avgR, avgG, avgB };
+                            blockColors[blockName] = [avgR, avgG, avgB];
                         }
 
                         processedCount++;
@@ -121,30 +121,32 @@ namespace MCto3D.Services.ColorProcesing
                         // Actualizamos la UI cada 50 archivos para no saturar el reporte
                         if (processedCount % 50 == 0 || processedCount == totalFiles)
                         {
-                            progress?.Report($"Procesando texturas: {processedCount} / {totalFiles}");
+                            progress?.Report(LanguageService.GetString("TextureProcessing") + $" {processedCount} / {totalFiles}");
                         }
                     }
                 }
             });
             // 3. Guardamos el resultado en JSON de forma asíncrona
-            progress?.Report(MCto3D.Services.LanguageService.GetString("ProgressSavingColors"));
+            progress?.Report(LanguageService.GetString("ProgressSavingColors"));
 
             var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(blockColors, jsonOptions);
 
             await File.WriteAllTextAsync(jsonOutputPath, jsonString);
 
-            progress?.Report("¡Procesamiento exitoso!");
+            progress?.Report(LanguageService.GetString("TextureProcessingSuccessfull"));
             return blockColors;
         }
 
         public Dictionary<string, byte[]> LoadColorsSync(string localAppFolder)
         {
+            //TODO crear constante para la direccion.
             string jsonPath = Path.Combine(localAppFolder, "colores_base.json");
 
             // 1. Verificación de seguridad
             if (!File.Exists(jsonPath))
             {
+                //TODO Realizar prohibicion al procesamiento multicolor y notificar archivos corruptos o inexistentes.
                 return new Dictionary<string, byte[]>();
             }
 

@@ -41,5 +41,6 @@
 
   <ItemGroup>
     <Folder Include="Assets\Images\Icons\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@
   "ConverterFillColor": "Fill color",
   "ConverterFillHoles": "Fill internal holes",
   "ConverterForceColor": "Force color",
-  "ConverterFutureAds": "Future Ads",
+  "ConverterFutureWorldReading": "Minecraft World Converter under development...",
   "ConverterGeneratingMesh": "Generating 3D Mesh...",
   "ConverterGeomFull": "Full geometries",
   "ConverterGeomMode": "Geometry Mode:",
@@ -145,5 +145,16 @@
   "WelcomeContinueTooltip": "Will try to find Minecraft in the default folder",
   "WelcomeCustomFolderBtn": "Do you have Minecraft installed in another folder? Click here to find it.",
   "WelcomeDesc": "Since we are a third-party software, we cannot include certain configurations and we need to process a Minecraft version file. Therefore, it is vital that you have Minecraft installed on your computer.",
-  "WelcomeTitle": "Welcome to MCto3D!"
+  "WelcomeTitle": "Welcome to MCto3D!",
+  "AssetExtractionWaitingStatus": "Waiting for user input...",
+  "AssetExtractorStartExtraction": "Starting extraction process...",
+  "AssetExtractorVersionsNotFoundOnDotM": "There is no versions directory on your \".minecraft\" . You need to have at least one minecraft version installed",
+  "AssetExtractorNothingFound": "Minecraft Not found. If you have Minecraft installed, check that the directory you entered is correct",
+  "AssetExtractorVersionNotFound": "There is no Versions on yor versions folder. You need to have at least one minecraft version installed",
+  "AssetExtractorCleanningOldAssets": "Cleaning Old Local Files...",
+  "AssetExtractorOpeningFile": "Opening Minecraft Version file :",
+  "AssetExtractorExtracting": "Extracting :",
+  "AssetExtractorExtractionSuccessfull": "Extraction Completed Successfully!",
+  "TextureProcessing": "Processing Texture :",
+  "TextureProcessingSuccessfull": "Texture Processing Completed Successfully!"
 }

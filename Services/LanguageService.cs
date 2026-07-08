@@ -4,6 +4,13 @@ namespace MCto3D.Services
 {
     public static class LanguageService
     {
+        public static event System.EventHandler? LanguageChanged;
+
+        public static void RaiseLanguageChanged()
+        {
+            LanguageChanged?.Invoke(null, System.EventArgs.Empty);
+        }
+
         public static string GetString(string key, string fallback = "")
         {
             if (Application.Current != null && Application.Current.TryGetResource(key, Avalonia.Styling.ThemeVariant.Default, out var resource) && resource is string str)

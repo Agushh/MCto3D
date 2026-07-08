@@ -10,51 +10,82 @@ namespace MCto3D.Services.AssetsProcessing
 {
     public class AssetExtractorService
     {
-        public async Task<string> ExtractLegalAssets(string localFilesPath, IProgress<string> progress = null, string minecraftLocation = "default")
+        public async Task<string> ExtractLegalAssets(string localFilesPath, IProgress<string> progress = null, string userLocationInput = "default")
         {
-            progress?.Report("Iniciando búsqueda de assets...");
+            progress?.Report(LanguageService.GetString("AssetExtractorStartExtraction"));
 
-            string appData = minecraftLocation;
+            string appData = userLocationInput == "default" ? Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData):
+                                                              userLocationInput;
             
-            if (minecraftLocation == "default")
-                appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
             string minecraftDir = Path.Combine(appData, ".minecraft");
+            
+            string versionsDir;
 
+            #region Comprobacion de direcciones
             //Comprobar las rutas y manejar las comprobaciones
             //Adicional, añadir traduccion al texto de las excepciones.
-            #region Comprobacion de direcciones
-            if (!Directory.Exists(minecraftDir))
+            if (Directory.Exists(minecraftDir))
             {
-                if (!Directory.Exists(Path.Combine(appData, "versions")))
-                    throw new Exception("Error al Intentar encontrar la carpeta Versions. Soluciones en el FAQ");
-                minecraftDir = minecraftLocation;
+                if(Directory.Exists(Path.Combine(minecraftDir, "versions")))
+                {
+                    versionsDir = Path.Combine(minecraftDir, "versions");
+                }
+                else
+                {
+                    //La carpeta .minecraft existe pero no contiene carpeta Versions.
+                    throw new DirectoryNotFoundException(LanguageService.GetString("AssetExtractorVersionsNotFoundOnDotM"));
+                }
             }
-            string versionsDir = Path.Combine(minecraftDir, "versions"); 
-            if (!Directory.Exists(versionsDir))
+            else
             {
-                throw new Exception("No dispones de ninguna instalacion de minecraft descargada! Recuerda que debes de haber abierto el juego al menos una vez");
+                minecraftDir = appData;
+                //no se encontro .minecraft, se comprobara que la carpeta elegida sea ya .minecraft
+                if (Directory.Exists(Path.Combine(minecraftDir, "versions")))
+                {
+                    versionsDir = Path.Combine(minecraftDir, "versions");
+                }
+                else //No se encontro la carpeta versions, se comprobara el caso de Curseforge, el cual utiliza una carpeta Install, y dentro Versions
+                {
+                    if (Directory.Exists(Path.Combine(minecraftDir, "Install")))
+                    {
+                        if (Directory.Exists(Path.Combine(minecraftDir, "Install", "versions")))
+                        {
+                            versionsDir = Path.Combine(minecraftDir, "Install", "versions");
+                        }
+                        else
+                        {
+                            //No hay versiones instaladas. -- No se encontro la carpeta Versions.
+                            throw new DirectoryNotFoundException(LanguageService.GetString("AssetExtractorVersionsNotFoundOnDotM"));
+                        }
+                    }
+                    else
+                    {
+                        //No se encontro nada. 
+                        throw new DirectoryNotFoundException(LanguageService.GetString("AssetExtractorNothingFound"));
+                    }
+                }
+                
+
             }
+
+            #endregion
+
             string latestVersion = GetLatestMinecraftVersion(versionsDir);
 
 
             string jarPath = Path.Combine(versionsDir, latestVersion, $"{latestVersion}.jar");
 
-            if (!File.Exists(jarPath))
-            {
-                throw new FileNotFoundException($"Error: No se encontró el archivo .jar de la versión {latestVersion} en la ruta {jarPath}");
-            }
-            #endregion
-
+            //---CONST THAT NEEDS TO BE ON SEPARATED FILE
             string localAppFolder = Path.Combine(localFilesPath, "MinecraftExtractedAssets");
+
 
             if (Directory.Exists(localAppFolder))
             {
-                progress?.Report("Limpiando assets anteriores...");
+                progress?.Report(LanguageService.GetString("AssetExtractorCleanningOldAssets"));
                 Directory.Delete(localAppFolder, true);
             }
 
-            progress?.Report($"Abriendo el archivo de Minecraft {latestVersion}...");
+            progress?.Report(LanguageService.GetString("AssetExtractorOpeningFile") + latestVersion + "...");
             await Task.Delay(500);
             using (ZipArchive archive = ZipFile.OpenRead(jarPath))
             {
@@ -113,17 +144,15 @@ namespace MCto3D.Services.AssetsProcessing
                         if (extracted % ammount == 0)
                         {
                             string filename = Path.GetFileName(entry.FullName);
-                            progress?.Report($"Extrayendo {filename}... ({extracted} / {totalToExtract})");
+                            progress?.Report(LanguageService.GetString("AssetExtractorExtracting") + $" {filename}... ({extracted} / {totalToExtract})");
                             ammount = Random.Shared.Next(75, 175);
                         }
 
                     }
                 }
             }
-            System.Diagnostics.Debug.WriteLine("¡Extracción completada con éxito!");
-
             File.WriteAllText(Path.Combine(localAppFolder, "version.txt"), latestVersion);
-            progress?.Report("¡Extracción completada con éxito!");
+            progress?.Report(LanguageService.GetString("AssetExtractorExtractionSuccessfull"));
             return localAppFolder;
         }
 
@@ -158,7 +187,7 @@ namespace MCto3D.Services.AssetsProcessing
             }
             if (latestVersionName == String.Empty)
             {
-                throw new FileNotFoundException("No se encontró ninguna instalación de Minecraft Vanilla o Modificada válida con un .jar.");
+                throw new FileNotFoundException(LanguageService.GetString("AssetExtractorVersionNotFound"));
             }
             return latestVersionName;
         }

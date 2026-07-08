@@ -129,6 +129,7 @@ public partial class SettingsViewModel : ViewModelBase
             {
                 _appSettings.Language = newLang;
                 MCto3D.App.ChangeLanguage(newLang);
+                MCto3D.Services.LanguageService.RaiseLanguageChanged();
                 OnPropertyChanged(nameof(SelectedLanguageIndex));
             }
         }

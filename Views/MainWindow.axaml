@@ -4,8 +4,25 @@
 		xmlns:views="using:MCto3D.Views"
 		x:Class="MCto3D.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
-		Title="MCto3D" Width="{Binding WindowWidth}" Height="750" MinWidth="{Binding WindowWidth}" MinHeight="715"
-		Background="{DynamicResource EnderBackgroundBase}" Foreground="{DynamicResource EnderTextPrimary}">
+		Width="{Binding WindowWidth}" Height="750" MinWidth="{Binding WindowWidth}" MinHeight="715"
+		Background="{DynamicResource EnderBackgroundBase}" Foreground="{DynamicResource EnderTextPrimary}"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaTitleBarHeightHint="-1"
+		Title="MCTo3D"
+		>
+
+	<Window.Styles>
+		<!-- Oculta el texto del título que dibuja Avalonia -->
+		<Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel > TextBlock">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		
+		<!-- Oculta el botón de Pantalla Completa (las flechas diagonales) -->
+		<Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
+			<Setter Property="Opacity" Value="0" />
+			<Setter Property="IsHitTestVisible" Value="False" />
+		</Style>
+	</Window.Styles>
 
 	<Window.DataTemplates>
 		<DataTemplate DataType="{x:Type vm:HomeViewModel}">
@@ -41,9 +58,25 @@
 		</DataTemplate>
 	</Window.DataTemplates>
 
-	<Grid>
+	
+
+	<Grid RowDefinitions="Auto, *">
+
+		<!-- Tab Border -->
+
+		<Border Grid.Row="0" Height="30" Background="{DynamicResource EnderBackgroundBase}" IsHitTestVisible="False" BorderBrush="{DynamicResource EnderSurfaceHover}" BorderThickness="0,0,0,2">
+		<!-- Aquí puedes poner tu logo, menú, o título -->
+				<TextBlock Text="   MCto3D"
+						   VerticalAlignment="Center"
+						   HorizontalAlignment="Left"
+						   FontWeight="Bold"
+						   Foreground="{DynamicResource EnderTextPrimary}"/>
+	
+	    </Border>
+
+
 		<!-- MAIN LAYOUT (Sólo visible cuando no está activa la pantalla de bienvenida ni la de carga) -->
-		<Grid IsVisible="{Binding IsMainContentVisible}">
+		<Grid Grid.Row="1" IsVisible="{Binding IsMainContentVisible}">
 			<!-- CONTENIDO CON SPLITVIEW (Ahora ocupa toda la pantalla) -->
 			<SplitView IsPaneOpen="{Binding IsSidebarExpanded}" DisplayMode="CompactInline" CompactPaneLength="70" OpenPaneLength="260" PaneBackground="{DynamicResource EnderBackgroundBase}">
 				<SplitView.Pane>
@@ -66,8 +99,6 @@
 							<!-- Top Navigation -->
 							<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 								<StackPanel Spacing="8">
-									<TextBlock Text="{DynamicResource SidebarMenu}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12" FontWeight="SemiBold" Margin="24,0,0,16" IsVisible="{Binding IsSidebarExpanded}"/>
-									
 									<!-- Navigation Buttons -->
 									<StackPanel Spacing="8">
 										<!-- Home -->
@@ -157,9 +188,9 @@
 		</Grid>
 
 		<!-- OVERLAY PANTALLA DE BIENVENIDA -->
-		<ContentControl Content="{Binding WelcomeVM}" IsVisible="{Binding IsWelcomeScreenActive}"/>
+		<ContentControl Grid.Row="1" Content="{Binding WelcomeVM}" IsVisible="{Binding IsWelcomeScreenActive}"/>
 
 		<!-- OVERLAY PANTALLA DE CARGA GLOBAL -->
-		<ContentControl Content="{Binding LoadingVM}" IsVisible="{Binding LoadingVM.IsActive}"/>
+		<ContentControl Grid.Row="1" Content="{Binding LoadingVM}" IsVisible="{Binding LoadingVM.IsActive}"/>
 	</Grid>
 </Window>

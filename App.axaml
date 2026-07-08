@@ -5,8 +5,6 @@
              
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Language keys will be injected dynamically via JSON -->
-            
             <!-- Ender Theme Colors -->
             <SolidColorBrush x:Key="EnderBackgroundBase">#05050A</SolidColorBrush>
             <SolidColorBrush x:Key="EnderSurface">#0B0B13</SolidColorBrush>

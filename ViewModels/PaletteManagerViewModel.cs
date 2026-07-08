@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Models;
 using MCto3D.Services;
-using MCto3D.Services.ColorProcesing;
 
 namespace MCto3D.ViewModels;
 
@@ -20,6 +18,7 @@ public partial class PaletteManagerViewModel : ViewModelBase
     {
         _appSettings = appSettings;
         LoadPalettes();
+        MCto3D.Services.LanguageService.LanguageChanged += (s, e) => LoadPalettes();
     }
 
     [ObservableProperty] private ColorAlgorithm _selectedAlgorithm = ColorAlgorithm.SingleColor;
@@ -69,7 +68,7 @@ public partial class PaletteManagerViewModel : ViewModelBase
 
         // Load the colors into UserDefinedColors
         UserDefinedColors.Clear();
-        if (value.Name == CustomPaletteName || value.ColorsHex == null || value.ColorsHex.Count == 0)
+        if (value.IsPlaceholder || value.ColorsHex == null || value.ColorsHex.Count == 0)
         {
             // Default blank palette
             var item = new CustomColorItem { Color = Avalonia.Media.Color.Parse("#FFFFFF") };
@@ -95,8 +94,8 @@ public partial class PaletteManagerViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsCustomPaletteSelected));
     }
 
-    public bool IsSavedPaletteSelected => SelectedPalette != null && SelectedPalette.Name != CustomPaletteName;
-    public bool IsCustomPaletteSelected => SelectedPalette != null && SelectedPalette.Name == CustomPaletteName;
+    public bool IsSavedPaletteSelected => SelectedPalette != null && !SelectedPalette.IsPlaceholder;
+    public bool IsCustomPaletteSelected => SelectedPalette != null && SelectedPalette.IsPlaceholder;
 
     [RelayCommand]
     private void SaveCustomPalette(string name)
@@ -104,7 +103,7 @@ public partial class PaletteManagerViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(name))
         {
             int count = _appSettings.SavedPalettes.Count + 1;
-            name = $"Personalizada-{count}";
+            name = $"{LanguageService.GetString("ConverterPalette")}-{count}";
         }
         
         var newPalette = new CustomPalette { Name = name };
@@ -126,7 +125,7 @@ public partial class PaletteManagerViewModel : ViewModelBase
     [RelayCommand]
     private void UpdateSavedPalette()
     {
-        if (SelectedPalette == null || SelectedPalette.Name == CustomPaletteName) return;
+        if (SelectedPalette == null || SelectedPalette.IsPlaceholder) return;
         
         var existing = _appSettings.SavedPalettes.FirstOrDefault(p => p.Name == SelectedPalette.Name);
         if (existing != null)
@@ -152,7 +151,7 @@ public partial class PaletteManagerViewModel : ViewModelBase
     [RelayCommand]
     private void DeleteSavedPalette()
     {
-        if (SelectedPalette == null || SelectedPalette.Name == CustomPaletteName) return;
+        if (SelectedPalette == null || SelectedPalette.IsPlaceholder) return;
         
         var existing = _appSettings.SavedPalettes.FirstOrDefault(p => p.Name == SelectedPalette.Name);
         if (existing != null)
@@ -165,19 +164,26 @@ public partial class PaletteManagerViewModel : ViewModelBase
 
     public void LoadPalettes()
     {
+        var currentSelectionIsPlaceholder = SelectedPalette?.IsPlaceholder ?? false;
         var currentSelectionName = SelectedPalette?.Name;
         AvailablePalettes.Clear();
         foreach (var p in _appSettings.SavedPalettes)
         {
+            p.IsPlaceholder = false;
             AvailablePalettes.Add(p);
         }
-        AvailablePalettes.Add(new CustomPalette { Name = MCto3D.Services.LanguageService.GetString("ConverterPaletteCustom") });
+        AvailablePalettes.Add(new CustomPalette { Name = MCto3D.Services.LanguageService.GetString("ConverterPaletteCustom"), IsPlaceholder = true });
         
         Avalonia.Threading.Dispatcher.UIThread.Post(() => 
         {
+            if (currentSelectionIsPlaceholder)
+            {
+                SelectedPalette = AvailablePalettes[^1]; // default to Custom
+                return;
+            }
             if (currentSelectionName != null)
             {
-                var match = AvailablePalettes.FirstOrDefault(p => p.Name == currentSelectionName);
+                var match = AvailablePalettes.FirstOrDefault(p => p.Name == currentSelectionName && !p.IsPlaceholder);
                 if (match != null)
                 {
                     SelectedPalette = match;

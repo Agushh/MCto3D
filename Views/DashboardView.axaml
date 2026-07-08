@@ -273,8 +273,7 @@
 				<Panel>
 					<!-- Empty State: Future Ads -->
 					<Border IsVisible="{Binding !IsFileLoaded}" HorizontalAlignment="Center" VerticalAlignment="Center">
-						<!-- Rotate to vertical to match mockup -->
-						<TextBlock Text="{DynamicResource ConverterFutureAds}" Foreground="{DynamicResource EnderBorder}" FontSize="48" FontWeight="Black" RenderTransform="rotate(-90deg)"/>
+						<TextBlock Text="{DynamicResource ConverterFutureWorldReading}" TextWrapping="Wrap" Foreground="{DynamicResource EnderBorder}" FontSize="24" FontWeight="Black" />
 					</Border>
 
 					<!-- Loaded State: Render -->

@@ -17,7 +17,7 @@
   "ConverterFillColor": "Color de relleno",
   "ConverterFillHoles": "Llenar huecos internos",
   "ConverterForceColor": "Forzar color",
-  "ConverterFutureAds": "Future Ads",
+  "ConverterFutureWorldReading": "Lectura de mundos para conversor en desarrollo...",
   "ConverterGeneratingMesh": "Generando Malla 3D...",
   "ConverterGeomFull": "Geometrías completas",
   "ConverterGeomMode": "Modo de Geometría:",
@@ -145,5 +145,16 @@
   "WelcomeContinueTooltip": "Intentará buscar Minecraft en la ruta por defecto",
   "WelcomeCustomFolderBtn": "¿Tienes instalado Minecraft en otra carpeta? Haz click aquí y búscala.",
   "WelcomeDesc": "Al ser un programa externo a Mojang, no podemos incluir ciertas configuraciones y necesitamos procesar un archivo de versión de Minecraft, por lo que es vital que tengas Minecraft instalado en tu computadora.",
-  "WelcomeTitle": "¡Bienvenido a MCto3D!"
+  "WelcomeTitle": "¡Bienvenido a MCto3D!",
+  "AssetExtractionWaitingStatus": "Esperando que el usuario ingrese la carpeta...",
+  "AssetExtractorStartExtraction": "Empezando proceso de extraccion...",
+  "AssetExtractorVersionsNotFoundOnDotM": "No se encontro la carpeta versiones en \".minecraft\". Necesitas tener al menos una version de minecraft instalada.",
+  "AssetExtractorNothingFound": "No se encontraron archivos. Si tenes minecraft instalado, corrobora que la direccion que ingresaste es correcta",
+  "AssetExtractorVersionNotFound": "No hay versiones en tu carpeta \"versions\". Necesitas tener al menos una version de minecraft instalada.",
+  "AssetExtractorCleanningOldAssets": "Borrando archivos locales antiguos...",
+  "AssetExtractorOpeningFile": "Abriendo la version de minecraft :",
+  "AssetExtractorExtracting": "Extrayendo :",
+  "AssetExtractorExtractionSuccessfull": "¡Extraccion completada exitosamente!",
+  "TextureProcessing": "Procesando textura :",
+  "TextureProcessingSuccessfull": "¡Procesamiento de texturas completado exitosamente!"
 }

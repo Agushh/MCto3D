@@ -23,7 +23,7 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid>
+    <Grid >
         <!-- CONTENIDO PRINCIPAL -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="30" MaxWidth="700">
             

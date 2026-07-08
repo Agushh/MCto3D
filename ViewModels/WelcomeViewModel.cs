@@ -78,7 +78,7 @@ public partial class WelcomeViewModel : ViewModelBase
     private async Task SelectCustomFolderAsync()
     {
         IsProcessing = true;
-        LoadingMessage = "Esperando selección de carpeta...";
+        LoadingMessage = LanguageService.GetString("AssetExtractionWaitingStatus");
 
         try
         {
