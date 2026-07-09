@@ -6,7 +6,7 @@
 <div align="center"> <STRONG> <H1> MCTo3D </H1> </STRONG> </div> 
 
 <div align="center">
-  <a href="https://github.com/Agushh/MCto3D/releases"><img src="https://img.shields.io/github/v/release/Agushh/MCto3D?color=blue&label=Latest%20Release" alt="Latest Release" /></a>
+  <a href="https://github.com/Agushh/MCto3D/releases"><img src="https://img.shields.io/github/v/release/Agushh/MCto3D?include_prereleases&color=blue&label=Latest%20Release" alt="Latest Release" /></a>
   <img src="https://img.shields.io/github/downloads/Agushh/MCto3D/total?color=brightgreen" alt="Total Downloads" />
   <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10" />
   <img src="https://img.shields.io/badge/UI-Avalonia-8A338F?logo=avalonia&logoColor=white" alt="Avalonia UI" />
@@ -17,8 +17,8 @@ A powerful desktop application designed to convert Minecraft structure files int
 It accurately preserves block geometry, adds texture colors, and applies color-clustering algorithms for multi-color 3D printing.
 </div>
 
+<img width="100%" height="739" alt="MainMenu" src="https://github.com/user-attachments/assets/0f46b91e-cd09-4e6c-8d8a-9228d5dd8d86" />
 
-<img width="100%"  alt="image" src="https://github.com/user-attachments/assets/23162e8c-a4a3-4712-a17f-4d09bfa3e1c5" />
 
 ## Table of Contents
 - [Key Features](#key-features)
@@ -106,9 +106,10 @@ From there, head to the Convert section (by clicking the big "Convert" button or
 
 In this version, you can change the model's export format between `.stl` and `.3mf`. You can also create a colored 3D model using the available algorithms (you must select `.3mf` first) and change the model's geometry. If you need a simple model or the structure is very large, you can use **solid blocks**, which will create full cube geometries for all blocks (16x16 pixels). For a more detailed build, you can choose **full geometries**, which creates detailed models for each specific block shape (like stairs, fences, and others). 
 
-<img width="30%" height="514" alt="Full Geometry - Solid blocks Comparative" src="https://github.com/user-attachments/assets/faebe952-547e-49a0-97bd-6ead5bd04624" />
+<img height="350" alt="Full Geometry - Solid Blocks Comparison" src="https://github.com/user-attachments/assets/cefa0ecf-d26e-4301-a99f-8c2864c04133" />
 
-<img width="30%" height="514" alt="Algorithms Comparative" src="second Image"/>
+<img height="350" alt="Types of algorythms" src="https://github.com/user-attachments/assets/b24c1e47-7a91-4544-b23e-ee003ff8f987" />
+
 
 ### What can I do with the model?
 Once you finish customizing, you can do any of the following: 
