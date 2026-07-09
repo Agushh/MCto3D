@@ -1,18 +1,21 @@
-Copyright (c) 2026 MCto3D Developer
+MIT License
 
-All rights reserved.
+Copyright (c) 2026 Agushh
 
-This repository is designated as "Source Available". You are encouraged to view, study, and learn from this code.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-### What you are ALLOWED to do:
-1. **Personal Use:** You may download, compile, and modify the software strictly for your own private, non-commercial use.
-2. **Contribute:** You are welcome to fork the repository on GitHub, modify the code, and submit Pull Requests back to this official repository to improve the project.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-### What you are NOT ALLOWED to do:
-1. **Distribution:** You may not distribute, publicly share, or publish copies of this software (compiled or raw source code), modified or unmodified.
-2. **Commercial Use:** You may not use this software, or any portion of its code, to create a commercial product or service.
-3. **Cloning:** You may not create public forks of this project with the intent to distribute a competing or alternative version of the application.
-
-By submitting a Pull Request to this repository, you agree to assign the rights of your contribution to the project owner.
-
-For any commercial licensing or exceptions, you must obtain explicit written permission from the author.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
