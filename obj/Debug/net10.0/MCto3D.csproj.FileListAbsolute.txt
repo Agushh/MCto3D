@@ -7,6 +7,10 @@ C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.Assembly
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.csproj.CoreCompileInputs.cache
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.sourcelink.json
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\EgyptianGod66.3mf
+C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\HousePreview.3mf
+C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\LibraryPreview.3mf
+C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\TemplePreview.3mf
+C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\weaponsmithPreview.3mf
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\MCto3D.exe
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\MCto3D.deps.json
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\MCto3D.runtimeconfig.json
@@ -96,7 +100,3 @@ C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\refint\MCto3D.d
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.pdb
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\MCto3D.genruntimeconfig.cache
 C:\Users\agust\Desktop\Avalonia Testing\MCto3D\obj\Debug\net10.0\ref\MCto3D.dll
-C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\HousePreview.3mf
-C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\LibraryPreview.3mf
-C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\TemplePreview.3mf
-C:\Users\agust\Desktop\Avalonia Testing\MCto3D\bin\Debug\net10.0\DemoFiles\weaponsmithPreview.3mf

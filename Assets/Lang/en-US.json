@@ -1,7 +1,9 @@
 {
   "AppTitle": "MCto3D",
-  "Converter3DModel": "3D Model:",
-  "Converter3MfOptions": "3MF Options",
+  "Converter3DModel": "3D Model",
+  "Converter3MfOptions": "Colors",
+  "ConverterGeometryOptions": "Geometry",
+  "Converter3MfNotSelected": "You need to select .3mf output format to use colors",
   "ConverterActiveFile": "Active file:",
   "ConverterAddColor": "\u002B Add Color",
   "ConverterAddFloor": "Add floor",

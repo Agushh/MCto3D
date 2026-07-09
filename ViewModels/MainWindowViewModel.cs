@@ -95,13 +95,6 @@ public partial class MainWindowViewModel : ViewModelBase
         var colorMapping = provider.GetRequiredService<ColorMappingService>();
         colorMapping.BlockColors = colorGenerator.LoadColorsSync(appSettings.LocalFilesPath);
 
-        DashboardVM.ExportVM.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(ExportViewModel.Is3MfSelected))
-            {
-                UpdateWindowWidth();
-            }
-        };
     }
 
     private void CheckInitialAssets(AppSettingsService appSettings)
@@ -126,20 +119,6 @@ public partial class MainWindowViewModel : ViewModelBase
         IsWalkthroughActive = CurrentPage is WalkthroughViewModel;
         IsFaqActive = CurrentPage is FaqViewModel;
         IsSettingsActive = CurrentPage is SettingsViewModel;
-
-        UpdateWindowWidth();
-    }
-
-    private void UpdateWindowWidth()
-    {
-        if (IsDashboardActive && DashboardVM.ExportVM.Is3MfSelected)
-        {
-            WindowWidth = 1650;
-        }
-        else
-        {
-            WindowWidth = 1300;
-        }
     }
 
     private void UpdateActiveStates()
@@ -153,7 +132,6 @@ public partial class MainWindowViewModel : ViewModelBase
         IsDevToolsActive = CurrentPage == DevToolsVM;
         IsSettingsActive = CurrentPage == SettingsVM;
         
-        UpdateWindowWidth();
     }
 
     public void NavigateTo(ViewModelBase nextPage)

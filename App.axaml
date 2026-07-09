@@ -15,6 +15,7 @@
             <SolidColorBrush x:Key="EnderTextPrimary">#F8FAFC</SolidColorBrush>
             <SolidColorBrush x:Key="EnderTextSecondary">#94A3B8</SolidColorBrush>
             <SolidColorBrush x:Key="EnderBorder">#1E1B2E</SolidColorBrush>
+            <SolidColorBrush x:Key="EnderDisabled">#2b0416</SolidColorBrush>
         </ResourceDictionary>
     </Application.Resources>
 
@@ -87,16 +88,48 @@
             <Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="SineEaseInOut"/>
-                </Transitions>
-            </Setter>
+	        <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="ZIndex" Value="0" />
         </Style>
-        <Style Selector="Border.Card:pointerover">
+
+        <!-- Tab Items -->
+
+        <Style Selector="TabControl /template/ ItemsPresenter#PART_ItemsPresenter">
+        	<Setter Property="ZIndex" Value="1" />
+        </Style>
+
+        <!-- Global -->
+    	<Style Selector="TabItem">
+    		<Setter Property="Background" Value="{DynamicResource EnderBackground}"/> 
+	        <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+	        <Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
+	        <Setter Property="BorderThickness" Value="2,2,2,0"/>
+	        <Setter Property="CornerRadius" Value="6,6,0,0"/>
+            <Setter Property="Margin" Value="0,0,0,-4"/>
+            <Setter Property="FontSize" Value="18"/>
+    	</Style>
+        
+        <!-- Hovering -->
+    	<Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+    		<Setter Property="Background" Value="{DynamicResource EnderSurface}"/> 
+        </Style>
+    
+        <!-- Selected -->
+    	<Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
+	        <Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource EnderPrimary}"/>
+            <Setter Property="BorderThickness" Value="2,2,2,0"/>
+	        <Setter Property="CornerRadius" Value="6,6,0,0"/>
         </Style>
+            
+        <!-- Disabled -->
+	    <Style Selector="TabItem:disabled">
+	    	<Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/> 
+        </Style>
+
+	    <Style Selector="TabItem:disabled /template/ Border#PART_LayoutRoot">
+            <Setter Property="Background" Value="{DynamicResource EnderDisabled}"/> 
+        </Style>
+
     </Application.Styles>
 </Application>

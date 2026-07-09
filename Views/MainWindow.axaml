@@ -23,6 +23,9 @@
 			<Setter Property="Opacity" Value="0" />
 			<Setter Property="IsHitTestVisible" Value="False" />
 		</Style>
+
+
+
 	</Window.Styles>
 
 	<Window.DataTemplates>
