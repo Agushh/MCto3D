@@ -4,6 +4,15 @@
 </picture>
 
 <div align="center"> <STRONG> <H1> MCTo3D </H1> </STRONG> </div> 
+
+<div align="center">
+  <a href="https://github.com/Agushh/MCto3D/releases"><img src="https://img.shields.io/github/v/release/Agushh/MCto3D?color=blue&label=Latest%20Release" alt="Latest Release" /></a>
+  <img src="https://img.shields.io/github/downloads/Agushh/MCto3D/total?color=brightgreen" alt="Total Downloads" />
+  <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10" />
+  <img src="https://img.shields.io/badge/UI-Avalonia-8A338F?logo=avalonia&logoColor=white" alt="Avalonia UI" />
+</div>
+<br/>
+
 A powerful desktop application designed to convert Minecraft structure files into highly optimized 3D models suitable for 3D printing and rendering.
 It accurately preserves block geometry, adds texture colors, and applies color-clustering algorithms for multi-color 3D printing.
 </div>
