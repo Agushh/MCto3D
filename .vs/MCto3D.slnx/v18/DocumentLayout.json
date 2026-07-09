@@ -57,11 +57,11 @@
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 0,
+      "Orientation": 1,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 251,
+          "DockedHeight": 324,
           "SelectedChildIndex": 8,
           "Children": [
             {
@@ -78,8 +78,7 @@
               "RelativeToolTip": "Services\\AssetsProcessing\\AssetExtractorService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-09T00:13:49.313Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-09T00:13:49.313Z"
             },
             {
               "$type": "Document",
@@ -91,8 +90,7 @@
               "RelativeToolTip": "Services\\AssetsProcessing\\ColorGeneratorService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-09T00:13:48.848Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-09T00:13:48.848Z"
             },
             {
               "$type": "Document",
@@ -104,8 +102,7 @@
               "RelativeToolTip": "Assets\\Lang\\es-ES.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-07-09T00:11:30.152Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-09T00:11:30.152Z"
             },
             {
               "$type": "Document",
@@ -117,8 +114,7 @@
               "RelativeToolTip": "Assets\\Lang\\en-US.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-07-09T00:11:03.901Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-09T00:11:03.901Z"
             },
             {
               "$type": "Document",
@@ -130,8 +126,7 @@
               "RelativeToolTip": "ViewModels\\DashboardViewModel.cs",
               "ViewState": "AgIAABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-09T00:03:59.87Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-09T00:03:59.87Z"
             },
             {
               "$type": "Document",
@@ -143,8 +138,7 @@
               "RelativeToolTip": "Views\\DashboardView.axaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-08T23:04:33.943Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:04:33.943Z"
             },
             {
               "$type": "Document",
@@ -155,8 +149,7 @@
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\SettingsView.axaml",
               "RelativeToolTip": "Views\\SettingsView.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-08T23:03:29.422Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:03:29.422Z"
             },
             {
               "$type": "Document",
@@ -180,8 +173,7 @@
               "RelativeToolTip": "Views\\MainWindow.axaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-08T23:05:04.177Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:05:04.177Z"
             },
             {
               "$type": "Document",
@@ -192,8 +184,7 @@
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\App.axaml",
               "RelativeToolTip": "App.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-08T23:23:54.097Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:23:54.097Z"
             },
             {
               "$type": "Document",
@@ -204,8 +195,7 @@
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\MainWindow.axaml",
               "RelativeToolTip": "Views\\MainWindow.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-08T23:02:48.917Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:02:48.917Z"
             },
             {
               "$type": "Document",
@@ -216,8 +206,7 @@
               "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\LoadingView.axaml",
               "RelativeToolTip": "Views\\LoadingView.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-07-08T23:27:10.574Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:27:10.574Z"
             },
             {
               "$type": "Document",
@@ -229,8 +218,21 @@
               "RelativeToolTip": "ViewModels\\MainWindowViewModel.cs",
               "ViewState": "AgIAAHUAAAAAAAAAAAAEwGAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-08T23:31:38.391Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-08T23:31:38.391Z"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 76,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             }
           ]
         }

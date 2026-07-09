@@ -11,6 +11,19 @@ It accurately preserves block geometry, adds texture colors, and applies color-c
 
 <img width="100%"  alt="image" src="https://github.com/user-attachments/assets/23162e8c-a4a3-4712-a17f-4d09bfa3e1c5" />
 
+## Table of Contents
+- [Key Features](#key-features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Build](#build)
+- [How to use](#how-to-use)
+- [Legal Actions](#legal-actions)
+- [Credits & Acknowledgments](#credits--acknowledgments)
+- [How to contribute](#how-to-contribute)
+- [Donations](#donations)
+- [Stay Updated](#-stay-updated)
+- [License](#license)
+
 ## Key Features
 - Reads `.nbt`, `.schematic`, and `.litematic` files.
 - Generates `.stl` and `.3mf` models.
@@ -25,6 +38,12 @@ It accurately preserves block geometry, adds texture colors, and applies color-c
 - Spanish and English language support.
 
 > IMPORTANT: The program requires Minecraft to be installed on your PC to run. See more in the ["Legal Actions"](#legalactions) section.
+
+## Prerequisites
+Before using or building the application, ensure you meet the following requirements:
+- **Operating System:** Windows 10 or Windows 11 (64-bit).
+- **Minecraft Java Edition:** Must be installed on your system to extract local assets for block geometry and textures.
+- **.NET 10 SDK:** Only required if you intend to build the project from source.
 
 ## Installation
 
@@ -94,6 +113,13 @@ Because this project is independent, I cannot pack the Minecraft assets directly
 
 How do we handle it? The application reads the local files from your pre-installed game (don't worry, it will not damage or delete anything) and then saves copies as local files to generate the models.  
 
+## Credits & Acknowledgments
+This project is built using several amazing open-source libraries:
+- **[Avalonia UI](https://avaloniaui.net/):** The core cross-platform UI framework used to build this desktop application.
+- **[CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet):** Used for managing the MVVM architecture cleanly and efficiently.
+- **[fNbt](https://github.com/fragmer/fNbt):** Used to efficiently read and parse `.nbt`, `.schematic`, and `.litematic` files.
+- **[StbImageSharp](https://github.com/StbSharp/StbImageSharp):** Used for fast image processing and texture handling.
+
 ## How to contribute
 
 1. Clone repo and create a new branch
@@ -110,7 +136,7 @@ This is free, open-source software. If you'd like to support the development of 
 If you'd like to follow the journey, download the latest stable versions, or read my devlogs, check out my landing page:
 🔗 **[Visit My Website / Devlogs](https://your-website-url-here.com)**
 
-Here I will be posting news, updates on MCto3D, and future projects I'll be working on. Stay tuned!
+Here I will be posting news, updates on MCto3D, and future projects I'll be working on. **You can also find the official Roadmap and upcoming features there!** Stay tuned!
 
 ## License
 
