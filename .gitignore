@@ -21,3 +21,6 @@ Thumbs.db
 
 publish/
 *.zip
+
+
+publish-release/
