@@ -11,10 +11,57 @@
 		<conv:SelectedThumbnailConverter x:Key="SelectedThumbnailConverter" />
 	</UserControl.Resources>
 
+	<UserControl.Styles>
+		<!-- Tab Items -->
+
+		<Style Selector="TabControl /template/ ItemsPresenter#PART_ItemsPresenter">
+			<Setter Property="ZIndex" Value="1" />
+		</Style>
+
+		<Style Selector="TextBlock.SettingsLabel">
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/>
+			<Setter Property="FontWeight" Value="Medium"/>
+		</Style>
+
+		<!-- Global -->
+		<Style Selector="TabItem">
+			<Setter Property="Background" Value="{DynamicResource EnderBackground}"/>
+			<Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
+			<Setter Property="BorderThickness" Value="2,2,2,0"/>
+			<Setter Property="CornerRadius" Value="6,6,0,0"/>
+			<Setter Property="Margin" Value="0,0,0,-4"/>
+			<Setter Property="FontSize" Value="18"/>
+		</Style>
+
+		<!-- Hovering -->
+		<Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+			<Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
+		</Style>
+
+		<!-- Selected -->
+		<Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
+			<Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource EnderPrimary}"/>
+			<Setter Property="BorderThickness" Value="2,2,2,0"/>
+			<Setter Property="CornerRadius" Value="6,6,0,0"/>
+		</Style>
+
+		<!-- Disabled -->
+		<Style Selector="TabItem:disabled">
+			<Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/>
+		</Style>
+
+		<Style Selector="TabItem:disabled /template/ Border#PART_LayoutRoot">
+			<Setter Property="Background" Value="{DynamicResource EnderDisabled}"/>
+		</Style>
+	</UserControl.Styles>
+
 	<Grid Margin="32" RowDefinitions="Auto,*">
 		<!-- HEADER -->
 		<Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,24">
-			<TextBlock Grid.Column="1" Text="{DynamicResource ConverterTitle}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center"/>
+			<TextBlock Grid.Column="1" Classes="H1" Text="{DynamicResource ConverterTitle}" VerticalAlignment="Center"/>
 		</Grid>
 
 		<Grid Grid.Row="1" ColumnDefinitions="*,*">
@@ -26,8 +73,8 @@
 					<Border Classes="Card" Padding="40,48" IsVisible="{Binding !IsFileLoaded}">
 						<StackPanel Spacing="16" HorizontalAlignment="Center">
 							<TextBlock Text="📁" FontSize="56" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-							<TextBlock Text="{DynamicResource ConverterNoFileTitle}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
-							<TextBlock Text="{DynamicResource ConverterNoFileDesc}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="0,-4,0,8"/>
+							<TextBlock Classes="H3" Text="{DynamicResource ConverterNoFileTitle}" HorizontalAlignment="Center"/>
+							<TextBlock Classes="Subtitle" Text="{DynamicResource ConverterNoFileDesc}" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="0,-4,0,8"/>
 							<Button Content="{DynamicResource ConverterSelectFileBtn}"
 									Command="{Binding LoadFileCommand}"
 									CommandParameter="{Binding $parent[UserControl]}"
@@ -37,14 +84,14 @@
 					<TextBlock Text="{DynamicResource ConverterAdmittedTypes}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="14" HorizontalAlignment="Center" IsVisible="{Binding !IsFileLoaded}"/>
 
 					<!-- Estado: Archivo Cargado -->
-					
+
 					<StackPanel Orientation="Horizontal" Spacing="24">
 						<Border Classes="Card" Padding="20"  BorderBrush="{DynamicResource EnderPrimary}" IsVisible="{Binding IsFileLoaded}">
 							<Grid ColumnDefinitions="Auto,*,Auto">
 								<TextBlock Grid.Column="0" Text="📄" FontSize="28" VerticalAlignment="Center" Margin="0,0,16,0"/>
 								<StackPanel Grid.Column="1" VerticalAlignment="Center">
-									<TextBlock Text="{DynamicResource ConverterActiveFile}" FontSize="12" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="SemiBold"/>
-									<TextBlock Text="{Binding OriginalFileName}" FontSize="16" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+									<TextBlock Classes="Subtitle" FontWeight="SemiBold" Text="{DynamicResource ConverterActiveFile}"/>
+									<TextBlock Classes="H3" Text="{Binding OriginalFileName}" TextTrimming="CharacterEllipsis"/>
 								</StackPanel>
 								<Button Grid.Column="2" Content="✕"
 										Command="{Binding CancelFileCommand}"
@@ -55,18 +102,18 @@
 
 					<StackPanel Orientation="Horizontal" Spacing="24" IsVisible="{Binding IsFileLoaded}" >
 
-						<TabControl TabStripPlacement="Top" Padding="0">
+						<TabControl Classes="converter" TabStripPlacement="Top" Padding="0">
 							<!-- File Settings -->
-							<TabItem Header="{DynamicResource Converter3DModel}">
+							<TabItem Classes="converter" Header="{DynamicResource Converter3DModel}">
 								<Border Classes="Card" Padding="24" MinWidth="450" VerticalAlignment="Top" CornerRadius="0,10,10,10">
 									<Grid RowDefinitions="*,Auto">
 										<!-- Ajustes scrolleables -->
 										<ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
 											<StackPanel Spacing="16">
-												<TextBlock Text="{DynamicResource ConverterMeshSettings}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" Margin="0,0,0,8"/>
+												<TextBlock Classes="H3" Text="{DynamicResource ConverterMeshSettings}" Margin="0,0,0,8"/>
 
 												<Grid ColumnDefinitions="160,*">
-													<TextBlock Grid.Column="0" Text="{DynamicResource ConverterOutFormat}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+													<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterOutFormat}"/>
 													<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedItem="{Binding ExportVM.ExportFormat}">
 														<x:String>STL</x:String>
 														<x:String>3MF</x:String>
@@ -78,7 +125,7 @@
 													<!-- Custom fill color logic: only relevant if not in single color mode -->
 													<StackPanel Spacing="12" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static models:ColorAlgorithm.SingleColor}}">
 														<Grid ColumnDefinitions="160,*">
-															<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+															<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterFillColor}"/>
 															<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
 																<CheckBox Content="{DynamicResource ConverterUseCustom}" IsChecked="{Binding UseCustomFillColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextPrimary}"/>
 																<ColorPicker IsVisible="{Binding UseCustomFillColor}" Color="{Binding CustomFillColor}" Height="32" VerticalAlignment="Center"/>
@@ -147,18 +194,18 @@
 
 							</TabItem>
 
-							<TabItem Header="{DynamicResource ConverterGeometryOptions}" >
+							<TabItem Classes="converter" Header="{DynamicResource ConverterGeometryOptions}" >
 								<Border Classes="Card" Padding="24" MinWidth="350" VerticalAlignment="Top">
 									<ScrollViewer VerticalScrollBarVisibility="Auto">
 										<StackPanel Spacing="16">
-											<TextBlock Text="{DynamicResource ConverterGeometryOptions}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" Margin="0,0,0,8"/>
+											<TextBlock Classes="H3" Text="{DynamicResource ConverterGeometryOptions}" Margin="0,0,0,8"/>
 
 											<Grid ColumnDefinitions="160,*">
-												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterBlockScale}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+												<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterBlockScale}"/>
 												<NumericUpDown Grid.Column="1" Value="{Binding Bs}" Minimum="0.01" Maximum="10" Increment="0.05" HorizontalAlignment="Stretch"/>
 											</Grid>
 											<Grid ColumnDefinitions="160,*">
-												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterGeomMode}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+												<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterGeomMode}"/>
 												<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedGeometryModeIndex}">
 													<ComboBoxItem Content="{DynamicResource ConverterGeomSolid}" />
 													<ComboBoxItem Content="{DynamicResource ConverterGeomFull}" />
@@ -167,21 +214,21 @@
 
 											<!-- Llenar Huecos -->
 											<Grid ColumnDefinitions="160,*" Margin="0,8,0,0">
-												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterFillHoles}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+												<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterFillHoles}"/>
 												<ToggleSwitch Grid.Column="1" IsChecked="{Binding FillHoles}" OnContent="{DynamicResource GlobalYes}" OffContent="{DynamicResource GlobalNo}" />
 											</Grid>
 										</StackPanel>
 									</ScrollViewer>
 								</Border>
-						</TabItem>
-							<TabItem Header="{DynamicResource Converter3MfOptions}" IsEnabled="{Binding ExportVM.Is3MfSelected}" ToolTip.Tip="{DynamicResource Converter3MfNotSelected}" ToolTip.ShowOnDisabled="{Binding !ExportVM.Is3MfSelected}" >
+							</TabItem>
+							<TabItem Classes="converter" Header="{DynamicResource Converter3MfOptions}" IsEnabled="{Binding ExportVM.Is3MfSelected}" ToolTip.Tip="{DynamicResource Converter3MfNotSelected}" ToolTip.ShowOnDisabled="{Binding !ExportVM.Is3MfSelected}" >
 								<Border Classes="Card" Padding="24" MinWidth="350" VerticalAlignment="Top">
 									<ScrollViewer VerticalScrollBarVisibility="Auto">
 										<StackPanel Spacing="16">
-											<TextBlock Text="{DynamicResource Converter3MfOptions}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" Margin="0,0,0,8"/>
+											<TextBlock Classes="H3" Text="{DynamicResource Converter3MfOptions}" Margin="0,0,0,8"/>
 
 											<Grid ColumnDefinitions="160,*">
-												<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAlgorithm}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+												<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterAlgorithm}"/>
 												<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding PaletteVM.SelectedAlgorithm}">
 													<ComboBoxItem Content="{DynamicResource ConverterMono}" />
 													<ComboBoxItem Content="{DynamicResource ConverterCustomPalette}" />
@@ -196,7 +243,7 @@
 											<StackPanel IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static models:ColorAlgorithm.SingleColor}}" Spacing="16">
 
 												<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.RawColors}}">
-													<TextBlock Grid.Column="0" Text="{DynamicResource ConverterInfo}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+													<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterInfo}"/>
 													<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
 														<TextBlock Text="{DynamicResource ConverterColorCount}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Bold"/>
 														<TextBlock Text="{Binding RawColorCount}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="Bold"/>
@@ -204,7 +251,7 @@
 												</Grid>
 
 												<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.KMeans}}">
-													<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAmountK}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+													<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterAmountK}"/>
 													<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
 														<Slider Minimum="2" Maximum="16" Value="{Binding PaletteVM.KMeansCount}" Width="120" VerticalAlignment="Center"/>
 														<TextBlock Text="{Binding PaletteVM.KMeansCount}" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center" FontWeight="Bold" Width="20"/>
@@ -212,7 +259,7 @@
 												</Grid>
 
 												<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.KMedoids}}">
-													<TextBlock Grid.Column="0" Text="{DynamicResource ConverterAmountK}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+													<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterAmountK}"/>
 													<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
 														<Slider Minimum="2" Maximum="16" Value="{Binding PaletteVM.KMeansCount}" Width="120" VerticalAlignment="Center"/>
 														<TextBlock Text="{Binding PaletteVM.KMeansCount}" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center" FontWeight="Bold" Width="20"/>
@@ -220,7 +267,7 @@
 												</Grid>
 
 												<Grid ColumnDefinitions="160,*" IsVisible="{Binding PaletteVM.SelectedAlgorithm, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:ColorAlgorithm.Palette}}">
-													<TextBlock Grid.Column="0" Text="{DynamicResource ConverterPalette}" VerticalAlignment="Top" Margin="0,8,0,0" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+													<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterPalette}" Margin="0,8,0,0" VerticalAlignment="Top"/>
 													<StackPanel Grid.Column="1" Spacing="16">
 														<ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PaletteVM.AvailablePalettes}" SelectedItem="{Binding PaletteVM.SelectedPalette}">
 															<ComboBox.ItemTemplate>
@@ -232,7 +279,7 @@
 
 														<!-- Guardadas -->
 														<StackPanel Spacing="8" IsVisible="{Binding PaletteVM.IsSavedPaletteSelected}">
-															<TextBox Text="{Binding PaletteVM.SelectedPaletteNameInput}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
+															<TextBox Classes="Modern" Text="{Binding PaletteVM.SelectedPaletteNameInput}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
 															<ItemsControl ItemsSource="{Binding PaletteVM.UserDefinedColors}">
 																<ItemsControl.ItemTemplate>
 																	<DataTemplate>
@@ -254,7 +301,7 @@
 
 														<!-- Personalizada (Nueva) -->
 														<StackPanel Spacing="8" IsVisible="{Binding PaletteVM.IsCustomPaletteSelected}">
-															<TextBox Text="{Binding PaletteVM.NewPaletteName}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
+															<TextBox Classes="Modern" Text="{Binding PaletteVM.NewPaletteName}" PlaceholderText="{DynamicResource ConverterOptionalName}" />
 															<ItemsControl ItemsSource="{Binding PaletteVM.UserDefinedColors}">
 																<ItemsControl.ItemTemplate>
 																	<DataTemplate>
@@ -295,7 +342,7 @@
 					<!-- Loaded State: Render -->
 					<Grid RowDefinitions="Auto,*,Auto" IsVisible="{Binding IsFileLoaded}">
 						<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
-							<TextBlock Grid.Column="0" Text="{DynamicResource ConverterInteractiveViewer}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" VerticalAlignment="Center"/>
+							<TextBlock Grid.Column="0" Classes="H3" Text="{DynamicResource ConverterInteractiveViewer}" VerticalAlignment="Center"/>
 							<Border Grid.Column="1" Background="#10B98120" Padding="8,4" CornerRadius="4">
 								<TextBlock Text="{DynamicResource ConverterLiveRender}" Foreground="{DynamicResource EnderSecondary}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
 							</Border>
@@ -319,8 +366,8 @@
 								<Border Background="#D00B0B13" IsVisible="{Binding IsLoadingMesh}">
 									<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
 										<TextBlock Text="{DynamicResource ConverterGeneratingMesh}" Foreground="{DynamicResource EnderPrimary}" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center"/>
-										<ProgressBar IsIndeterminate="True" Foreground="{DynamicResource EnderPrimary}" HorizontalAlignment="Stretch" MinWidth="150"/>
-										<TextBlock Text="{DynamicResource ConverterWaitMsg}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12" HorizontalAlignment="Center"/>
+										<ProgressBar IsIndeterminate="True" Foreground="{DynamicResource EnderPrimary}" Background="{DynamicResource EnderSurfaceHover}" HorizontalAlignment="Stretch" MinWidth="150"/>
+										<TextBlock Classes="Subtitle" Text="{DynamicResource ConverterWaitMsg}" HorizontalAlignment="Center"/>
 									</StackPanel>
 								</Border>
 							</Grid>
@@ -344,10 +391,10 @@
 
 					<!-- Columna Izquierda: Input y Botones -->
 					<StackPanel Grid.Column="0" Spacing="24" Margin="0,0,32,0" VerticalAlignment="Center">
-						<TextBlock Text="{DynamicResource ConverterSavePopupTitle}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}"/>
-						<TextBlock Text="{DynamicResource ConverterSavePopupDesc}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="14" TextWrapping="Wrap"/>
+						<TextBlock Classes="H2" Text="{DynamicResource ConverterSavePopupTitle}"/>
+						<TextBlock Classes="Subtitle" Text="{DynamicResource ConverterSavePopupDesc}" TextWrapping="Wrap"/>
 
-						<TextBox Text="{Binding ProjectSaveVM.NewProjectName}" PlaceholderText="{DynamicResource ConverterSavePopupPlaceholder}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,12" CornerRadius="8" FontSize="16"/>
+						<TextBox Classes="Modern" FontSize="16" Text="{Binding ProjectSaveVM.NewProjectName}" PlaceholderText="{DynamicResource ConverterSavePopupPlaceholder}"/>
 
 						<Grid ColumnDefinitions="*,*" Margin="0,16,0,0">
 							<Button Grid.Column="0" Content="{DynamicResource ConverterCancelBtn}" Command="{Binding ProjectSaveVM.CloseSavePopupCommand}" Classes="Ghost" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,14" Margin="0,0,8,0"/>

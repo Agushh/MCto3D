@@ -6,11 +6,11 @@
              x:Name="RootControl">
     <Grid Margin="32" RowDefinitions="Auto,*">
         <StackPanel Grid.Row="0" Margin="0,0,0,32">
-            <TextBlock Text="{DynamicResource SettingsTitle}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" LetterSpacing="0.5"/>
-            <TextBlock Text="{DynamicResource SettingsLanguageDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,5,0,0"/>
+            <TextBlock Classes="H1" FontSize="32" Text="{DynamicResource SettingsTitle}" LetterSpacing="0.5"/>
+            <TextBlock Classes="Subtitle" Text="{DynamicResource SettingsLanguageDesc}" Margin="0,5,0,0"/>
         </StackPanel>
         
-        <TabControl Grid.Row="1" TabStripPlacement="Left" Background="Transparent" IsEnabled="{Binding !IsMovingFiles}">
+        <TabControl Classes="options" Grid.Row="1" TabStripPlacement="Left" Background="Transparent" IsEnabled="{Binding !IsMovingFiles}">
             <TabControl.Styles>
                 <Style Selector="TabItem">
                     <Setter Property="FontSize" Value="16"/>
@@ -65,8 +65,8 @@
                         <Border Classes="Card" Padding="24">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="{DynamicResource SettingsLanguage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
-                                    <TextBlock Text="{DynamicResource SettingsLanguageDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                    <TextBlock Classes="H3" Text="{DynamicResource SettingsLanguage}"/>
+                                    <TextBlock Classes="Subtitle" Text="{DynamicResource SettingsLanguageDesc}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                 </StackPanel>
                                 <ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedLanguageIndex, FallbackValue=0}" Width="150" VerticalAlignment="Center">
                                     <ComboBoxItem Content="English" />
@@ -87,8 +87,8 @@
                         <Border Classes="Card" Padding="24">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="{DynamicResource SettingsMCVersion}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
-                                    <TextBlock Text="{DynamicResource SettingsMCVersionDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                    <TextBlock Classes="H3" Text="{DynamicResource SettingsMCVersion}"/>
+                                    <TextBlock Classes="Subtitle" Text="{DynamicResource SettingsMCVersionDesc}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                 </StackPanel>
                                 <Border Grid.Column="1" Background="{DynamicResource EnderSurfaceHover}" BorderBrush="{DynamicResource EnderBorder}" BorderThickness="1" CornerRadius="8" Padding="16,8" VerticalAlignment="Center">
                                     <TextBlock Text="{Binding LoadedMinecraftVersion}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource EnderPrimary}"/>
@@ -101,12 +101,12 @@
                             <StackPanel Spacing="16">
                                 <Grid ColumnDefinitions="*">
                                     <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
-                                        <TextBlock Text="{DynamicResource SettingsLocalPath}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
-                                        <TextBlock Text="{DynamicResource SettingsLocalPathDesc}" FontSize="14" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Classes="H3" Text="{DynamicResource SettingsLocalPath}"/>
+                                        <TextBlock Classes="Subtitle" Text="{DynamicResource SettingsLocalPathDesc}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Grid>
                                 
-                                <TextBox Text="{Binding LocalFilesPath}" IsReadOnly="True" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextSecondary}" BorderBrush="{DynamicResource EnderBorder}" Padding="12,10" CornerRadius="8"/>
+                                <TextBox Classes="Modern" Text="{Binding LocalFilesPath}" IsReadOnly="True" Foreground="{DynamicResource EnderTextSecondary}"/>
                                 
                                 <Grid ColumnDefinitions="*,Auto">
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
@@ -121,12 +121,12 @@
                         <!-- Reload Actions -->
                         <Border Classes="Card" Padding="24">
                             <StackPanel Spacing="16">
-                                <TextBlock Text="{DynamicResource SettingsReloadActions}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                <TextBlock Classes="H3" Text="{DynamicResource SettingsReloadActions}"/>
                                 
                                 <Grid ColumnDefinitions="*,Auto">
                                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="{DynamicResource SettingsReloadBaseFiles}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
-                                        <TextBlock Text="{DynamicResource SettingsReloadBaseFilesDesc}" FontSize="12" Foreground="{DynamicResource EnderTextSecondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Classes="Subtitle" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}" Text="{DynamicResource SettingsReloadBaseFiles}"/>
+                                        <TextBlock Classes="Subtitle" FontSize="12" Text="{DynamicResource SettingsReloadBaseFilesDesc}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="{DynamicResource SettingsReloadBtn}" Command="{Binding ReloadBaseFilesCommand}" Classes="Outline" Padding="16,8" VerticalAlignment="Center" Margin="16,0,0,0"/>
                                 </Grid>
@@ -143,7 +143,7 @@
                         <Border Classes="Card" Padding="24">
                             <Grid ColumnDefinitions="160,*">
                                 <StackPanel Grid.Column="0" VerticalAlignment="Top">
-                                    <TextBlock Text="{DynamicResource SettingsConverter3MfOptions}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                    <TextBlock Classes="H3" Text="{DynamicResource SettingsConverter3MfOptions}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Spacing="8">
                                     <RadioButton Content="{DynamicResource SettingsConverter3MfAssembly}" IsChecked="{Binding Use3MfAssemblyMode}" Foreground="{DynamicResource EnderTextPrimary}"/>
@@ -154,7 +154,7 @@
 
                         <Border Classes="Card" Padding="24">
                             <StackPanel Spacing="16">
-                                <TextBlock Text="{DynamicResource SettingsConverterPaletteManagement}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+                                <TextBlock Classes="H3" Text="{DynamicResource SettingsConverterPaletteManagement}"/>
                                 
                                 <Grid ColumnDefinitions="*,*">
                                     <Button Grid.Column="0" Content="{DynamicResource SettingsConverterManagePalettes}" Command="{Binding OpenPaletteManagerCommand}" Classes="Primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,0,8,0"/>
@@ -171,10 +171,10 @@
 		<ScrollViewer Margin="32,0,0,0">
 			<Border Classes="Card" Padding="24">
 				<StackPanel Spacing="16">
-					<TextBlock Text="{DynamicResource SettingsRendererVisuals}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource EnderTextPrimary}"/>
+					<TextBlock Classes="H3" Text="{DynamicResource SettingsRendererVisuals}"/>
 
 					<Grid ColumnDefinitions="160,*">
-						<TextBlock Grid.Column="0" Text="{DynamicResource SettingsRendererFloor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+						<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource SettingsRendererFloor}"/>
 						<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
 							<CheckBox IsChecked="{Binding ShowFloor}" Foreground="{DynamicResource EnderTextPrimary}"/>
 							<ColorPicker Color="{Binding FloorColor}" IsVisible="{Binding ShowFloor}" Height="32"/>
@@ -182,7 +182,7 @@
 					</Grid>
 
 					<Grid ColumnDefinitions="160,*">
-						<TextBlock Grid.Column="0" Text="{DynamicResource SettingsRendererMeshColor}" VerticalAlignment="Center" Foreground="{DynamicResource EnderTextSecondary}" FontWeight="Medium"/>
+						<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource SettingsRendererMeshColor}"/>
 						<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
 							<ColorPicker Color="{Binding ModelColor}" Height="32"/>
 						</StackPanel>
@@ -206,8 +206,8 @@
 	<!-- PANTALLA DE CARGA (MOVIMIENTO DE ARCHIVOS) -->
 	<Border Grid.Row="0" Grid.RowSpan="2" Background="#D9000000" IsVisible="{Binding IsMovingFiles}" ZIndex="100">
 		<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="24">
-			<TextBlock Text="{DynamicResource SettingsMovingFiles}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" HorizontalAlignment="Center"/>
-			<TextBlock Text="{Binding MovingProgressMessage}" FontSize="16" Foreground="{DynamicResource EnderTextSecondary}" HorizontalAlignment="Center"/>
+			<TextBlock Classes="H1" FontSize="32" Text="{DynamicResource SettingsMovingFiles}" HorizontalAlignment="Center"/>
+			<TextBlock Classes="Subtitle" FontSize="16" Text="{Binding MovingProgressMessage}" HorizontalAlignment="Center"/>
 			<ProgressBar IsIndeterminate="True" Foreground="{DynamicResource EnderPrimary}" Background="{DynamicResource EnderSurfaceHover}" Height="4" Width="300" CornerRadius="2"/>
 		</StackPanel>
         </Border>
@@ -216,7 +216,7 @@
 <Border Grid.Row="0" Grid.RowSpan="2" Background="#D9000000" IsVisible="{Binding IsPaletteManagerOpen}" ZIndex="100">
 	<Border Background="{DynamicResource EnderSurface}" CornerRadius="12" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="400" MaxWidth="600" MaxHeight="500">
 		<Grid RowDefinitions="Auto,*,Auto">
-			<TextBlock Grid.Row="0" Text="{DynamicResource SettingsConverterManagePalettes}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" Margin="0,0,0,16"/>
+			<TextBlock Grid.Row="0" Classes="H2" Text="{DynamicResource SettingsConverterManagePalettes}" Margin="0,0,0,16"/>
 			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
 				<ItemsControl ItemsSource="{Binding SavedPalettes}">
 					<ItemsControl.ItemTemplate>

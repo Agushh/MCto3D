@@ -152,6 +152,11 @@ public partial class DashboardViewModel : ViewModelBase
         }
     }
 
+    partial void OnShowFloorChanged(bool value)
+    {
+        UpdateLiveMesh();
+    }
+
     partial void OnUseCustomFillColorChanged(bool value)
     {
         if (IsFileLoaded)

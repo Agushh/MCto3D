@@ -92,44 +92,78 @@
             <Setter Property="ZIndex" Value="0" />
         </Style>
 
-        <!-- Tab Items -->
-
-        <Style Selector="TabControl /template/ ItemsPresenter#PART_ItemsPresenter">
-        	<Setter Property="ZIndex" Value="1" />
+        <!-- Typography -->
+        <Style Selector="TextBlock.H1">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Black"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+        </Style>
+        <Style Selector="TextBlock.H2">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+        </Style>
+        <Style Selector="TextBlock.H3">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+        </Style>
+        <Style Selector="TextBlock.Subtitle">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/>
+        </Style>
+        <Style Selector="TextBlock.SettingsLabel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
         </Style>
 
-        <!-- Global -->
-    	<Style Selector="TabItem">
-    		<Setter Property="Background" Value="{DynamicResource EnderBackground}"/> 
-	        <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
-	        <Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
-	        <Setter Property="BorderThickness" Value="2,2,2,0"/>
-	        <Setter Property="CornerRadius" Value="6,6,0,0"/>
-            <Setter Property="Margin" Value="0,0,0,-4"/>
-            <Setter Property="FontSize" Value="18"/>
-    	</Style>
-        
-        <!-- Hovering -->
-    	<Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
-    		<Setter Property="Background" Value="{DynamicResource EnderSurface}"/> 
+        <!-- Inputs -->
+        <Style Selector="TextBox.Modern">
+            <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
         </Style>
-    
-        <!-- Selected -->
-    	<Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
-	        <Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource EnderPrimary}"/>
-            <Setter Property="BorderThickness" Value="2,2,2,0"/>
-	        <Setter Property="CornerRadius" Value="6,6,0,0"/>
-        </Style>
-            
-        <!-- Disabled -->
-	    <Style Selector="TabItem:disabled">
-	    	<Setter Property="Foreground" Value="{DynamicResource EnderTextSecondary}"/> 
+        <Style Selector="ComboBox.Modern">
+            <Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
         </Style>
 
-	    <Style Selector="TabItem:disabled /template/ Border#PART_LayoutRoot">
-            <Setter Property="Background" Value="{DynamicResource EnderDisabled}"/> 
+        <!-- Extra Buttons -->
+        <Style Selector="Button.Danger">
+            <Setter Property="Background" Value="#EF4444"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="SineEaseInOut"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#DC2626"/>
         </Style>
 
+        <Style Selector="Button.Hyperlink">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnderPrimary}"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"/>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.Hyperlink:pointerover /template/ TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource EnderPrimaryHover}"/>
+        </Style>
     </Application.Styles>
 </Application>

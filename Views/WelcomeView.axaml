@@ -3,40 +3,21 @@
              xmlns:vm="using:MCto3D.ViewModels"
              x:Class="MCto3D.Views.WelcomeView"
              x:DataType="vm:WelcomeViewModel"
-             Background="#05050A">
-
-    <!-- Animaciones y estilos -->
-    <UserControl.Styles>
-        <Style Selector="Button.Hyperlink">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#9333EA"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"/>
-                </ControlTemplate>
-            </Setter>
-        </Style>
-        <Style Selector="Button.Hyperlink:pointerover /template/ TextBlock">
-            <Setter Property="Foreground" Value="#C084FC"/>
-        </Style>
-    </UserControl.Styles>
-
-    <Grid >
+             Background="{DynamicResource EnderBackgroundBase}">
+    
+    <Grid>
         <!-- CONTENIDO PRINCIPAL -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="30" MaxWidth="700">
             
-            <TextBlock Text="{DynamicResource WelcomeTitle}" 
+            <TextBlock Classes="H1"
+                       Text="{DynamicResource WelcomeTitle}" 
                        FontSize="42" 
-                       FontWeight="Black" 
-                       Foreground="#F8FAFC" 
                        HorizontalAlignment="Center" 
                        LetterSpacing="1"/>
             
-            <Border Background="#1A1528" BorderBrush="#2D2445" BorderThickness="1" CornerRadius="12" Padding="25">
+            <Border Classes="Card" Padding="25">
                 <TextBlock Text="{DynamicResource WelcomeDesc}"
-                           Foreground="#E2E8F0"
+                           Foreground="{DynamicResource EnderTextSecondary}"
                            FontSize="16"
                            TextWrapping="Wrap"
                            LineHeight="24"
@@ -45,15 +26,11 @@
 
             <!-- BOTONES Y ACCIONES (Se ocultan cuando está procesando) -->
             <StackPanel Spacing="15" IsVisible="{Binding !IsProcessing}" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button Content="{DynamicResource WelcomeContinueBtn}" 
+                <Button Classes="Primary"
+                        Content="{DynamicResource WelcomeContinueBtn}" 
                         Command="{Binding ContinueWithDefaultFolderCommand}"
-                        Background="#9333EA" 
-                        Foreground="White" 
-                        FontWeight="Bold" 
                         FontSize="18"
                         Padding="40,15" 
-                        CornerRadius="8"
-                        Cursor="Hand" 
                         HorizontalAlignment="Center"
                         ToolTip.Tip="{DynamicResource WelcomeContinueTooltip}"/>
 
@@ -70,12 +47,11 @@
                 <ProgressBar IsIndeterminate="True" 
                              Width="300" 
                              Height="6" 
-                             Foreground="#9333EA" 
-                             Background="#1E1B2E" 
+                             Foreground="{DynamicResource EnderPrimary}" 
+                             Background="{DynamicResource EnderSurfaceHover}" 
                              CornerRadius="3"/>
-                <TextBlock Text="{Binding LoadingMessage}" 
-                           Foreground="#94A3B8" 
-                           FontSize="14" 
+                <TextBlock Classes="Subtitle"
+                           Text="{Binding LoadingMessage}" 
                            HorizontalAlignment="Center" 
                            FontStyle="Italic"/>
             </StackPanel>

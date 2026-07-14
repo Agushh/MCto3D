@@ -24,12 +24,12 @@
 
 			<!-- Title and Search -->
 			<StackPanel Grid.Column="0" Spacing="16" VerticalAlignment="Center">
-				<TextBlock Text="{DynamicResource MyFilesTitle}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}"/>
+				<TextBlock Classes="H1" Text="{DynamicResource MyFilesTitle}"/>
 				<Grid ColumnDefinitions="300,Auto,Auto" Margin="0,8,0,0">
-					<TextBox Grid.Column="0" Text="{Binding SearchText}" PlaceholderText="{DynamicResource MyFilesSearch}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8"/>
+					<TextBox Grid.Column="0" Classes="Modern" Text="{Binding SearchText}" PlaceholderText="{DynamicResource MyFilesSearch}"/>
 					
 					<!-- Sort Selector -->
-					<ComboBox Grid.Column="1" SelectedIndex="{Binding SelectedSortIndex}" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderBorder}" Padding="16,10" CornerRadius="8" Margin="16,0,0,0" VerticalAlignment="Center">
+					<ComboBox Grid.Column="1" Classes="Modern" SelectedIndex="{Binding SelectedSortIndex}" Margin="16,0,0,0" VerticalAlignment="Center">
 						<x:String>Más Recientes</x:String>
 						<x:String>Nombre (A-Z)</x:String>
 					</ComboBox>
@@ -62,7 +62,7 @@
 			<!-- Empty State -->
 			<StackPanel IsVisible="{Binding !Projects.Count}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
 				<TextBlock Text="📭" FontSize="64" HorizontalAlignment="Center"/>
-				<TextBlock Text="{DynamicResource MyFilesEmpty}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+				<TextBlock Classes="H3" Foreground="{DynamicResource EnderTextSecondary}" Text="{DynamicResource MyFilesEmpty}" HorizontalAlignment="Center"/>
 			</StackPanel>
 
 			<!-- GRID VIEW -->
@@ -98,8 +98,8 @@
 									<!-- Info -->
 									<Border Padding="16">
 										<StackPanel Spacing="4">
-											<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" TextTrimming="CharacterEllipsis"/>
-											<TextBlock Text="{Binding FormattedDate}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="11"/>
+											<TextBlock Classes="H3" Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Classes="Subtitle" FontSize="11" Text="{Binding FormattedDate}"/>
 										</StackPanel>
 									</Border>
 								</StackPanel>
@@ -127,18 +127,18 @@
 									
 									<!-- Name & Path -->
 									<StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
-										<TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" FontSize="16" TextTrimming="CharacterEllipsis"/>
-										<TextBlock Text="{Binding FormattedDate}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12"/>
+										<TextBlock Classes="H3" Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+										<TextBlock Classes="Subtitle" FontSize="12" Text="{Binding FormattedDate}"/>
 									</StackPanel>
 									
 									<!-- Format & Geometry -->
 									<StackPanel Grid.Column="2" VerticalAlignment="Center" Width="150" Margin="0,0,16,0">
-										<TextBlock Text="{Binding ExportFormat}" Foreground="{DynamicResource EnderTextPrimary}" FontWeight="SemiBold"/>
-										<TextBlock Text="{Binding GeometryMode}" Foreground="{DynamicResource EnderTextSecondary}" FontSize="12"/>
+										<TextBlock Classes="H3" FontWeight="SemiBold" Text="{Binding ExportFormat}"/>
+										<TextBlock Classes="Subtitle" FontSize="12" Text="{Binding GeometryMode}"/>
 									</StackPanel>
 
 									<!-- Size -->
-									<TextBlock Grid.Column="3" Text="{Binding FileSizeStr}" Foreground="{DynamicResource EnderTextSecondary}" Width="100" VerticalAlignment="Center"/>
+									<TextBlock Grid.Column="3" Classes="Subtitle" Text="{Binding FileSizeStr}" Width="100" VerticalAlignment="Center"/>
 
 									<!-- Action -->
 									<Border Grid.Column="4" Background="{DynamicResource EnderSurfaceHover}" Padding="12,8" CornerRadius="6">
@@ -159,7 +159,7 @@
 				<Grid RowDefinitions="Auto,*,Auto">
 					<!-- Header: Edit / Close -->
 					<Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,24">
-						<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesProjectDetails}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="0" Classes="H2" Text="{DynamicResource MyFilesProjectDetails}" VerticalAlignment="Center"/>
 						<Button Grid.Column="1" Content="✕" Command="{Binding ClosePopupCommand}" Classes="Ghost" Padding="8"/>
 					</Grid>
 
@@ -178,12 +178,12 @@
 							<!-- Name Editing Logic -->
 							<StackPanel IsVisible="{Binding !IsEditingName}">
 								<Grid ColumnDefinitions="*,Auto">
-									<TextBlock Grid.Column="0" Text="{Binding SelectedProject.Name, FallbackValue=''}" FontSize="24" FontWeight="Black" Foreground="{DynamicResource EnderTextPrimary}" TextWrapping="Wrap"/>
+									<TextBlock Grid.Column="0" Classes="H2" FontSize="24" FontWeight="Black" Text="{Binding SelectedProject.Name, FallbackValue=''}" TextWrapping="Wrap"/>
 									<Button Grid.Column="1" IsVisible="{Binding !SelectedProject.IsReadOnly}" Content="✎" Command="{Binding StartEditNameCommand}" Classes="Ghost" Foreground="{DynamicResource EnderPrimary}" FontSize="18" Padding="8,0"/>
 								</Grid>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsEditingName}" Spacing="8">
-								<TextBox Text="{Binding EditingNameText}" FontSize="18" Background="{DynamicResource EnderSurfaceHover}" Foreground="{DynamicResource EnderTextPrimary}" BorderBrush="{DynamicResource EnderPrimary}"/>
+								<TextBox Classes="Modern" BorderBrush="{DynamicResource EnderPrimary}" Text="{Binding EditingNameText}" FontSize="18"/>
 								<StackPanel Orientation="Horizontal" Spacing="8">
 									<Button Content="{DynamicResource MyFilesSave}" Command="{Binding SaveEditNameCommand}" Classes="Primary" Padding="12,6"/>
 									<Button Content="{DynamicResource MyFilesCancel}" Command="{Binding CancelEditNameCommand}" Classes="Ghost" Padding="12,6"/>
@@ -193,20 +193,20 @@
 							<Border Height="1" Background="{DynamicResource EnderBorder}"/>
 
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesDate}" Foreground="{DynamicResource EnderTextSecondary}"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.FormattedDate, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
+								<TextBlock Grid.Column="0" Classes="Subtitle" Text="{DynamicResource MyFilesDate}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.FormattedDate, FallbackValue=''}"/>
 							</Grid>
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesGeometry}" Foreground="{DynamicResource EnderTextSecondary}"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.GeometryMode, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
+								<TextBlock Grid.Column="0" Classes="Subtitle" Text="{DynamicResource MyFilesGeometry}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.GeometryMode, FallbackValue=''}"/>
 							</Grid>
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesFormat}" Foreground="{DynamicResource EnderTextSecondary}"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.ExportFormat, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
+								<TextBlock Grid.Column="0" Classes="Subtitle" Text="{DynamicResource MyFilesFormat}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.ExportFormat, FallbackValue=''}"/>
 							</Grid>
 							<Grid ColumnDefinitions="100,*">
-								<TextBlock Grid.Column="0" Text="{DynamicResource MyFilesScale}" Foreground="{DynamicResource EnderTextSecondary}"/>
-								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.BlockScale, FallbackValue=''}" Foreground="{DynamicResource EnderTextPrimary}"/>
+								<TextBlock Grid.Column="0" Classes="Subtitle" Text="{DynamicResource MyFilesScale}"/>
+								<TextBlock Grid.Column="1" Text="{Binding SelectedProject.BlockScale, FallbackValue=''}"/>
 							</Grid>
 						</StackPanel>
 					</Grid>

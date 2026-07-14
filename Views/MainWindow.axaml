@@ -24,8 +24,11 @@
 			<Setter Property="IsHitTestVisible" Value="False" />
 		</Style>
 
-
-
+		<Style Selector="TextBlock.SidebarText">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="Foreground" Value="{DynamicResource EnderTextPrimary}"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
 	</Window.Styles>
 
 	<Window.DataTemplates>
@@ -103,7 +106,7 @@
 										<Button Classes="Ghost" Command="{Binding NavigateToHomeCommand}" IsEnabled="{Binding !IsHomeActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 											<Grid ColumnDefinitions="70,*">
 												<TextBlock Grid.Column="0" Text="🏠" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarHome}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+												<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarHome}" IsVisible="{Binding IsSidebarExpanded}"/>
 											</Grid>
 										</Button>
 										
@@ -111,7 +114,7 @@
 										<Button Classes="Ghost" Command="{Binding NavigateToDashboardCommand}" IsEnabled="{Binding !IsDashboardActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 											<Grid ColumnDefinitions="70,*">
 												<TextBlock Grid.Column="0" Text="🧊" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarConverter}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+												<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarConverter}" IsVisible="{Binding IsSidebarExpanded}"/>
 											</Grid>
 										</Button>
 										
@@ -119,7 +122,7 @@
 										<Button Classes="Ghost" Command="{Binding NavigateToMyFilesCommand}" IsEnabled="{Binding !IsMyFilesActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 											<Grid ColumnDefinitions="70,*">
 												<TextBlock Grid.Column="0" Text="📁" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarMyFiles}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+												<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarMyFiles}" IsVisible="{Binding IsSidebarExpanded}"/>
 											</Grid>
 										</Button>
 
@@ -127,7 +130,7 @@
 										<Button Classes="Ghost" Command="{Binding NavigateToVanillaStructuresCommand}" IsEnabled="{Binding !IsVanillaStructuresActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 											<Grid ColumnDefinitions="70,*">
 												<TextBlock Grid.Column="0" Text="🏛️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-												<TextBlock Grid.Column="1" Text="{DynamicResource SidebarVanillaStructures}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+												<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarVanillaStructures}" IsVisible="{Binding IsSidebarExpanded}"/>
 											</Grid>
 										</Button>
 									</StackPanel>
@@ -143,7 +146,7 @@
 									<Button Classes="Ghost" Command="{Binding NavigateToWalkthroughCommand}" IsEnabled="{Binding !IsWalkthroughActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 										<Grid ColumnDefinitions="70,*">
 											<TextBlock Grid.Column="0" Text="📖" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarWalkthrough}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarWalkthrough}" IsVisible="{Binding IsSidebarExpanded}"/>
 										</Grid>
 									</Button>
 
@@ -151,7 +154,7 @@
 									<Button Classes="Ghost" Command="{Binding NavigateToFaqCommand}" IsEnabled="{Binding !IsFaqActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 										<Grid ColumnDefinitions="70,*">
 											<TextBlock Grid.Column="0" Text="❓" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarFaq}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarFaq}" IsVisible="{Binding IsSidebarExpanded}"/>
 										</Grid>
 									</Button>
 									
@@ -159,7 +162,7 @@
 									<Button Classes="Ghost" Command="{Binding NavigateToSettingsCommand}" IsEnabled="{Binding !IsSettingsActive}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 										<Grid ColumnDefinitions="70,*">
 											<TextBlock Grid.Column="0" Text="⚙️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarSettings}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarSettings}" IsVisible="{Binding IsSidebarExpanded}"/>
 										</Grid>
 									</Button>
 
@@ -167,7 +170,7 @@
 									<Button Classes="Ghost" Command="{Binding NavigateToDevToolsCommand}" IsEnabled="{Binding !IsDevToolsActive}" IsVisible="{Binding IsDevelopmentMode}" HorizontalAlignment="Stretch" Padding="0" Height="46" Cursor="Hand">
 										<Grid ColumnDefinitions="70,*">
 											<TextBlock Grid.Column="0" Text="🛠️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,2"/>
-											<TextBlock Grid.Column="1" Text="{DynamicResource SidebarDevTools}" FontSize="16" VerticalAlignment="Center" IsVisible="{Binding IsSidebarExpanded}"/>
+											<TextBlock Grid.Column="1" Classes="SidebarText" Text="{DynamicResource SidebarDevTools}" IsVisible="{Binding IsSidebarExpanded}"/>
 										</Grid>
 									</Button>
 								</StackPanel>
