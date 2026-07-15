@@ -378,7 +378,7 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     public bool IsPaletteDisabled => !AreAssetsLoaded || ExportVM.ExportFormat != "3MF";
-    string? PaletteTooltipText
+    public string? PaletteTooltipText
     {
         get
         {

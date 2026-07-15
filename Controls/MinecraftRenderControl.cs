@@ -459,6 +459,15 @@ public class MinecraftRenderControl : OpenGlControlBase
                 _camera.Distance * (float)Math.Sin(pitch)
             );
             Matrix4x4 view = Matrix4x4.CreateLookAt(cameraPos, Vector3.Zero, Vector3.UnitZ);
+            Matrix4x4.Invert(view * projection, out Matrix4x4 invViewProj);
+
+            // Draw Sky
+            if (depthMaskPtr != IntPtr.Zero) Marshal.GetDelegateForFunctionPointer<glDepthMask_t>(depthMaskPtr)(0);
+            _skyShader.Use();
+            _skyShader.SetUniform1f(_skyShader.GetUniformLocation("u_time"), 0f);
+            _skyShader.SetUniformMatrix4(_skyShader.GetUniformLocation("invViewProj"), invViewProj);
+            _skyBuffer.BindAndDrawWithAttributes(2, 0, 0, 0); 
+            if (depthMaskPtr != IntPtr.Zero) Marshal.GetDelegateForFunctionPointer<glDepthMask_t>(depthMaskPtr)(1);
 
             if (ShowFloor)
             {

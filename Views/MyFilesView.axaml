@@ -9,6 +9,35 @@
 		<conv:PathToBitmapConverter x:Key="PathToBitmapConverter"/>
 	</UserControl.Resources>
 
+	<UserControl.Styles>
+		<!-- Estilo premium para las tarjetas de proyectos (botones) -->
+		<Style Selector="Button.ProjectCard">
+			<Setter Property="Background" Value="{DynamicResource EnderSurface}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource EnderBorder}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="12"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Transitions">			
+				<Transitions>
+					<BrushTransition Property="Background" Duration="0:0:0.2"/>
+					<BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15"/>
+				</Transitions>
+			</Setter>
+		</Style>
+		
+		<Style Selector="Button.ProjectCard:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource EnderSurfaceHover}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource EnderPrimary}"/>
+		</Style>
+		
+		<!-- Pequeño efecto de escala al hacer hover en las tarjetas -->
+		<Style Selector="Button.ProjectCard:pointerover">
+			<Setter Property="RenderTransform" Value="scale(1.02)"/>
+		</Style>
+	</UserControl.Styles>
+
 	<Grid Margin="32">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -70,23 +99,13 @@
 				<ItemsControl ItemsSource="{Binding Projects}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
-							<WrapPanel Orientation="Horizontal" Margin="-8"/>
+							<WrapPanel Orientation="Horizontal" Margin="0"/>
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<Button Command="{Binding $parent[UserControl].((vm:MyFilesViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
-									Classes="Card" Width="220" Margin="8" Padding="0" Cursor="Hand">
-								<Button.Transitions>
-									<Transitions>
-										<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
-									</Transitions>
-								</Button.Transitions>
-								<Button.Styles>
-									<Style Selector="Button:pointerover">
-										<Setter Property="RenderTransform" Value="scale(1.03)"/>
-									</Style>
-								</Button.Styles>
+									Classes="ProjectCard" Width="220" Margin="8">
 								<StackPanel>
 									<!-- Image -->
 									<Border Background="{DynamicResource EnderSurfaceHover}" Height="140" CornerRadius="11,11,0,0" ClipToBounds="True">
@@ -115,7 +134,7 @@
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
 							<Button Command="{Binding $parent[UserControl].((vm:MyFilesViewModel)DataContext).OpenProjectCommand}" CommandParameter="{Binding}" 
-									Classes="Card" HorizontalAlignment="Stretch" Margin="0,0,0,12" Padding="0" Cursor="Hand">
+									Classes="ProjectCard" HorizontalAlignment="Stretch" Margin="0,0,0,12">
 								<Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" Margin="12" VerticalAlignment="Center">
 									<!-- Image -->
 									<Border Grid.Column="0" Background="{DynamicResource EnderSurfaceHover}" Width="60" Height="60" CornerRadius="6" Margin="0,0,16,0" ClipToBounds="True">

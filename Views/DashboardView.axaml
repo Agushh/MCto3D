@@ -76,7 +76,7 @@
 			</Grid>
 		</Border>
 
-		<Grid Grid.Row="2" ColumnDefinitions="*,*">
+		<Grid Grid.Row="2" ColumnDefinitions="Auto,*">
 			<!-- Columna Izquierda (Centro de App): Configuraciones / Archivo -->
 			<ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,32,0">
 				<StackPanel Spacing="24">
@@ -112,7 +112,7 @@
 						</Border>
 					</StackPanel>
 
-					<StackPanel Orientation="Horizontal" Spacing="24" IsVisible="{Binding IsFileLoaded}" >
+					<StackPanel Orientation="Horizontal" Width="475" Spacing="24" IsVisible="{Binding IsFileLoaded}" >
 
 						<TabControl Classes="converter" TabStripPlacement="Top" Padding="0">
 							<!-- File Settings -->
@@ -234,7 +234,7 @@
 								</Border>
 							</TabItem>
 
-							<TabItem Classes="converter" Header="{DynamicResource Converter3MfOptions}" IsEnabled="{Binding !IsPaletteDisabled}" ToolTip.Tip="{DynamicResource PaletteToolTipText}" ToolTip.ShowOnDisabled="True">
+							<TabItem Classes="converter" Header="{DynamicResource Converter3MfOptions}" IsEnabled="{Binding !IsPaletteDisabled}" ToolTip.Tip="{Binding PaletteTooltipText}" ToolTip.ShowOnDisabled="True">
 								<Border Classes="Card" Padding="24" MinWidth="350" VerticalAlignment="Top">
 									<ScrollViewer VerticalScrollBarVisibility="Auto">
 										<StackPanel Spacing="16">
