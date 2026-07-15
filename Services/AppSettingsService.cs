@@ -22,6 +22,12 @@ namespace MCto3D.Services
             Load();
         }
 
+        public string McVersion
+        {
+            get => _currentSettings.McVersion;
+            set { _currentSettings.McVersion = value; Save(); }
+        }
+
         public string LocalFilesPath
         {
             get => _currentSettings.LocalFilesPath;
@@ -63,7 +69,11 @@ namespace MCto3D.Services
             get => _currentSettings.SavedPalettes;
             set { _currentSettings.SavedPalettes = value; Save(); }
         }
-
+        public bool IsFirstRun
+        {
+            get => _currentSettings.IsFirstRun;
+            set { _currentSettings.IsFirstRun = value; Save(); }
+        }
         public void SavePalettes() => Save();
 
         public void Load()

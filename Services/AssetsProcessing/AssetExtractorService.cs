@@ -10,6 +10,13 @@ namespace MCto3D.Services.AssetsProcessing
 {
     public class AssetExtractorService
     {
+        private AppSettingsService _appSettings;
+
+        public AssetExtractorService(AppSettingsService appSettings)
+        {
+            _appSettings = appSettings;
+        }
+
         public async Task<string> ExtractLegalAssets(string localFilesPath, IProgress<string> progress = null, string userLocationInput = "default")
         {
             progress?.Report(LanguageService.GetString("AssetExtractorStartExtraction"));
@@ -72,6 +79,7 @@ namespace MCto3D.Services.AssetsProcessing
 
             string latestVersion = GetLatestMinecraftVersion(versionsDir);
 
+            _appSettings.McVersion = latestVersion;
 
             string jarPath = Path.Combine(versionsDir, latestVersion, $"{latestVersion}.jar");
 
@@ -151,7 +159,6 @@ namespace MCto3D.Services.AssetsProcessing
                     }
                 }
             }
-            File.WriteAllText(Path.Combine(localAppFolder, "version.txt"), latestVersion);
             progress?.Report(LanguageService.GetString("AssetExtractorExtractionSuccessfull"));
             return localAppFolder;
         }

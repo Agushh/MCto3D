@@ -3,12 +3,14 @@
              xmlns:vm="using:MCto3D.ViewModels"
              x:Class="MCto3D.Views.LoadingView"
              x:DataType="vm:LoadingViewModel"
-             Background="{DynamicResource EnderSurface}"> <!-- Fondo completamente opaco -->
-
+             Background="#D9000000"
+             
+             >
+    <!-- Añadir uso de lenguaje para los textos y demas. Unificar todo a esta pantalla de carga. Welcome, settings, y demas.  -->
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="25" IsVisible="{Binding !HasError}">
             <TextBlock Classes="H1" FontSize="36"
-                       Text="Generando modelos..." 
+                       Text="Action In Process..." 
                        HorizontalAlignment="Center" 
                        LetterSpacing="1"/>
             

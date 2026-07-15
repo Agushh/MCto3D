@@ -24,15 +24,13 @@ public partial class WelcomeViewModel : ViewModelBase
 
     private readonly AppSettingsService _appSettings;
     private readonly AssetExtractorService _assetExtractorService;
-    private readonly ColorGeneratorService _colorGeneratorService;
     private readonly ColorMappingService _colorMappingService;
 
-    public WelcomeViewModel(MainWindowViewModel mainViewModel, AppSettingsService appSettings, AssetExtractorService assetExtractorService, ColorGeneratorService colorGeneratorService, ColorMappingService colorMappingService)
+    public WelcomeViewModel(MainWindowViewModel mainViewModel, AppSettingsService appSettings, AssetExtractorService assetExtractorService, ColorMappingService colorMappingService)
     {
         _mainViewModel = mainViewModel;
         _appSettings = appSettings;
         _assetExtractorService = assetExtractorService;
-        _colorGeneratorService = colorGeneratorService;
         _colorMappingService = colorMappingService;
     }
 
@@ -53,11 +51,11 @@ public partial class WelcomeViewModel : ViewModelBase
 
 
             //procesar colores y guardarlos en JSON.
-            _colorMappingService.BlockColors = await _colorGeneratorService.GenerateAndLoadColors(_appSettings.LocalFilesPath, progressReporter);
+            _colorMappingService.BlockColors = await ColorGeneratorService.GenerateAndLoadColors(_appSettings.LocalFilesPath, progressReporter);
             await Task.Delay(1500);
 
             // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
-            await _mainViewModel.SettingsVM.UpdateMinecraftVersionAsync();
+            _mainViewModel.SettingsVM.McVersion = _appSettings.McVersion;
             
             // Ocultamos la bienvenida y pasamos directo al Dashboard (el Loading de modelos ya no existe)
             _mainViewModel.IsWelcomeScreenActive = false;
@@ -72,6 +70,14 @@ public partial class WelcomeViewModel : ViewModelBase
         {
             IsProcessing = false;
         }
+    }
+
+
+    [RelayCommand]
+    private void LoadLaterButton()
+    {
+        _mainViewModel.IsWelcomeScreenActive = false;
+        _mainViewModel.IsMainContentVisible = true;
     }
 
     [RelayCommand]
@@ -108,12 +114,12 @@ public partial class WelcomeViewModel : ViewModelBase
                         await Task.Delay(1500);
 
                         //procesar colores y guardarlos en JSON.
-                        _colorMappingService.BlockColors = await _colorGeneratorService.GenerateAndLoadColors(_appSettings.LocalFilesPath, progressReporter);
+                        _colorMappingService.BlockColors = await ColorGeneratorService.GenerateAndLoadColors(_appSettings.LocalFilesPath, progressReporter);
                         await Task.Delay(1500);
 
                         // Actualizamos la versión en SettingsVM ahora que se extrajeron los archivos
-                        await _mainViewModel.SettingsVM.UpdateMinecraftVersionAsync();
-                        
+                        _mainViewModel.SettingsVM.McVersion = _appSettings.McVersion;
+
                         // Ocultamos bienvenida y pasamos directo
                         _mainViewModel.IsWelcomeScreenActive = false;
                         _mainViewModel.IsMainContentVisible = true;

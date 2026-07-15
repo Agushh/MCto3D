@@ -26,12 +26,12 @@ namespace MCto3D
             AvaloniaXamlLoader.Load(this);
 
             var collection = new ServiceCollection();
+            
             collection.AddSingleton<AppSettingsService>();
             collection.AddSingleton<IProjectStorageService, ProjectStorageService>();
             collection.AddSingleton<StructureLoaderService>();
             collection.AddSingleton<MeshService>();
             collection.AddSingleton<AssetExtractorService>();
-            collection.AddSingleton<ColorGeneratorService>();
             collection.AddSingleton<TopologyService>();
             collection.AddSingleton<KMeansColorsService>();
             collection.AddSingleton<KMedoidsColorsService>();

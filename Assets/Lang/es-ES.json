@@ -3,7 +3,13 @@
   "Converter3DModel": "Modelo 3D:",
   "Converter3MfOptions": "Colores",
   "ConverterGeometryOptions": "Geometria",
+
   "Converter3MfNotSelected": "Debes seleccionar el formato .3mf para usar colores",
+  "ConverterAssetsNotLoaded": "Debes hacer la carga de archivos de minecraft para usar colores",
+  "ConverterAssetsNotLoadedWarningTitle": "Archivos de Minecraft no cargados",
+  "ConverterAssetsNotLoadedWarning": "Las caracteristicas de Geometrias completas y modelos coloreados esta desactivado. Carga los archivos para utilizarlas",
+  "ConverterAssetsNotLoadedWarningButton": "Ir a ajustes",
+
   "ConverterActiveFile": "Archivo activo:",
   "ConverterAddColor": "\u002B Agregar Color",
   "ConverterAddFloor": "Añadir suelo",
@@ -99,6 +105,7 @@
   "SettingsLanguage": "Idioma",
   "SettingsLanguageDesc": "Selecciona el idioma de la aplicación.",
   "SettingsLocalFiles": "Archivos Locales",
+  "SettingsSelectNewFolderPath": "Selecciona nueva ruta para archivos",
   "SettingsLocalPath": "Ruta de archivos locales",
   "SettingsLocalPathDesc": "Carpeta donde se guardan los modelos extraídos, caché y proyectos de usuario.",
   "SettingsMCVersion": "Versión de Minecraft",
@@ -107,10 +114,19 @@
   "SettingsMovingFiles": "Moviendo Archivos...",
   "SettingsMovingProgress": "Moviendo archivos... ({0} / {1})",
   "SettingsOpenFolder": "Abrir Carpeta Local",
-  "SettingsReloadActions": "Acciones de Recarga",
-  "SettingsReloadBaseFiles": "Recargar archivos base del juego",
-  "SettingsReloadBaseFilesDesc": "Abre el selector para extraer los recursos de Minecraft nuevamente.",
-  "SettingsReloadBtn": "Recargar",
+
+
+  "SettingsExtractFilesTitle": "Archivo de version de minecraft",
+  "SettingsExtractFromDefault": "Extraer de carpeta por defecto",
+  "SettingsExtractFromDefaultDesc": "El programa buscara tu carpeta .minecraft en %appdata%",
+  "SettingsExtract": "Extraer",
+
+  "SettingsExtractFromCustom": "Extraer de direccion personalizada",
+  "SettingsExtractFromCustomDesc": "El programa extraera tu version mas nueva de tu carpeta seleccionada",
+  "SettingsInputCustom": "Seleccionar carpeta...",
+  "SettingsReload": "Recargar",
+
+
   "SettingsReloadDesc": "Cargar datos de bloques e idiomas",
   "SettingsRenderer": "Opciones de render",
   "SettingsRendererComingSoon": "Los ajustes de renderizado llegarán pronto...",
@@ -144,9 +160,11 @@
   "VanillaSearch": "Buscar...",
   "VanillaTitle": "Estructuras Vanilla",
   "WelcomeContinueBtn": "Continuar",
+  "WelcomeLoadLater": "Cargar Luego",
   "WelcomeContinueTooltip": "Intentará buscar Minecraft en la ruta por defecto",
   "WelcomeCustomFolderBtn": "¿Tienes instalado Minecraft en otra carpeta? Haz click aquí y búscala.",
-  "WelcomeDesc": "Al ser un programa externo a Mojang, no podemos incluir ciertas configuraciones y necesitamos procesar un archivo de versión de Minecraft, por lo que es vital que tengas Minecraft instalado en tu computadora.",
+  "WelcomeDesc": "Gracias por descargar MCto3D! Como se trata de una aplicacion no oficial de minecraft, no podemos incluir ciertos archivos necesarios para el funcionamiento directamente. Por lo que para generar modelos con colores y geometrias precisas, se necesita procesar un archivo de version de minecraft primero. Podes saltearte este paso para crear modelos simples, y podras cargar el archivo desde configuraciones cuando desees.",
+  "WelcomeContinueDescription": "El programa buscara en tu carpeta .minecraft por defecto la version mas reciente.",
   "WelcomeTitle": "¡Bienvenido a MCto3D!",
   "AssetExtractionWaitingStatus": "Esperando que el usuario ingrese la carpeta...",
   "AssetExtractorStartExtraction": "Empezando proceso de extraccion...",

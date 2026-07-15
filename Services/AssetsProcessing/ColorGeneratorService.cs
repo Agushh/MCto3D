@@ -7,9 +7,9 @@ using StbImageSharp;
 
 namespace MCto3D.Services.AssetsProcessing
 {
-    public class ColorGeneratorService
+    public static class ColorGeneratorService
     {
-        public async Task<Dictionary<string, byte[]>> GenerateAndLoadColors(string localAppFolder, IProgress<string> progress = null)
+        public static async Task<Dictionary<string, byte[]>> GenerateAndLoadColors(string localAppFolder, IProgress<string> progress = null)
         {
             progress?.Report(LanguageService.GetString("ProgressInitColors"));
 
@@ -138,7 +138,7 @@ namespace MCto3D.Services.AssetsProcessing
             return blockColors;
         }
 
-        public Dictionary<string, byte[]> LoadColorsSync(string localAppFolder)
+        public static Dictionary<string, byte[]> LoadColorsSync(string localAppFolder)
         {
             //TODO crear constante para la direccion.
             string jsonPath = Path.Combine(localAppFolder, "colores_base.json");

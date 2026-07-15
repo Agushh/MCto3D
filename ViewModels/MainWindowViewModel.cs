@@ -91,20 +91,18 @@ public partial class MainWindowViewModel : ViewModelBase
 
         // Comprobar estado inicial
         CheckInitialAssets(appSettings);
-        var colorGenerator = provider.GetRequiredService<ColorGeneratorService>();
         var colorMapping = provider.GetRequiredService<ColorMappingService>();
-        colorMapping.BlockColors = colorGenerator.LoadColorsSync(appSettings.LocalFilesPath);
-
+        colorMapping.BlockColors = ColorGeneratorService.LoadColorsSync(appSettings.LocalFilesPath);
     }
 
     private void CheckInitialAssets(AppSettingsService appSettings)
     {
-        // TODO: Implementa aquí tu lógica para verificar si los assets ya existen.
-        bool assetsCargados = System.IO.Directory.Exists(Path.Combine(appSettings.LocalFilesPath, "MinecraftExtractedAssets", "assets"));
-
-        if (assetsCargados)
+        if (appSettings.IsFirstRun)
         {
-            // Si ya están cargados, ocultamos la pantalla de bienvenida directamente
+            appSettings.IsFirstRun = false;
+        }
+        else
+        {
             IsWelcomeScreenActive = false;
             IsMainContentVisible = true;
         }

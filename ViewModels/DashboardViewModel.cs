@@ -4,18 +4,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MCto3D.Models;
 using MCto3D.Services;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Avalonia.Media;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
-using System.Linq;
 using MCto3D.Services.ColorProcesing;
 using MCto3D.Services.FileReading;
 
@@ -70,6 +64,9 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty] private Avalonia.Media.Color _floorColor;
     [ObservableProperty] private Avalonia.Media.Color _modelColor;
 
+
+    
+
     public DashboardViewModel(MainWindowViewModel navigationController, AppSettingsService appSettings, ColorSeparatorService colorSeparatorService, IProjectStorageService projectStorage, StructureLoaderService structureLoaderService, MeshService meshService, TopologyService topologyService)
     {
         _navigationController = navigationController;
@@ -85,7 +82,14 @@ public partial class DashboardViewModel : ViewModelBase
         ProjectSaveVM = new ProjectSaveViewModel(navigationController, appSettings, projectStorage);
 
         PaletteVM.PaletteChanged += (s, e) => { if (IsFileLoaded) UpdateLiveMesh(); };
-        ExportVM.ExportFormatChanged += (s, e) => { if (IsFileLoaded) UpdateLiveMesh(); };
+
+        ExportVM.ExportFormatChanged += (s, e) => { 
+            if (IsFileLoaded) UpdateLiveMesh();
+
+            OnPropertyChanged(nameof(IsPaletteDisabled));
+            OnPropertyChanged(nameof(PaletteTooltipText));
+        };
+
         ExportVM.StatusTextChanged += (s, msg) => StatusText = msg;
         ProjectSaveVM.StatusTextChanged += (s, msg) => StatusText = msg;
 
@@ -106,6 +110,7 @@ public partial class DashboardViewModel : ViewModelBase
         try { _modelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { _modelColor = Colors.White; }
         
         _appSettings.SettingsChanged += OnSettingsChanged;
+        CheckAssets();
     }
 
     private void OnSettingsChanged()
@@ -116,6 +121,7 @@ public partial class DashboardViewModel : ViewModelBase
             try { FloorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { }
             try { ModelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { }
         });
+        CheckAssets();
     }
 
     partial void OnSelectedGeometryModeIndexChanged(int value)
@@ -127,7 +133,6 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     [ObservableProperty] private List<Triangle> _meshTriangles = new();
-
     partial void OnBsChanged(float value)
     {
         if (IsFileLoaded)
@@ -135,7 +140,6 @@ public partial class DashboardViewModel : ViewModelBase
             UpdateLiveMesh();
         }
     }
-
     partial void OnGeometryModeChanged(string value)
     {
         if (IsFileLoaded)
@@ -143,7 +147,6 @@ public partial class DashboardViewModel : ViewModelBase
             UpdateLiveMesh();
         }
     }
-
     partial void OnFillHolesChanged(bool value)
     {
         if (IsFileLoaded)
@@ -151,12 +154,10 @@ public partial class DashboardViewModel : ViewModelBase
             UpdateLiveMesh();
         }
     }
-
     partial void OnShowFloorChanged(bool value)
     {
         UpdateLiveMesh();
     }
-
     partial void OnUseCustomFillColorChanged(bool value)
     {
         if (IsFileLoaded)
@@ -164,7 +165,6 @@ public partial class DashboardViewModel : ViewModelBase
             UpdateLiveMesh();
         }
     }
-
     partial void OnCustomFillColorChanged(Avalonia.Media.Color value)
     {
         if (IsFileLoaded)
@@ -172,9 +172,7 @@ public partial class DashboardViewModel : ViewModelBase
             UpdateLiveMesh();
         }
     }
-
     private System.Threading.CancellationTokenSource? _meshUpdateCts;
-
     private async void UpdateLiveMesh()
     {
         if (string.IsNullOrEmpty(_selectedFilePath)) return;
@@ -291,8 +289,6 @@ public partial class DashboardViewModel : ViewModelBase
 
         return (k, userColors);
     }
-
-
     [RelayCommand]
     private void GoBack()
     {
@@ -354,6 +350,8 @@ public partial class DashboardViewModel : ViewModelBase
         StatusText = LanguageService.GetString("StatusWaitingFile");
     }
 
+    
+
     public void LoadDirectFile(string filePath)
     {
         if (File.Exists(filePath))
@@ -361,8 +359,37 @@ public partial class DashboardViewModel : ViewModelBase
             _selectedFilePath = filePath;
             IsFileLoaded = true;
             OriginalFileName = Path.GetFileNameWithoutExtension(filePath);
-            StatusText = $"{MCto3D.Services.LanguageService.GetString("StatusFileLoaded")} {Path.GetFileName(filePath)}";
+            StatusText = $"{LanguageService.GetString("StatusFileLoaded")} {Path.GetFileName(filePath)}";
             UpdateLiveMesh();
+        }
+    }
+
+    [ObservableProperty] private bool _areAssetsLoaded;
+
+    [RelayCommand]
+    private void GoToSettings()
+    {
+        _navigationController.SettingsVM.SelectedTabIndex = 1;
+        _navigationController.NavigateToSettingsCommand.Execute(null);
+    }
+    private void CheckAssets()
+    {
+        AreAssetsLoaded = _appSettings.McVersion != null;
+    }
+
+    public bool IsPaletteDisabled => !AreAssetsLoaded || ExportVM.ExportFormat != "3MF";
+    string? PaletteTooltipText
+    {
+        get
+        {
+            if (!AreAssetsLoaded)
+                return LanguageService.GetString("ConverterAssetsNotLoaded");
+
+            if (ExportVM.ExportFormat != "3MF")
+                return LanguageService.GetString("Converter3MfNotSelected");
+
+            // Retornamos null cuando todo está bien para que no muestre ningún ToolTip molesto
+            return null;
         }
     }
 }

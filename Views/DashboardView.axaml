@@ -58,13 +58,25 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Grid Margin="32" RowDefinitions="Auto,*">
+	<Grid Margin="32" RowDefinitions="Auto,Auto,*">
+		
 		<!-- HEADER -->
 		<Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,24">
 			<TextBlock Grid.Column="1" Classes="H1" Text="{DynamicResource ConverterTitle}" VerticalAlignment="Center"/>
 		</Grid>
 
-		<Grid Grid.Row="1" ColumnDefinitions="*,*">
+		<!-- ADVERTENCIA (Fila 1) -->
+		<Border Grid.Row="1" Classes="Card" Padding="16" Background="#1AEF4444" BorderBrush="#EF4444" BorderThickness="1" IsVisible="{Binding !AreAssetsLoaded}" Margin="0,0,0,24">
+			<Grid ColumnDefinitions="*,Auto">
+				<StackPanel Grid.Column="0" VerticalAlignment="Center">
+					<TextBlock Classes="H3" Foreground="#FCA5A5" Text="{DynamicResource ConverterAssetsNotLoadedWarningTitle}" Padding="0,0,0,8"/>
+					<TextBlock Classes="Subtitle" Foreground="#FECACA" Text="{DynamicResource ConverterAssetsNotLoadedWarning}" TextWrapping="Wrap"/>
+				</StackPanel>
+				<Button Background="#EF4444" CornerRadius="8" Grid.Column="1" Content="{DynamicResource ConverterAssetsNotLoadedWarningButton}" Command="{Binding GoToSettingsCommand}" VerticalAlignment="Center" Margin="16,0,0,0"/>
+			</Grid>
+		</Border>
+
+		<Grid Grid.Row="2" ColumnDefinitions="*,*">
 			<!-- Columna Izquierda (Centro de App): Configuraciones / Archivo -->
 			<ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,32,0">
 				<StackPanel Spacing="24">
@@ -206,7 +218,7 @@
 											</Grid>
 											<Grid ColumnDefinitions="160,*">
 												<TextBlock Grid.Column="0" Classes="SettingsLabel" Text="{DynamicResource ConverterGeomMode}"/>
-												<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedGeometryModeIndex}">
+												<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedGeometryModeIndex}" IsEnabled="{Binding AreAssetsLoaded}">
 													<ComboBoxItem Content="{DynamicResource ConverterGeomSolid}" />
 													<ComboBoxItem Content="{DynamicResource ConverterGeomFull}" />
 												</ComboBox>
@@ -221,7 +233,8 @@
 									</ScrollViewer>
 								</Border>
 							</TabItem>
-							<TabItem Classes="converter" Header="{DynamicResource Converter3MfOptions}" IsEnabled="{Binding ExportVM.Is3MfSelected}" ToolTip.Tip="{DynamicResource Converter3MfNotSelected}" ToolTip.ShowOnDisabled="{Binding !ExportVM.Is3MfSelected}" >
+
+							<TabItem Classes="converter" Header="{DynamicResource Converter3MfOptions}" IsEnabled="{Binding !IsPaletteDisabled}" ToolTip.Tip="{DynamicResource PaletteToolTipText}" ToolTip.ShowOnDisabled="True">
 								<Border Classes="Card" Padding="24" MinWidth="350" VerticalAlignment="Top">
 									<ScrollViewer VerticalScrollBarVisibility="Auto">
 										<StackPanel Spacing="16">
@@ -333,7 +346,7 @@
 
 
 			<!-- Columna Derecha: Renderizado-->
-			<Border Grid.Column="1" Classes="Card" Padding="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<Border  Grid.Column="1" Classes="Card" Padding="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 				<Panel>
 					<Border IsVisible="{Binding !IsFileLoaded}" HorizontalAlignment="Center" VerticalAlignment="Center">
 						<TextBlock Text="{DynamicResource ConverterFutureWorldReading}" TextWrapping="Wrap" Foreground="{DynamicResource EnderBorder}" FontSize="24" FontWeight="Black" />
@@ -382,10 +395,12 @@
 					</Grid>
 				</Panel>
 			</Border>
+
 		</Grid>
 
+
 		<!-- OVERLAY POPUP: Guardar Proyecto -->
-		<Border Grid.RowSpan="2" Background="#D0000000" IsVisible="{Binding ProjectSaveVM.IsSavePopupOpen}" ZIndex="100" Margin="-32">
+		<Border Grid.RowSpan="3" Background="#D0000000" IsVisible="{Binding ProjectSaveVM.IsSavePopupOpen}" ZIndex="100" Margin="-32">
 			<Border Classes="Card" Padding="40" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="800">
 				<Grid ColumnDefinitions="*,*">
 
