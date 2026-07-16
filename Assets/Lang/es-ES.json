@@ -82,6 +82,10 @@
   "HomeSubtitle": "¡Dale vida a tus construcciones!",
   "HomeTitle": "Minecraft to 3D Model",
 
+  "LoadingActionInProcess": "Cargando...",
+  "LoadingCommonError": "Se ha producido un error",
+  "LoadingCloseAndContinue": "Cerrar y continuar",
+
   "MyFilesBack": "Volver",
   "MyFilesCancel": "Cancelar",
   "MyFilesDate": "Fecha:",

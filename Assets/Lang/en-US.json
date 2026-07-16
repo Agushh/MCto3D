@@ -82,6 +82,10 @@
   "HomeSubtitle": "Make your builds alive!",
   "HomeTitle": "Minecraft to 3D Model",
 
+  "LoadingActionInProcess": "Loading...",
+  "LoadingCommonError": "There was an error",
+  "LoadingCloseAndContinue": "Close and Continue",
+
   "MyFilesBack": "Back",
   "MyFilesCancel": "Cancel",
   "MyFilesDate": "Date:",

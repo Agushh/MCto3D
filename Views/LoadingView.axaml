@@ -10,7 +10,7 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="25" IsVisible="{Binding !HasError}">
             <TextBlock Classes="H1" FontSize="36"
-                       Text="Action In Process..." 
+                       Text= "{DynamicResource LoadingActionInProcess}"
                        HorizontalAlignment="Center" 
                        LetterSpacing="1"/>
             
@@ -29,14 +29,14 @@
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" IsVisible="{Binding HasError}">
             <TextBlock Classes="H1" FontSize="32" Foreground="#EF4444" 
-                       Text="Ha ocurrido un error" 
+                       Text="{DynamicResource LoadingCommonError}" 
                        HorizontalAlignment="Center"/>
             
             <Border Background="#2A1015" BorderBrush="#7F1D1D" BorderThickness="1" CornerRadius="8" Padding="20" MaxWidth="600">
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="#FCA5A5" TextWrapping="Wrap"/>
             </Border>
             
-            <Button Classes="Danger" Content="Cerrar y continuar" 
+            <Button Classes="Danger" Content="{DynamicResource LoadingCloseAndContinue}"  
                     Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).HideLoadingScreenCommand}"
                     Padding="20,10" 
                     HorizontalAlignment="Center"/>
