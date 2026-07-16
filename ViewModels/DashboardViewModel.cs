@@ -14,17 +14,6 @@ using MCto3D.Services.ColorProcesing;
 using MCto3D.Services.FileReading;
 
 namespace MCto3D.ViewModels;
-
-
-
-public class SlicerOption
-{
-    public string Name { get; set; } = "";
-    public string ColorHex { get; set; } = "";
-    public string UriScheme { get; set; } = "";
-    public string ButtonText => $"{MCto3D.Services.LanguageService.GetString("ConverterOpenIn")} {Name}";
-}
-
 public partial class DashboardViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _navigationController;
@@ -46,7 +35,7 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty] private bool _fillHoles = false;
     [ObservableProperty] private bool _useCustomFillColor = false;
-    [ObservableProperty] private Avalonia.Media.Color _customFillColor = Colors.Green;
+    [ObservableProperty] private Color _customFillColor = Colors.Green;
     [ObservableProperty] private bool _isFileLoaded = false;
     [ObservableProperty] private string _originalFileName = "";
 
@@ -61,8 +50,8 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty] private Dictionary<System.Drawing.Color, List<Triangle>> _coloredMeshes = new();
 
     [ObservableProperty] private bool _showFloor;
-    [ObservableProperty] private Avalonia.Media.Color _floorColor;
-    [ObservableProperty] private Avalonia.Media.Color _modelColor;
+    [ObservableProperty] private Color _floorColor;
+    [ObservableProperty] private Color _modelColor;
 
 
     
@@ -106,8 +95,8 @@ public partial class DashboardViewModel : ViewModelBase
         ProjectSaveVM.GetColoredMeshesFunc = () => ColoredMeshes;
         
         _showFloor = _appSettings.ShowFloor;
-        try { _floorColor = Avalonia.Media.Color.Parse(_appSettings.FloorColorHex); } catch { _floorColor = Colors.DarkGray; }
-        try { _modelColor = Avalonia.Media.Color.Parse(_appSettings.ModelColorHex); } catch { _modelColor = Colors.White; }
+        try { _floorColor = Color.Parse(_appSettings.FloorColorHex); } catch { _floorColor = Colors.DarkGray; }
+        try { _modelColor = Color.Parse(_appSettings.ModelColorHex); } catch { _modelColor = Colors.White; }
         
         _appSettings.SettingsChanged += OnSettingsChanged;
         CheckAssets();
