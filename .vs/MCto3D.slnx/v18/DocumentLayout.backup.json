@@ -22,8 +22,12 @@
       "DocumentGroups": [
         {
           "DockedHeight": 420,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -56,15 +60,11 @@
               "Title": "LoadingView.axaml",
               "DocumentMoniker": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\LoadingView.axaml",
               "RelativeDocumentMoniker": "Views\\LoadingView.axaml",
-              "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\LoadingView.axaml*",
-              "RelativeToolTip": "Views\\LoadingView.axaml*",
+              "ToolTip": "C:\\Users\\agust\\Desktop\\Avalonia Testing\\MCto3D\\Views\\LoadingView.axaml",
+              "RelativeToolTip": "Views\\LoadingView.axaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-07-16T18:09:09.427Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             }
           ]
         },

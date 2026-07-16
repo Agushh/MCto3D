@@ -57,6 +57,9 @@
 			<views:SettingsView/>
 		</DataTemplate>
 		<!-- Nuevas vistas -->
+		<DataTemplate DataType="{x:Type vm:LanguageSetupViewModel}">
+			<views:LanguageSetupView/>
+		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:WalkthroughViewModel}">
 			<views:WalkthroughView/>
 		</DataTemplate>
@@ -191,6 +194,9 @@
 
 		<!-- OVERLAY PANTALLA DE BIENVENIDA -->
 		<ContentControl Grid.Row="1" Content="{Binding WelcomeVM}" IsVisible="{Binding IsWelcomeScreenActive}"/>
+
+		<!-- OVERLAY PANTALLA DE CONFIGURACION DE IDIOMA -->
+		<ContentControl Grid.Row="1" Content="{Binding LanguageSetupVM}" IsVisible="{Binding IsLanguageSetupActive}"/>
 
 		<!-- OVERLAY PANTALLA DE CARGA GLOBAL -->
 		<ContentControl Grid.Row="1" Content="{Binding LoadingVM}" IsVisible="{Binding LoadingVM.IsActive}"/>

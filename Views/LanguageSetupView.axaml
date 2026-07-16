@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:MCto3D.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MCto3D.Views.LanguageSetupView"
+             x:DataType="vm:LanguageSetupViewModel"
+             Background="{DynamicResource EnderBackgroundBase}">
+
+	<Grid RowDefinitions="*,Auto,Auto,*" HorizontalAlignment="Center" VerticalAlignment="Center">
+		
+		<!-- Titles -->
+		<StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,32" HorizontalAlignment="Center">
+			<TextBlock Text="Welcome / Bienvenido" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource EnderTextPrimary}" HorizontalAlignment="Center"/>
+			<TextBlock Text="Select your language to continue" FontSize="16" Foreground="{DynamicResource EnderTextSecondary}" HorizontalAlignment="Center"/>
+		</StackPanel>
+
+		<!-- Dropdown and Button -->
+		<StackPanel Grid.Row="2" Spacing="24" HorizontalAlignment="Center" Width="300">
+			
+			<ComboBox ItemsSource="{Binding AvailableLanguages}" 
+			          SelectedItem="{Binding SelectedLanguage}"
+			          HorizontalAlignment="Stretch" Height="40" >
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<Button Command="{Binding ContinueCommand}" 
+			        Content="Continue / Continuar" 
+			        Classes="Primary" HorizontalAlignment="Stretch" Height="45"
+			        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
+			        CornerRadius="8" Cursor="Hand" FontWeight="Bold" FontSize="16" />
+
+		</StackPanel>
+	</Grid>
+</UserControl>

@@ -32,6 +32,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public DevToolsViewModel DevToolsVM { get; }
     public WelcomeViewModel WelcomeVM { get; }
     public LoadingViewModel LoadingVM { get; }
+    public LanguageSetupViewModel LanguageSetupVM { get; }
     public SettingsViewModel SettingsVM { get; }
     public WalkthroughViewModel WalkthroughVM { get; }
     public FaqViewModel FaqVM { get; }
@@ -44,6 +45,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isHomeActive = true;
+
+    [ObservableProperty]
+    private bool _isLanguageSetupActive = false;
 
     [ObservableProperty]
     private bool _isWelcomeScreenActive = true;
@@ -81,6 +85,7 @@ public partial class MainWindowViewModel : ViewModelBase
         DevToolsVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<DevToolsViewModel>(provider, this);
         WelcomeVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<WelcomeViewModel>(provider, this);
         LoadingVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<LoadingViewModel>(provider, this);
+        LanguageSetupVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<LanguageSetupViewModel>(provider, this);
         SettingsVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<SettingsViewModel>(provider, this);
         WalkthroughVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<WalkthroughViewModel>(provider, this);
         FaqVM = Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<FaqViewModel>(provider, this);
@@ -100,9 +105,13 @@ public partial class MainWindowViewModel : ViewModelBase
         if (appSettings.IsFirstRun)
         {
             appSettings.IsFirstRun = false;
+            IsLanguageSetupActive = true;
+            IsWelcomeScreenActive = false;
+            IsMainContentVisible = false;
         }
         else
         {
+            IsLanguageSetupActive = false;
             IsWelcomeScreenActive = false;
             IsMainContentVisible = true;
         }

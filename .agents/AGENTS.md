@@ -44,6 +44,7 @@ Use `[ObservableProperty]` and `[RelayCommand]`.
 - `MyFilesViewModel.cs`: Manages saved projects.
 - `PaletteManagerViewModel.cs`: Handles the CRUD operations for user-defined custom color palettes.
 - `MainWindowViewModel.cs`: The routing engine managing the current view.
+- `LanguageSetupViewModel.cs`: The first-boot language selection screen shown before the welcome view.
 - `WelcomeViewModel.cs` / `LoadingViewModel.cs`: Overlay screens for first-time setup and heavy asynchronous loading.
 
 ### 3.4. Views (`/Views`)
@@ -92,4 +93,10 @@ Agents must read this section before attempting fixes, as many "bugs" are intent
 3. **Refactoring is Restricted:** Do not delete interfaces or combine classes (like `ColorClustering` interfaces) unless the user specifically asks for an architectural refactoring plan. If you find that a logic is badly implemented, and you think that it needs changes, ask first.
 4. **Commands Policy:** Unless it is a run command, when needing to execute PowerShell scripts or terminal commands, you need to tell first, what you are going to do and why.
 5. **Language:** The project, commits, and documentation must be in **English**.
-6. **Continuous Context Maintenance:** Whenever you make code modifications (adding features, changing architecture, or fixing bugs), you MUST proactively review this `AGENTS.md` file at the end of the task. If your changes affect anything documented here (e.g., algorithms, architecture paths, or known issues), you must automatically update, add, or remove the relevant sections to keep this document perfectly synchronized with the codebase.
+6. **Continuous Context Maintenance:** Whenever you make code modifications, you MUST include a header ### Context Check at the end of your response. Under this header, you must explicitly state whether AGENTS.md needs to be updated. If it does, you must update it before finishing your turn.
+
+## 7. Useful Commands
+- **Publish Release:** Compiles the app as a single, self-contained executable for Windows x64.
+  ```bash
+  dotnet publish MCto3D.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o "publish-release\MCto3D_Alpha1.0" 
+  ```

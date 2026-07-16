@@ -52,6 +52,7 @@ namespace MCto3D
 
             // ViewModels
             collection.AddTransient<MainWindowViewModel>();
+            collection.AddTransient<LanguageSetupViewModel>();
             
             var provider = collection.BuildServiceProvider();
             Services = provider;
