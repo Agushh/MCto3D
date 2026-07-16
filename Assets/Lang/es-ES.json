@@ -1,21 +1,29 @@
 {
   "AppTitle": "MCto3D",
+
+  "AssetExtractionWaitingStatus": "Esperando que el usuario ingrese la carpeta...",
+  "AssetExtractorCleanningOldAssets": "Borrando archivos locales antiguos...",
+  "AssetExtractorExtracting": "Extrayendo :",
+  "AssetExtractorExtractionSuccessfull": "¡Extraccion completada exitosamente!",
+  "AssetExtractorNothingFound": "No se encontraron archivos. Si tenes minecraft instalado, corrobora que la direccion que ingresaste es correcta",
+  "AssetExtractorOpeningFile": "Abriendo la version de minecraft :",
+  "AssetExtractorStartExtraction": "Empezando proceso de extraccion...",
+  "AssetExtractorVersionNotFound": "No hay versiones en tu carpeta \"versions\". Necesitas tener al menos una version de minecraft instalada.",
+  "AssetExtractorVersionsNotFoundOnDotM": "No se encontro la carpeta versiones en \".minecraft\". Necesitas tener al menos una version de minecraft instalada.",
+
   "Converter3DModel": "Modelo 3D:",
-  "Converter3MfOptions": "Colores",
-  "ConverterGeometryOptions": "Geometria",
-
   "Converter3MfNotSelected": "Debes seleccionar el formato .3mf para usar colores",
-  "ConverterAssetsNotLoaded": "Debes hacer la carga de archivos de minecraft para usar colores",
-  "ConverterAssetsNotLoadedWarningTitle": "Archivos de Minecraft no cargados",
-  "ConverterAssetsNotLoadedWarning": "Las caracteristicas de Geometrias completas y modelos coloreados esta desactivado. Carga los archivos para utilizarlas",
-  "ConverterAssetsNotLoadedWarningButton": "Ir a ajustes",
-
+  "Converter3MfOptions": "Colores",
   "ConverterActiveFile": "Archivo activo:",
   "ConverterAddColor": "\u002B Agregar Color",
   "ConverterAddFloor": "Añadir suelo",
   "ConverterAdmittedTypes": "Tipos admitidos: .nbt, .schematic",
   "ConverterAlgorithm": "Algoritmo",
   "ConverterAmountK": "Cantidad (K)",
+  "ConverterAssetsNotLoaded": "Debes hacer la carga de archivos de minecraft para usar colores",
+  "ConverterAssetsNotLoadedWarning": "Las caracteristicas de Geometrias completas y modelos coloreados esta desactivado. Carga los archivos para utilizarlas",
+  "ConverterAssetsNotLoadedWarningButton": "Ir a ajustes",
+  "ConverterAssetsNotLoadedWarningTitle": "Archivos de Minecraft no cargados",
   "ConverterBlockScale": "Escala de Bloque (bs):",
   "ConverterCancelBtn": "Cancelar",
   "ConverterColorCount": "Cantidad de colores:",
@@ -58,6 +66,7 @@
   "ConverterTitle": "Convertidor",
   "ConverterUseCustom": "Usar personalizado",
   "ConverterWaitMsg": "Por favor espera, esto puede tardar unos segundos en estructuras grandes.",
+
   "GlobalClose": "Cerrar",
   "GlobalDelete": "Borrar",
   "GlobalNo": "No",
@@ -65,11 +74,13 @@
   "GlobalSaveChanges": "Guardar Cambios",
   "GlobalUpdate": "Actualizar",
   "GlobalYes": "Sí",
+
   "HomeConvertBtn": "¡CONVERTIR!",
   "HomeDescription": "Una herramienta poderosa para convertir estructuras de Minecraft en modelos 3D de alta calidad para renderizado, impresión y más.",
   "HomeLearnMore": "ver más...",
   "HomeSubtitle": "¡Dale vida a tus construcciones!",
   "HomeTitle": "Minecraft to 3D Model",
+
   "MyFilesBack": "Volver",
   "MyFilesCancel": "Cancelar",
   "MyFilesDate": "Fecha:",
@@ -87,10 +98,12 @@
   "MyFilesTitle": "Mis Archivos",
   "MyFilesViewGrid": "Vista de Cuadrícula",
   "MyFilesViewList": "Vista de Lista",
+
   "ProgressErrorNoPng": "Error: No se encontraron texturas .png procesables.",
   "ProgressErrorTexture": "Error: No se encontró la carpeta de texturas.",
   "ProgressInitColors": "Iniciando procesamiento de colores para .3mf ...",
   "ProgressSavingColors": "Guardando archivo de colores...",
+
   "SettingsAbout": "Acerca de",
   "SettingsCalculatingFiles": "Calculando archivos...",
   "SettingsChangePathBtn": "Cambiar Ruta",
@@ -101,11 +114,17 @@
   "SettingsConverterDeleteAllPalettes": "Borrar todas las paletas",
   "SettingsConverterManagePalettes": "Gestionar Paletas",
   "SettingsConverterPaletteManagement": "Gestión de Paletas",
+  "SettingsExtract": "Extraer",
+  "SettingsExtractFilesTitle": "Archivo de version de minecraft",
+  "SettingsExtractFromCustom": "Extraer de direccion personalizada",
+  "SettingsExtractFromCustomDesc": "El programa extraera tu version mas nueva de tu carpeta seleccionada",
+  "SettingsExtractFromDefault": "Extraer de carpeta por defecto",
+  "SettingsExtractFromDefaultDesc": "El programa buscara tu carpeta .minecraft en %appdata%",
   "SettingsGeneral": "General",
+  "SettingsInputCustom": "Seleccionar carpeta...",
   "SettingsLanguage": "Idioma",
   "SettingsLanguageDesc": "Selecciona el idioma de la aplicación.",
   "SettingsLocalFiles": "Archivos Locales",
-  "SettingsSelectNewFolderPath": "Selecciona nueva ruta para archivos",
   "SettingsLocalPath": "Ruta de archivos locales",
   "SettingsLocalPathDesc": "Carpeta donde se guardan los modelos extraídos, caché y proyectos de usuario.",
   "SettingsMCVersion": "Versión de Minecraft",
@@ -114,19 +133,7 @@
   "SettingsMovingFiles": "Moviendo Archivos...",
   "SettingsMovingProgress": "Moviendo archivos... ({0} / {1})",
   "SettingsOpenFolder": "Abrir Carpeta Local",
-
-
-  "SettingsExtractFilesTitle": "Archivo de version de minecraft",
-  "SettingsExtractFromDefault": "Extraer de carpeta por defecto",
-  "SettingsExtractFromDefaultDesc": "El programa buscara tu carpeta .minecraft en %appdata%",
-  "SettingsExtract": "Extraer",
-
-  "SettingsExtractFromCustom": "Extraer de direccion personalizada",
-  "SettingsExtractFromCustomDesc": "El programa extraera tu version mas nueva de tu carpeta seleccionada",
-  "SettingsInputCustom": "Seleccionar carpeta...",
   "SettingsReload": "Recargar",
-
-
   "SettingsReloadDesc": "Cargar datos de bloques e idiomas",
   "SettingsRenderer": "Opciones de render",
   "SettingsRendererComingSoon": "Los ajustes de renderizado llegarán pronto...",
@@ -134,7 +141,9 @@
   "SettingsRendererMeshColor": "Color de Malla",
   "SettingsRendererVisuals": "Ajustes Visuales",
   "SettingsRestoreFolder": "Restaurar por defecto",
+  "SettingsSelectNewFolderPath": "Selecciona nueva ruta para archivos",
   "SettingsTitle": "Ajustes",
+
   "SidebarConverter": "Convertidor",
   "SidebarDevTools": "Dev Tools",
   "SidebarFaq": "FAQ",
@@ -144,6 +153,7 @@
   "SidebarSettings": "Ajustes",
   "SidebarVanillaStructures": "Estructuras Vanilla",
   "SidebarWalkthrough": "Tutorial",
+
   "StatusErrorOpenFile": "Error al abrir el archivo:",
   "StatusExportCancel": "Exportación cancelada.",
   "StatusExportError": "Error al cargar el archivo.",
@@ -152,6 +162,10 @@
   "StatusProcessingGeom": "Procesando geometría para exportar...",
   "StatusSentToSlicer": "¡Enviado al Slicer!",
   "StatusWaitingFile": "Esperando archivo NBT o 3MF...",
+
+  "TextureProcessing": "Procesando textura :",
+  "TextureProcessingSuccessfull": "¡Procesamiento de texturas completado exitosamente!",
+
   "VanillaBack": "Volver",
   "VanillaDesc": "Explora y convierte estructuras internas del juego",
   "VanillaEmpty": "No hay estructuras en esta carpeta.",
@@ -159,22 +173,12 @@
   "VanillaOpenTooltip": "Carga esta estructura en el Conversor 3D",
   "VanillaSearch": "Buscar...",
   "VanillaTitle": "Estructuras Vanilla",
+
   "WelcomeContinueBtn": "Continuar",
-  "WelcomeLoadLater": "Cargar Luego",
+  "WelcomeContinueDescription": "El programa buscara en tu carpeta .minecraft por defecto la version mas reciente.",
   "WelcomeContinueTooltip": "Intentará buscar Minecraft en la ruta por defecto",
   "WelcomeCustomFolderBtn": "¿Tienes instalado Minecraft en otra carpeta? Haz click aquí y búscala.",
   "WelcomeDesc": "Gracias por descargar MCto3D! Como se trata de una aplicacion no oficial de minecraft, no podemos incluir ciertos archivos necesarios para el funcionamiento directamente. Por lo que para generar modelos con colores y geometrias precisas, se necesita procesar un archivo de version de minecraft primero. Podes saltearte este paso para crear modelos simples, y podras cargar el archivo desde configuraciones cuando desees.",
-  "WelcomeContinueDescription": "El programa buscara en tu carpeta .minecraft por defecto la version mas reciente.",
-  "WelcomeTitle": "¡Bienvenido a MCto3D!",
-  "AssetExtractionWaitingStatus": "Esperando que el usuario ingrese la carpeta...",
-  "AssetExtractorStartExtraction": "Empezando proceso de extraccion...",
-  "AssetExtractorVersionsNotFoundOnDotM": "No se encontro la carpeta versiones en \".minecraft\". Necesitas tener al menos una version de minecraft instalada.",
-  "AssetExtractorNothingFound": "No se encontraron archivos. Si tenes minecraft instalado, corrobora que la direccion que ingresaste es correcta",
-  "AssetExtractorVersionNotFound": "No hay versiones en tu carpeta \"versions\". Necesitas tener al menos una version de minecraft instalada.",
-  "AssetExtractorCleanningOldAssets": "Borrando archivos locales antiguos...",
-  "AssetExtractorOpeningFile": "Abriendo la version de minecraft :",
-  "AssetExtractorExtracting": "Extrayendo :",
-  "AssetExtractorExtractionSuccessfull": "¡Extraccion completada exitosamente!",
-  "TextureProcessing": "Procesando textura :",
-  "TextureProcessingSuccessfull": "¡Procesamiento de texturas completado exitosamente!"
+  "WelcomeLoadLater": "Cargar Luego",
+  "WelcomeTitle": "¡Bienvenido a MCto3D!"
 }

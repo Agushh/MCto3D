@@ -6,7 +6,7 @@
 **Design Philosophy:**
 - **No "AI-Generic" UI:** The interface must feel highly custom, premium, and human-designed.
 - **Performance First:** Converting large structures is intensive. Background tasks, cancellation tokens, and decoupled services are mandatory.
-- **Zero Copyright Infringement:** Minecraft assets (textures, block models) are never distributed with the app. They are parsed dynamically from the user's local Minecraft `.jar` files (e.g., `%appdata%\.minecraft\versions`).
+- **Zero Copyright Infringement:** Minecraft assets (textures and block models) are never distributed with the app. They are parsed dynamically from the user's local or custom Minecraft `.jar` files (e.g., `%appdata%\.minecraft\versions`). The program can run without these files, but only allow using the "Solid Blocks" (No Complex Geometry like stairs) and without colors (UniColor Model). 
 
 ## 2. Technology Stack & Frameworks
 - **Platform & Language:** .NET 10, C# 13 (Nullable contexts enabled).
@@ -48,8 +48,8 @@ Use `[ObservableProperty]` and `[RelayCommand]`.
 
 ### 3.4. Views (`/Views`)
 Avalonia `.axaml` files. 
-- **Rule:** No inline styles (`Background="#FFF"`, `Margin="10"`). All styling must be extracted to `<UserControl.Styles>` or global dictionaries.
-- **Rule:** Uses customized Window decorations. Do not remove the custom title bar.
+- **Rule:** No inline styles (`Background="#FFF"`, `Margin="10"`). All styling must be extracted to `<UserControl.Styles>` or global dictionaries unless they are truly minimal and only for layout or positioning purposes. Complex styles and repeated ones, goes to the Styles or a UserControl's Styles.
+- **Rule:** Uses customized Window decorations. Do not remove the custom title bar. 
 - **Rule:** The UI uses responsive `Grid` layouts. Do not use absolute `Canvas` positioning unless specifically requested.
 
 ## 4. Deep Dive: Core Algorithms
@@ -82,12 +82,14 @@ Agents must read this section before attempting fixes, as many "bugs" are intent
 4. **Slider Debouncing:**
    - Updating the 3D model color in real-time when dragging a slider caused 30+ mesh generations per second, crashing the app.
    - *Solution:* `CancellationToken` and a delay/debounce mechanism are implemented. Do not remove them.
-5. **Localization Failures:**
-   - Do not hardcode strings like `"Custom"`. Use `LanguageService`. We previously had bugs where changing the language left ghost texts because the ViewModel properties weren't updated dynamically.
+5. **Localization & Translation Files:**
+   - Do not hardcode strings like `"Custom"`. Use `LanguageService`. We previously had bugs where changing the language left ghost texts because the ViewModel properties weren't updated dynamically. If the string is needed from a view, you can use `{DynamicResource MyStringKey}`, and for scripts use `LanguageService.GetString("MyString")`. If there is a resource without key, the program will crash when it asks for it.
+   - **JSON Format Rule:** When adding new keys to the translation files in `Assets/Lang` (like `en-US.json` or `es-ES.json`), you MUST maintain the existing structure: keys must be in alphabetical order, visually grouped by their prefix (e.g., `Converter`, `Global`) separated by a blank line, and both language files must contain the exact same keys in the exact same order.
 
 ## 6. Strict Rules for AI Agents
 1. **Do Not Hallucinate Features:** If asked to fix the renderer, look at `/Rendering/Shaders.cs` and `ShaderProgram.cs`. Do not invent new Avalonia 3D controls; we use a raw OpenGL context.
 2. **Preserve the MVVM Pattern:** If you need to show an error message, do not do it from a Service. Pass the error to the ViewModel and let the View bind to an Error property or use an interaction dialog.
-3. **Refactoring is Restricted:** Do not delete interfaces or combine classes (like `ColorClustering` interfaces) unless the user specifically asks for an architectural refactoring plan.
-4. **Handle Execution Policies:** PowerShell scripts (like the context extractor) were blocked by Windows Execution Policies. When writing build scripts or terminal commands, account for `-ExecutionPolicy Bypass`.
+3. **Refactoring is Restricted:** Do not delete interfaces or combine classes (like `ColorClustering` interfaces) unless the user specifically asks for an architectural refactoring plan. If you find that a logic is badly implemented, and you think that it needs changes, ask first.
+4. **Commands Policy:** Unless it is a run command, when needing to execute PowerShell scripts or terminal commands, you need to tell first, what you are going to do and why.
 5. **Language:** The project, commits, and documentation must be in **English**.
+6. **Continuous Context Maintenance:** Whenever you make code modifications (adding features, changing architecture, or fixing bugs), you MUST proactively review this `AGENTS.md` file at the end of the task. If your changes affect anything documented here (e.g., algorithms, architecture paths, or known issues), you must automatically update, add, or remove the relevant sections to keep this document perfectly synchronized with the codebase.
