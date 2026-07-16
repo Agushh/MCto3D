@@ -35,6 +35,7 @@
   "ConverterForceColor": "Forzar color",
   "ConverterFutureWorldReading": "Lectura de mundos para conversor en desarrollo...",
   "ConverterGeneratingMesh": "Generando Malla 3D...",
+  "ConverterGeometryOptions": "Geometria",
   "ConverterGeomFull": "Geometrías completas",
   "ConverterGeomMode": "Modo de Geometría:",
   "ConverterGeomSolid": "Bloques sólidos",

@@ -37,7 +37,7 @@ public partial class ProjectSaveViewModel : ViewModelBase
     [ObservableProperty] private bool _isSavePopupOpen = false;
     [ObservableProperty] private string _newProjectName = string.Empty;
     [ObservableProperty] private int _selectedThumbnailIndex = 0;
-    [ObservableProperty] private ObservableCollection<WriteableBitmap>? _thumbnails;
+    [ObservableProperty] private ObservableCollection<WriteableBitmap?> _thumbnails = new(new WriteableBitmap?[4]);
 
     [RelayCommand]
     private async Task OpenSavePopup()
@@ -48,7 +48,7 @@ public partial class ProjectSaveViewModel : ViewModelBase
         if (CaptureThumbnailsFunc != null)
         {
             var images = await CaptureThumbnailsFunc();
-            Thumbnails = new ObservableCollection<WriteableBitmap>(images);
+            Thumbnails = new ObservableCollection<WriteableBitmap?>(images!);
         }
 
         IsSavePopupOpen = true;

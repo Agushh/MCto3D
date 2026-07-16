@@ -35,6 +35,7 @@
   "ConverterForceColor": "Force color",
   "ConverterFutureWorldReading": "Minecraft World Converter under development...",
   "ConverterGeneratingMesh": "Generating 3D Mesh...",
+  "ConverterGeometryOptions": "Geometry",
   "ConverterGeomFull": "Full geometries",
   "ConverterGeomMode": "Geometry Mode:",
   "ConverterGeomSolid": "Solid blocks",
